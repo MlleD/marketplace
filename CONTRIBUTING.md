@@ -7,6 +7,8 @@
   * [Bouchra Bennani](https://gaufre.informatique.univ-paris-diderot.fr/poca-b)
   * [Carl Christensen](https://gaufre.informatique.univ-paris-diderot.fr/poca-c)
   * [Dorothée Huynh](https://gaufre.informatique.univ-paris-diderot.fr/huynhd)
+  * [Laure Merat](https://gaufre.informatique.univ-paris-diderot.fr/merat)
+  * [Léo-Paul Cadiou](https://gaufre.informatique.univ-paris-diderot.fr/cadiou)
 * SCRUM master: Diane Delaunay
 
 ## Types of gitlab issues
