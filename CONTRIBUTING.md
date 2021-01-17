@@ -9,6 +9,7 @@
   * [Dorothée Huynh](https://gaufre.informatique.univ-paris-diderot.fr/huynhd)
   * [Laure Merat](https://gaufre.informatique.univ-paris-diderot.fr/merat)
   * [Léo-Paul Cadiou](https://gaufre.informatique.univ-paris-diderot.fr/cadiou)
+  * [Paul Traore](https://gaufre.informatique.univ-paris-diderot.fr/traore)
 * SCRUM master: Diane Delaunay
 
 ## Types of gitlab issues
