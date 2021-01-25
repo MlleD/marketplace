@@ -44,3 +44,7 @@ Changes are integrated to the branch `master` after the following steps:
 * the branch has been rebased on the branch `master`.
 
 See https://medium.com/faun/how-to-rebase-and-merge-with-git-a9c29b2172ad.
+
+## Architecture
+The architectures of the database and the website can be accessed with this link:
+https://docs.google.com/document/d/1JeWsdxSpvzw74xOpyeGiH-RaTiorfR0i185U2TYaCrc/edit
