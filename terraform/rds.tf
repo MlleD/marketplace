@@ -14,7 +14,7 @@ resource "aws_db_instance" "db_poca" {
 
   name = "poca"
   username = "poca"
-  password = var.db_password
+  password = "poca2020"
   port = 5432
 
   storage_type = "gp2"
@@ -22,14 +22,14 @@ resource "aws_db_instance" "db_poca" {
 }
 
 resource "aws_db_subnet_group" "dbsubnet_poca" {
-  name = "dbsubnet-poca"
+  name = "dbsubnet-poca2020"
   subnet_ids = [aws_subnet.subnet_back_a.id, aws_subnet.subnet_back_b.id]
 }
 
 resource "aws_ssm_parameter" "db_password" {
   name = "/database/password"
   type = "SecureString"
-  value = var.db_password
+  value = "var.db_password"
 }
 
 output "db_address" {

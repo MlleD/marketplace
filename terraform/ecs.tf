@@ -9,12 +9,12 @@ resource "aws_instance" "ec2_poca" {
   iam_instance_profile = aws_iam_instance_profile.ecs_instance_profile.name
 
   user_data = <<EOF
-#!/bin/bash
-# The cluster this agent should check into.
-echo 'ECS_CLUSTER=${aws_ecs_cluster.cluster_poca.name}' >> /etc/ecs/ecs.config
-# Disable privileged containers.
-echo 'ECS_DISABLE_PRIVILEGED=true' >> /etc/ecs/ecs.config
-EOF
+  #!/bin/bash
+  # The cluster this agent should check into.
+  echo 'ECS_CLUSTER=${aws_ecs_cluster.cluster_poca.name}' >> /etc/ecs/ecs.config
+  # Disable privileged containers.
+  echo 'ECS_DISABLE_PRIVILEGED=true' >> /etc/ecs/ecs.config
+  EOF
 
   // Uncomment to allow ssh connection using the key named "debug"
   //key_name = "debug"
@@ -103,19 +103,22 @@ resource "aws_iam_role" "ecs_task_execution_role" {
  
   assume_role_policy = <<EOF
 {
- "Version": "2012-10-17",
- "Statement": [
-   {
-     "Action": "sts:AssumeRole",
-     "Principal": {
-       "Service": "ecs-tasks.amazonaws.com"
-     },
-     "Effect": "Allow",
-     "Sid": ""
-   }
- ]
-}
-EOF
+   "Version": "2012-10-17",
+   "Statement": [
+     {
+       "Action": "sts:AssumeRole",
+       "Principal": {
+         "Service": "ecs-tasks.amazonaws.com"
+       },
+       "Effect": "Allow",
+       "Sid": ""
+     }
+   ]
+  }
+  EOF
+  tags = {
+      tag-key = "tag-value"
+  }
 }
 
 resource "aws_iam_policy" "access_db_password" {
@@ -131,7 +134,7 @@ resource "aws_iam_policy" "access_db_password" {
         ],
         "Effect": "Allow",
         "Resource": [
-                "arn:aws:ssm:eu-west-3:182500928202:parameter/database/password"     
+                "arn:aws:ssm:eu-west-3:650264402855:parameter/database/password"     
             ]
         }
     ]
