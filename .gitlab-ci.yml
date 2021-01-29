@@ -40,12 +40,12 @@ build-dockerfile:
 build-dockerimage:
   stage: build-dockerimage
   image:
-    name: gcr.io/kaniko-project/executor:debug  # see https://docs.gitlab.com/ce/ci/docker/using_kaniko.html
+    name: gcr.io/kaniko-project/executor:51734fc3a33e04f113487853d118608ba6ff2b81  # see https://docs.gitlab.com/ce/ci/docker/using_kaniko.html
     entrypoint: [""]
   script:
     # With vanilla docker you would be using:
     # docker build --tag poca-2020:latest --file target/docker/stage/Dockerfile target/docker/stage
-    - mkdir -p /kaniko/.docker
+    - mkdir -p /poca2020/.docker
     - echo "{\"auths\":{\"https://index.docker.io/v1/\":{\"auth\":\"`echo -n poca:$CI_REGISTRY_TOKEN | base64`\"}}}" > /kaniko/.docker/config.json
     - mkdir image-digest
     - /kaniko/executor --context target/docker/stage --digest-file image-digest/content --dockerfile target/docker/stage/Dockerfile --destination poca/poca-2020:latest
