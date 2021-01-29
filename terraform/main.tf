@@ -3,12 +3,6 @@ The AWS user used by terraform is granted the AWS managed policy AdministratorAc
 */
 
 terraform {
-  backend "s3" {
-    bucket = "poca-tfstates"
-    key = "poca-2020"
-    region = "eu-west-3"
-    dynamodb_table = "poca-tfstates-locks"
-  }
   required_providers {
     aws = {
       source  = "hashicorp/aws"
@@ -18,6 +12,8 @@ terraform {
 }
 
 provider "aws" {
+  access_key = "YourAccessKey"
+  secret_key = "YourPrivateKey"
   region = "eu-west-3"  # Europe (Paris)
 }
 
