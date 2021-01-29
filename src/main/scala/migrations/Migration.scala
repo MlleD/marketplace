@@ -51,7 +51,7 @@ class RunMigrations(db: Database) extends LazyLogging {
         logger.info(s"Database version incremented from $oldVersion to $newVersion")
     }
 
-    def apply() {
+    def apply(): Unit = {
         val version = getCurrentDatabaseVersion()
 
         migrationList.slice(version, migrationList.length).foreach(migration => {
