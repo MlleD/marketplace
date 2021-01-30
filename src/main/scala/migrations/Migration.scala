@@ -24,6 +24,7 @@ class RunMigrations(db: Database) extends LazyLogging {
         new Migration07CreateTableProductReseller(db),
         new Migration08CreateTableOrderStatus(db),
         new Migration09CreateTableUser(db),
+        new Migration10CreateTableComment(db),
     )
 
     def getCurrentDatabaseVersion(): Int = {
