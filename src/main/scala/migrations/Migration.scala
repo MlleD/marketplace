@@ -16,6 +16,7 @@ class RunMigrations(db: Database) extends LazyLogging {
     val migrationList: List[Migration] = List(
         new Migration00AddVersionNumber(db),
         new Migration01CreateTables(db),
+        new Migration02CreateTableManufacturer(db),
     )
 
     def getCurrentDatabaseVersion(): Int = {
