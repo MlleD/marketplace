@@ -35,7 +35,7 @@ build-dockerfile:
     expire_in: 1 hour
   only:
     refs:
-      - Cadiou-CI
+      - master
 
 build-dockerimage:
   stage: build-dockerimage
@@ -53,7 +53,7 @@ build-dockerimage:
     - cat image-digest/content
   only:
     refs:
-      - Cadiou-CI
+      - master
   artifacts:
     paths:
       - image-digest/content
@@ -76,4 +76,4 @@ deploy:
     - terraform apply -input=false -auto-approve --var-file=integration.tfvars
   only:
     refs:
-      - Cadiou-CI
+      - master
