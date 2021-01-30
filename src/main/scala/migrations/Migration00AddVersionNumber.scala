@@ -8,7 +8,7 @@ import slick.jdbc.PostgresProfile.api._
 
 
 class Migration00AddVersionNumber(db: Database) extends Migration with LazyLogging {
-    override def apply() {
+    override def apply(): Unit = {
         val setVersionRequest = sqlu"create table database_version (number int not null); insert into database_version values (0);"
         val setVersionFuture: Future[Int] = db.run(setVersionRequest)
 
