@@ -14,9 +14,10 @@ final case class InconsistentStateException(private val message: String="", priv
 final case class NotSamePasswordException(private val message: String="", private val cause: Throwable=None.orNull)
     extends Exception(message, cause) 
 
-type User_t = (Int, String, String, String, String, String, String)
 
 class Users {
+
+type User_t = (Int, String, String, String, String, String, String)
     /*
     class UsersTable(tag: Tag) extends Table[(String, String)](tag, "users") {
         def userId = column[String]("userId", O.PrimaryKey)
@@ -53,7 +54,7 @@ class Users {
 
         val userListFuture = db.run(query.result)
 
-        userListFuture.map((userList: Seq[(User_t]) => {
+        userListFuture.map((userList: Seq[User_t]) => {
             userList.length match {
                 case 0 => None
                 case 1 => Some(User tupled userList.head)
