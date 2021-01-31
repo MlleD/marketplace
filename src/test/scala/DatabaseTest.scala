@@ -1,5 +1,5 @@
 
-import scala.util.{Success, Failure}
+/*import scala.util.{Success, Failure}
 import scala.concurrent.{Future, Await}
 import scala.concurrent.duration.Duration
 import slick.jdbc.PostgresProfile.api._
@@ -11,7 +11,7 @@ import com.typesafe.config.{ConfigFactory, ConfigValueFactory}
 import ch.qos.logback.classic.{Level, Logger}
 import org.slf4j.LoggerFactory
 import poca.{MyDatabase, Users, User, UserAlreadyExistsException, Routes, RunMigrations}
-
+*/
 
 class DatabaseTest extends AnyFunSuite with Matchers with BeforeAndAfterAll with BeforeAndAfterEach with LazyLogging {
    /* val rootLogger: Logger = LoggerFactory.getLogger("com").asInstanceOf[Logger]
