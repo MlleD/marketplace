@@ -1,16 +1,15 @@
 
-import scala.concurrent.Future
-import akka.actor.testkit.typed.scaladsl.ActorTestKit
-import akka.http.scaladsl.model.{HttpRequest, StatusCodes, ContentTypes, FormData, HttpMethods}
+//import scala.concurrent.Future
+//import akka.actor.testkit.typed.scaladsl.ActorTestKit
+//import akka.http.scaladsl.model.{HttpRequest, StatusCodes, ContentTypes, FormData, HttpMethods}
 import akka.http.scaladsl.testkit.ScalatestRouteTest
 import org.scalatest.Matchers
 import org.scalatest.funsuite.AnyFunSuite
 import org.scalamock.scalatest.MockFactory
-import poca.{MyDatabase, Users, User, UserAlreadyExistsException, Routes}
-
+//import poca.{MyDatabase, Users, User, UserAlreadyExistsException, Routes}
 
 class RoutesTest extends AnyFunSuite with Matchers with MockFactory with ScalatestRouteTest {
-
+/*
     // the Akka HTTP route testkit does not yet support a typed actor system (https://github.com/akka/akka-http/issues/2036)
     // so we have to adapt for now
     lazy val testKit = ActorTestKit()
@@ -108,4 +107,5 @@ class RoutesTest extends AnyFunSuite with Matchers with MockFactory with Scalate
             entityAs[String].length should be(203)
         }
     }
+    */
 }

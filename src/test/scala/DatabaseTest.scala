@@ -1,20 +1,19 @@
 
-import scala.util.{Success, Failure}
-import scala.concurrent.{Future, Await}
-import scala.concurrent.duration.Duration
-import slick.jdbc.PostgresProfile.api._
-import slick.jdbc.meta._
+//import scala.util.{Success, Failure}
+//import scala.concurrent.{Future, Await}
+//import scala.concurrent.duration.Duration
+//import slick.jdbc.PostgresProfile.api._
+//import slick.jdbc.meta._
 import org.scalatest.{Matchers, BeforeAndAfterAll, BeforeAndAfterEach}
 import org.scalatest.funsuite.AnyFunSuite
 import com.typesafe.scalalogging.LazyLogging
-import com.typesafe.config.{ConfigFactory, ConfigValueFactory}
-import ch.qos.logback.classic.{Level, Logger}
-import org.slf4j.LoggerFactory
-import poca.{MyDatabase, Users, User, UserAlreadyExistsException, Routes, RunMigrations}
-
+//import com.typesafe.config.{ConfigFactory, ConfigValueFactory}
+//import ch.qos.logback.classic.{Level, Logger}
+//import org.slf4j.LoggerFactory
+//import poca.{MyDatabase, Users, User, UserAlreadyExistsException, Routes, RunMigrations}
 
 class DatabaseTest extends AnyFunSuite with Matchers with BeforeAndAfterAll with BeforeAndAfterEach with LazyLogging {
-    val rootLogger: Logger = LoggerFactory.getLogger("com").asInstanceOf[Logger]
+   /* val rootLogger: Logger = LoggerFactory.getLogger("com").asInstanceOf[Logger]
     rootLogger.setLevel(Level.INFO)
     val slickLogger: Logger = LoggerFactory.getLogger("slick").asInstanceOf[Logger]
     slickLogger.setLevel(Level.INFO)
@@ -111,4 +110,5 @@ class DatabaseTest extends AnyFunSuite with Matchers with BeforeAndAfterAll with
 
         returnedUserSeq.length should be(2)
     }
+    */
 }
