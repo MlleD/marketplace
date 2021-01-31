@@ -25,12 +25,53 @@ class Routes(users: Users) extends LazyLogging {
         html.signup()
     }
 
+    def getSignin() = {
+        logger.info("I got a request for signin.")
+        html.signin()
+    }
+
     def register(fields: Map[String, String]): Future[HttpResponse] = {
         logger.info("I got a request to register.")
+        fields.get("email") match {
+            case Some(email) => {
+                var firstname = fields.get("firstname").get
+                var lastname = fields.get("lastname").get
+                var address = fields.get("address").get
+                var phone = fields.get("telephone").get
+                var pwd = fields.get("pwd").get
+                var pwd_conf = fields.get("pwd_conf").get
+                val userCreation: Future[Unit] = users.createUser(0, firstname=firstname, lastname=lastname, email=email, password=pwd, address=address, telephone=phone, password_conf=pwd_conf)
 
-        fields.get("username") match {
+                userCreation.map(_ => {
+                    HttpResponse(
+                        StatusCodes.OK,
+                        entity=s"Welcome $firstname $lastname! You've just been registered to our great marketplace.",
+                    )
+                }).recover({
+                    case exc: EmailAlreadyExistsException => {
+                        HttpResponse(
+                            StatusCodes.OK,
+                            entity=s"The email '$email' is already taken. Please choose another email.",
+                        )
+                    }
+                    case exc : NotSamePasswordException => {
+                        HttpResponse(
+                            StatusCodes.OK,
+                            entity=s"The password are not the same.",
+                        )
+                    }
+                })
+            }
+        }
+    }
+/*
+    def checkUser(fields: Map[String, String]): Future[HttpResponse] = {
+        logger.info("I got a request to checkUser.")
+
+        fields.get("email") match {
             case Some(username) => {
-                val userCreation: Future[Unit] = users.createUser(username=username)
+                val pwd = fields.get("pwd").get
+                val existingUsersFuture = getUserByEmail(email)
 
                 userCreation.map(_ => {
                     HttpResponse(
@@ -44,8 +85,16 @@ class Routes(users: Users) extends LazyLogging {
                             entity=s"The username '$username' is already taken. Please choose another username.",
                         )
                     }
+
+                    case exc: WrongPasswordException => {
+                        HttpResponse(
+                            StatusCodes.OK,
+                            entity=s"Wrong password.",
+                        )
+                    }
                 })
             }
+            /*
             case None => {
                 Future(
                     HttpResponse(
@@ -54,8 +103,10 @@ class Routes(users: Users) extends LazyLogging {
                     )
                 )
             }
+            */
         }
     }
+    */
 
     def getUsers() = {
         logger.info("I got a request to get user list.")
@@ -77,11 +128,22 @@ class Routes(users: Users) extends LazyLogging {
                     complete(getSignup)
                 }
             },
+            path("signin") {
+                get {
+                    complete(getSignin)
+                }
+            },
             path("register") {
                 (post & formFieldMap) { fields =>
                     complete(register(fields))
                 }
             },
+            /*
+            path("checkUser") {
+                (post & formFieldMap) { fields =>
+                    complete(checkUser(fields))
+                }
+            },*/
             path("users") {
                 get {
                     complete(getUsers)
