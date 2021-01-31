@@ -14,7 +14,7 @@ import poca.{MyDatabase, Users, User, UserAlreadyExistsException, Routes, RunMig
 
 
 class DatabaseTest extends AnyFunSuite with Matchers with BeforeAndAfterAll with BeforeAndAfterEach with LazyLogging {
-    val rootLogger: Logger = LoggerFactory.getLogger("com").asInstanceOf[Logger]
+   /* val rootLogger: Logger = LoggerFactory.getLogger("com").asInstanceOf[Logger]
     rootLogger.setLevel(Level.INFO)
     val slickLogger: Logger = LoggerFactory.getLogger("slick").asInstanceOf[Logger]
     slickLogger.setLevel(Level.INFO)
@@ -111,4 +111,5 @@ class DatabaseTest extends AnyFunSuite with Matchers with BeforeAndAfterAll with
 
         returnedUserSeq.length should be(2)
     }
+    */
 }
