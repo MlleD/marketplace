@@ -5,7 +5,7 @@ import scala.concurrent.Future
 import slick.jdbc.PostgresProfile.api._
 import java.util.UUID
 
-case class User(id: Int, firstname: String, lastname: String, email: String, address: String, telephone: String, password: String)
+case class User(id: Int, firstname: String, lastname: String, email: String, password: String, address: String, telephone: String)
 
 final case class EmailAlreadyExistsException(private val message: String="", private val cause: Throwable=None.orNull)
     extends Exception(message, cause) 
@@ -13,6 +13,8 @@ final case class InconsistentStateException(private val message: String="", priv
     extends Exception(message, cause) 
 final case class NotSamePasswordException(private val message: String="", private val cause: Throwable=None.orNull)
     extends Exception(message, cause) 
+
+type User_t = (Int, String, String, String, String, String, String)
 
 class Users {
     /*
@@ -33,7 +35,7 @@ class Users {
             if (existingUsers.isEmpty) {
                 if(!password.equals(password_conf)) throw new NotSamePasswordException(s"Passwords are not the same.")
                 val newUser = User(id, firstname=firstname, lastname=lastname, email=email, password=password, address=address, telephone=telephone)
-                val newUserAsTuple: (Int, String, String, String, String, String, String) = User.unapply(newUser).get
+                val newUserAsTuple: User_t = User.unapply(newUser).get
 
                 val dbio: DBIO[Int] = users += newUserAsTuple
                 var resultFuture: Future[Int] = db.run(dbio)
@@ -51,7 +53,7 @@ class Users {
 
         val userListFuture = db.run(query.result)
 
-        userListFuture.map((userList: Seq[(Int, String, String, String, String, String, String)]) => {
+        userListFuture.map((userList: Seq[(User_t]) => {
             userList.length match {
                 case 0 => None
                 case 1 => Some(User tupled userList.head)
@@ -63,7 +65,7 @@ class Users {
     def getAllUsers(): Future[Seq[User]] = {
         val userListFuture = db.run(users.result)
 
-        userListFuture.map((userList: Seq[(Int, String, String, String, String, String, String)]) => {
+        userListFuture.map((userList: Seq[User_t]) => {
             userList.map(User tupled _)
         })
     }
