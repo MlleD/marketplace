@@ -22,7 +22,7 @@ resource "aws_db_instance" "db_poca" {
 }
 
 resource "aws_db_subnet_group" "dbsubnet_poca" {
-  name = "dbsubnet-poca2020"
+  name = "dbsubnet-poca2020-equipe-7"
   subnet_ids = [aws_subnet.subnet_back_a.id, aws_subnet.subnet_back_b.id]
 }
 

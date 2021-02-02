@@ -1,9 +1,14 @@
 
 // EC2 Instance
+resource "aws_key_pair" "admin" {
+  key_name = "admin"
+  public_key = "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQDBZowB25LkKTwftGMR1Q7dVW//nCT7YwrnzO0r/1Q2tbidgm667FaYy+H9ZTYPDzSoNEdq9GNQfSB8sWLhBIfKaufadO5/Blr4kd0I0DZZPJYnInuaT0dNZ7G3fYUgJzTGcrGzKXtLj1WKBn01F9BV4wXqUhq3en8NjLeTTkbVKoeOxIPQ52mFshzH2DlBjKNtE/04Wp9hkmB8aC+WcjIZF8QGwHKEEZ9sReOEH7FfD1nULcWWI4pKisfLmtKMnq0JtHkbRIBz6/GmEHDWonKy3nsJwGYsykNkW5l8+Ly4a5ZwwVmik3VP6UvMi9RxB4+Os03XwjfUXfpybdXkUtF6KNI9FFOo6FLJig2vEzOBL695NWGfGIUw5h3wbm82aCreR1/PEkrjkzBfmbQpR/kJu34mFVQLP+UDYU5x5qXZI+sUlaSOpcDAx6Ku9Ho86KNHIWV3+oZUuJ4c34L7pSV9KWGAXlHeKiWItkRn3EDVL0317yvO1qPJO3FO6AIgWaM= laure@merat-2.home"
+}
 
 resource "aws_instance" "ec2_poca" {
   ami = data.aws_ssm_parameter.ecs_ami.value
   instance_type = "t2.micro"
+  key_name = "admin"
   vpc_security_group_ids = [aws_security_group.sg_front.id]
   subnet_id = aws_subnet.subnet_front.id
   iam_instance_profile = aws_iam_instance_profile.ecs_instance_profile.name
@@ -37,7 +42,7 @@ resource "aws_ecs_cluster" "cluster_poca" {
 // See https://github.com/trussworks/terraform-aws-ecs-cluster/blob/master/main.tf
 
 resource "aws_iam_instance_profile" "ecs_instance_profile" {
-  name = "ecs_instance_profile"
+  name = "ecs_instance_profile_equipe_7"
   path = "/"
   role = aws_iam_role.ecs_instance_role.name
 }

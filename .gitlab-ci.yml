@@ -36,6 +36,7 @@ build-dockerfile:
   only:
     refs:
       - master
+      - merat-ci
 
 build-dockerimage:
   stage: build-dockerimage
@@ -54,6 +55,7 @@ build-dockerimage:
   only:
     refs:
       - master
+      - merat-ci
   artifacts:
     paths:
       - image-digest/content
@@ -77,3 +79,4 @@ deploy:
   only:
     refs:
       - master
+      - merat-ci
