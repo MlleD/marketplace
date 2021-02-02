@@ -162,7 +162,7 @@ resource "aws_iam_role_policy_attachment" "ecs_task_execution_role_attach_manage
 // Service
 
 resource "aws_ecs_service" "service_poca" {
-  name = "service-equipe-7"
+  name = "service-poca"
   cluster = aws_ecs_cluster.cluster_poca.id
   deployment_controller {
     type = "ECS"
