@@ -35,7 +35,6 @@ build-dockerfile:
     expire_in: 1 hour
   only:
     refs:
-      - master
       - merat-ci
 
 build-dockerimage:
@@ -54,7 +53,6 @@ build-dockerimage:
     - cat image-digest/content
   only:
     refs:
-      - master
       - merat-ci
   artifacts:
     paths:
@@ -78,5 +76,4 @@ deploy:
     - terraform apply -input=false -auto-approve --var-file=integration.tfvars
   only:
     refs:
-      - master
       - merat-ci
