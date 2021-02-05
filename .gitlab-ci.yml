@@ -35,7 +35,7 @@ build-dockerfile:
     expire_in: 1 hour
   only:
     refs:
-      - master
+      - merat-ci
 
 build-dockerimage:
   stage: build-dockerimage
@@ -53,7 +53,7 @@ build-dockerimage:
     - cat image-digest/content
   only:
     refs:
-      - master
+      - merat-ci
   artifacts:
     paths:
       - image-digest/content
@@ -66,8 +66,8 @@ deploy:
     - apk add curl
     - mkdir terraform_install
     - cd terraform_install
-    - curl -OJ https://releases.hashicorp.com/terraform/0.13.3/terraform_0.13.3_linux_amd64.zip
-    - unzip terraform_0.13.3_linux_amd64.zip && rm terraform_0.13.3_linux_amd64.zip
+    - curl -OJ https://releases.hashicorp.com/terraform/0.14.4/terraform_0.14.4_linux_amd64.zip
+    - unzip terraform_0.14.4_linux_amd64.zip && rm terraform_0.14.4_linux_amd64.zip
     - mv terraform /usr/bin/terraform
     - cd ../terraform
     - export TF_IN_AUTOMATION=1
@@ -76,4 +76,4 @@ deploy:
     - terraform apply -input=false -auto-approve --var-file=integration.tfvars
   only:
     refs:
-      - master
+      - merat-ci
