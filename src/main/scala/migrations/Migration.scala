@@ -27,6 +27,8 @@ class RunMigrations(db: Database) extends LazyLogging {
         new Migration10CreateTableComment(db),
         new Migration11CreateTableOrder(db),
         new Migration12CreateTableOrderLine(db),
+        new Migration13CreateTableDeveloper(db),
+        new Migration14CreateTableGenre(db),
         new Migration01CreateTables(db),
     )
 

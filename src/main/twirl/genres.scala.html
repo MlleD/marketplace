@@ -1,0 +1,15 @@
+@(genres: Seq[poca.Genre])
+
+<!doctype html>
+<html>
+    <head></head>
+
+    <h1>List of registred genres</h1>
+
+    <ul>
+    @for(genre <- genres) {
+        <li>@genre.name</li>
+    }
+    </ul>
+        
+</html>
