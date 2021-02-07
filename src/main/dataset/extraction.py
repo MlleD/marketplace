@@ -2,22 +2,22 @@ import sys
 import pandas as pd
 import numpy as np
 
-dev_file = "developer.csv"
-pub_file = "publisher.csv"
-gen_file = "genre.csv"
-prod_file= "product.csv"
+dev_file = "./features/developer.csv"
+pub_file = "./features/publisher.csv"
+gen_file = "./features/genre.csv"
+prod_file= "./features/game.csv"
 basic_url = "http://www.vgchartz.com"
 
 def getDeveloper(df):
     dev = df.Developer.unique()
-    print(type(dev))
-    print(dev)
+    #print(type(dev))
+    #print(dev)
     return dev
 
 def getPublisher(df):
     pub = df.Publisher.unique()
-    print(type(pub))
-    print(pub)
+    #print(type(pub))
+    #print(pub)
     return pub
 
 def getGenre(df):
@@ -26,17 +26,15 @@ def getGenre(df):
 
 def createDeveloperFile(dev):
     df = pd.DataFrame(dev)
-    df['description']= ""
-    df.to_csv(dev_file, header=['name','description'])
+    df.to_csv(dev_file, sep=";", header=False)
 
 def createPublisherFile(pub):
     df = pd.DataFrame(pub)
-    df['description']= ""
-    df.to_csv(pub_file , header=['name','description'])
+    df.to_csv(pub_file, sep=";", header=False)
 
 def createGenreFile(cat):
     df = pd.DataFrame(cat)
-    df.to_csv(gen_file, header=['name'])
+    df.to_csv(gen_file, sep=";", header=False)
 
 
 def defineProduct(df, gen, pub, dev):
@@ -45,8 +43,8 @@ def defineProduct(df, gen, pub, dev):
     for index, row in df.iterrows() :
         p = buildProduct(row, gen, pub, dev)
         l.append(p)
-    prod = pd.DataFrame(l,columns=head)
-    prod.to_csv(prod_file)
+    prod = pd.DataFrame(l)#,columns=head)
+    prod.to_csv(prod_file, sep=";", header=False)
 
 def buildProduct(row, gen, pub, dev):
     res = []
@@ -84,11 +82,11 @@ if __name__ == "__main__":
     filename = sys.argv[1]
     df = pd.read_csv(filename)
     dev = getDeveloper(df)   
-    #createDeveloperFile(dev)
+    createDeveloperFile(dev)
     
     pub = getPublisher(df)
-    #createPublisherFile(pub)
+    createPublisherFile(pub)
     
     gen = getGenre(df)
-    #createGenreFile(gen)
+    createGenreFile(gen)
     defineProduct(df, gen, pub, dev)
