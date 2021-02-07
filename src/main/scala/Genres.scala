@@ -20,17 +20,10 @@ type Genre_t = (Int, String)
 
     def createGenre(id: Int, name: String): Future[Unit] = {
         val existingGenresFuture = getGenreByName(name)
-         println("on ajoute un nouveau genre dans la bd")
-        val newGenre = Genre(id, name=name)
-        val newGenreAsTuple: Genre_t = Genre.unapply(newGenre).get
-
-        val dbio: DBIO[Int] = genres += newGenreAsTuple
-        var resultFuture: Future[Int] = db.run(dbio)
-
-        // We do not care about the Int value
-        resultFuture.map(_ => ())
-        /*existingGenresFuture.flatMap(existingGenres => {
+        
+        existingGenresFuture.flatMap(existingGenres => {
             if (existingGenres.isEmpty) {
+               
                 println("on ajoute un nouveau genre dans la bd")
                 val newGenre = Genre(id, name=name)
                 val newGenreAsTuple: Genre_t = Genre.unapply(newGenre).get
@@ -43,19 +36,18 @@ type Genre_t = (Int, String)
             }else{
                 throw new NameAlreadyExistsException(s"A user with name '$name' already exists.")
             }
-        })*/
+        })
     }
 
     def fillGenreFromCSV() = {
-        println("dans fill genre from csv")
+        //println("dans fill genre from csv")
         val db = MyDatabase.db
         val bufferedSource = io.Source.fromFile("src/main/dataset/features/genre.csv")
         
         for (line <- bufferedSource.getLines) {
-            val cols = line.split(",").map(_.trim)
-            // do whatever you want with the columns here
+            val cols = line.split(";").map(_.trim)
+            
             createGenre(0, cols(1))
-            println(s"${cols(0)}|${cols(1)}")
         }
         bufferedSource.close
     }

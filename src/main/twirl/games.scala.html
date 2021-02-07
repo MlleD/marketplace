@@ -1,0 +1,15 @@
+@(games: Seq[poca.Game])
+
+<!doctype html>
+<html>
+    <head></head>
+
+    <h1>List of registred games</h1>
+
+    <ul>
+    @for(game <- games) {
+        <li>@game.basename</li>
+    }
+    </ul>
+        
+</html>

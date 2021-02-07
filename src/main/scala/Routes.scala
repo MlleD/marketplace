@@ -9,7 +9,7 @@ import com.typesafe.scalalogging.LazyLogging
 import TwirlMarshaller._
 
 
-class Routes(users: Users, developers: Developers, genres: Genres) extends LazyLogging {
+class Routes(users: Users, developers: Developers, genres: Genres, publishers: Publishers, games : Games) extends LazyLogging {
     implicit val executionContext = scala.concurrent.ExecutionContext.Implicits.global
 
     def getHello() = {
@@ -113,12 +113,20 @@ class Routes(users: Users, developers: Developers, genres: Genres) extends LazyL
         userSeqFuture.map(userSeq => html.users(userSeq))
     }
 
-    def getGenres() = {
-        logger.info("I got a request to get genre list.")
+    def getPublishers() = {
+        logger.info("I got a request to get publisher list.")
 
-        val genreSeqFuture: Future[Seq[Genre]] = genres.getAllGenres()
+        val publisherSeqFuture: Future[Seq[Publisher]] = publishers.getAllPublishers()
 
-        genreSeqFuture.map(genreSeq => html.genres(genreSeq))    
+        publisherSeqFuture.map(publisherSeq => html.publishers(publisherSeq))
+    }
+    
+    def getGames() = {
+        logger.info("I got a request to get game list.")
+
+        val gameSeqFuture: Future[Seq[Game]] = games.getAllGames()
+
+        gameSeqFuture.map(gameSeq => html.games(gameSeq))
     }
 
     def getDevelopers() = {
@@ -128,6 +136,16 @@ class Routes(users: Users, developers: Developers, genres: Genres) extends LazyL
 
         developerSeqFuture.map(developerSeq => html.developers(developerSeq))
     }
+
+
+    def getGenres() = {
+        logger.info("I got a request to get genre list.")
+
+        val genreSeqFuture: Future[Seq[Genre]] = genres.getAllGenres()
+
+        genreSeqFuture.map(genreSeq => html.genres(genreSeq))    
+    }
+
 
     /*def getPublishers() = {
         logger.info("I got a request to get publisher list.")
@@ -178,6 +196,16 @@ class Routes(users: Users, developers: Developers, genres: Genres) extends LazyL
             path("genre") {
                 get {
                     complete(getGenres)
+                }
+            },
+            path("publisher") {
+                get {
+                    complete(getPublishers)
+                }
+            },
+            path("game") {
+                get {
+                    complete(getGames)
                 }
             }
 

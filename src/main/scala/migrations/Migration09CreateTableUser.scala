@@ -16,7 +16,7 @@ class Migration09CreateTableUser(db: Database) extends Migration with LazyLoggin
         val dropFuture: Future[Unit] = db.run(TableQuery[UsersTable].schema.dropIfExists)
         dropFuture.map(t => logger.info("Done dropping table Users"))
 
-        val creationFuture: Future[Unit] = db.run(TableQuery[UserTable].schema.createIfNotExists)
+        val creationFuture: Future[Unit] = db.run(TableQuery[UsersTable].schema.createIfNotExists)
         creationFuture.onComplete(t => logger.info("Done creating table User"))
     }
 }
