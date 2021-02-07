@@ -9,16 +9,12 @@ import com.typesafe.scalalogging.LazyLogging
 import TwirlMarshaller._
 
 
-class Routes(users: Users) extends LazyLogging {
+class Routes(users: Users, developers: Developers, genres: Genres, publishers: Publishers, games : Games) extends LazyLogging {
     implicit val executionContext = scala.concurrent.ExecutionContext.Implicits.global
 
     def getHello() = {
         logger.info("I got a request to greet.")
         html.hello()
-        /*HttpEntity(
-            ContentTypes.`text/html(UTF-8)`,
-            "<h1>Say hello to akka-http</h1>"
-        )*/
     }
 
     def getSignup() = {
@@ -117,6 +113,48 @@ class Routes(users: Users) extends LazyLogging {
         userSeqFuture.map(userSeq => html.users(userSeq))
     }
 
+    def getPublishers() = {
+        logger.info("I got a request to get publisher list.")
+
+        val publisherSeqFuture: Future[Seq[Publisher]] = publishers.getAllPublishers()
+
+        publisherSeqFuture.map(publisherSeq => html.publishers(publisherSeq))
+    }
+    
+    def getGames() = {
+        logger.info("I got a request to get game list.")
+
+        val gameSeqFuture: Future[Seq[Game]] = games.getAllGames()
+
+        gameSeqFuture.map(gameSeq => html.games(gameSeq))
+    }
+
+    def getDevelopers() = {
+        logger.info("I got a request to get developer list.")
+        //developers.fillDeveloperFromCSV()
+        val developerSeqFuture: Future[Seq[Developer]] = developers.getAllDevelopers()
+
+        developerSeqFuture.map(developerSeq => html.developers(developerSeq))
+    }
+
+
+    def getGenres() = {
+        logger.info("I got a request to get genre list.")
+
+        val genreSeqFuture: Future[Seq[Genre]] = genres.getAllGenres()
+
+        genreSeqFuture.map(genreSeq => html.genres(genreSeq))    
+    }
+
+
+    /*def getPublishers() = {
+        logger.info("I got a request to get publisher list.")
+
+        val publisherSeqFuture: Future[Seq[Publisher]] = publishers.getAllPublishers()
+
+        publisherSeqFuture.map(publisherSeq => html.publishers(publisherSeq))
+    }*/
+
     val routes: Route = 
         concat(
             path("hello") {
@@ -149,7 +187,28 @@ class Routes(users: Users) extends LazyLogging {
                 get {
                     complete(getUsers)
                 }
+            },
+            path("developer") {
+                get {
+                    complete(getDevelopers)
+                }
+            },
+            path("genre") {
+                get {
+                    complete(getGenres)
+                }
+            },
+            path("publisher") {
+                get {
+                    complete(getPublishers)
+                }
+            },
+            path("game") {
+                get {
+                    complete(getGames)
+                }
             }
+
         )
 
 }

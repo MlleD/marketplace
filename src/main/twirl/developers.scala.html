@@ -1,0 +1,15 @@
+@(developers: Seq[poca.Developer])
+
+<!doctype html>
+<html>
+    <head></head>
+
+    <h1>List of integrated developers</h1>
+
+    <ul>
+    @for(developer <- developers) {
+        <li>@developer.name</li>
+    }
+    </ul>
+        
+</html>

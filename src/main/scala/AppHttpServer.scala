@@ -44,7 +44,18 @@ object AppHttpServer extends LazyLogging {
         new RunMigrations(db)()
 
         var users = new Users()
-        val routes = new Routes(users)
+        var genres = new Genres()
+        var publishers = new Publishers()
+        var developers = new Developers()
+        var games = new Games()
+
+        /* insert data here :*/
+        developers.fillDeveloperFromCSV()
+        genres.fillGenreFromCSV()
+        publishers.fillPublisherFromCSV()
+        games.fillGameFromCSV()
+        
+        val routes = new Routes(users, developers, genres, publishers, games)
 
         val bindingFuture = Http().newServerAt("0.0.0.0", 8080).bind(routes.routes)
 
