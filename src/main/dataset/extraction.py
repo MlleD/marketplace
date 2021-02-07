@@ -26,14 +26,20 @@ def getGenre(df):
 
 def createDeveloperFile(dev):
     df = pd.DataFrame(dev)
+    l = pd.notnull(df[0])
+    df = df[l]
     df.to_csv(dev_file, sep=";", header=False)
 
 def createPublisherFile(pub):
     df = pd.DataFrame(pub)
+    l = pd.notnull(df[0])
+    df = df[l]
     df.to_csv(pub_file, sep=";", header=False)
 
 def createGenreFile(cat):
     df = pd.DataFrame(cat)
+    l = pd.notnull(df[0])
+    df = df[l]
     df.to_csv(gen_file, sep=";", header=False)
 
 
@@ -44,20 +50,23 @@ def defineProduct(df, gen, pub, dev):
         p = buildProduct(row, gen, pub, dev)
         l.append(p)
     prod = pd.DataFrame(l)#,columns=head)
+    for i in range(9):
+        l = pd.notnull(prod[i])
+        prod = prod[l]
     prod.to_csv(prod_file, sep=";", header=False)
 
 def buildProduct(row, gen, pub, dev):
     res = []
-    res.append(row.Name)
-    res.append(row.basename)
+    res.append(row.Name.replace(';',','))
+    res.append(row.basename.replace(';',','))
     res.append(matchGenre(row, gen))
     res.append(row.Year)
-    res.append(row.Platform)
+    res.append(row.Platform.replace(';',','))
     res.append(row.ESRB_Rating)
     res.append(basic_url + row.img_url)
     res.append(matchPublisher(row, pub))
     if not pd.isna(row.Developer):
-        res.append(matchDeveloper(row, dev))
+        res.append(int(matchDeveloper(row, dev)))
     return res
             
 def matchGenre(row, gen):
