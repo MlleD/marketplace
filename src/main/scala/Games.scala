@@ -61,6 +61,20 @@ type Game_t = (Int, String, String, Int, Double, String, String, String, Int, In
         })
     }
 
+    def getGameById(id: Int): Future[Option[Game]] = {
+        val query = games.filter(_.id === id)
+
+        val gameListFuture = db.run(query.result)
+
+        gameListFuture.map((gameList: Seq[Game_t]) => {
+            gameList.length match {
+                case 0 => None
+                case 1 => Some(Game tupled gameList.head)
+                case _ => throw new InconsistentStateException(s"Game $id is linked to several Products in database!")
+            }
+        })
+    }
+
     def getAllGames(): Future[Seq[Game]] = {
         val gameListFuture = db.run(games.result)
 

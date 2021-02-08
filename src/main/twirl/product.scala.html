@@ -1,4 +1,4 @@
-@(prods: Seq[poca.Game])
+@(game: poca.Game)
 
 <!doctype html>
 <html>
@@ -97,23 +97,8 @@
               background: #ddd;
               color: black;
             }
-            .button {
-              border: none;
-              color: white;
-              padding: 16px 32px;
-              text-align: center;
-              text-decoration: none;
-              display: inline-block;
-              font-size: 16px;
-              margin: 4px 2px;
-              transition-duration: 0.4s;
-              cursor: pointer;
-            }
-            .button2 {
-              background-color: white; 
-              color: black; 
-              border: 2px solid #008CBA;
-            }
+
+           
         </style>
     </head>
 
@@ -143,60 +128,22 @@
                 cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non
                 proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
                 </p>
-
-                <!-- <h2>About Me</h2>
-                <h5>Photo of me:</h5>
-                <div class="fakeimg" style="height:200px;">Image</div>
-                <p>Some text about me in culpa qui officia deserunt mollit anim..</p>
-                <h3>More Text</h3>
-                <p>Lorem ipsum dolor sit ame.</p>
-                <div class="fakeimg" style="height:60px;">Image</div><br>
-                <div class="fakeimg" style="height:60px;">Image</div><br>
-                <div class="fakeimg" style="height:60px;">Image</div>
-                -->
             </div>
             <div class="main">
-                <h1> File d'actualité des Produits </h1>
-
-                <section class="caroussel">
-                  <ul class="caroussel-item">
-                     @for(prod <- prods) {
-                      <li class="caroussel-item">
-                        <div class="prod">
-                          <a href="/product?id=@prod.id">
-                           <h2> @for(image <- prod.url_image.split(';')) { 
-                            <img src="@image" />
-                            } </h2>
-                          </a>
-                          <h5> @prod.basename </h5>
-                          
-                          <p> ESRB : @prod.ESRB, Platefrome : prod.plateform </p>
-                          
-                        </div>
-                      </li>
+                <h2>@game.name</h2>
+                <h5>@game.name : @game.plateform, @game.year</h5>
+                <div class="fakeimg">
+                  @for(image <- game.url_image.split(';')) { 
+                    <img src="@image" />
                     }
-                  </ul>
-                </section>
-
-
-<!--
-                <h2>The Witcher 3</h2>
-                <h5>The Witcher 3: Wild Hunt PC (GOG.COM), May 18, 2015</h5>
-                <div class="fakeimg" style="height:200px;">
-                    <img src="https://encrypted-tbn0.gstatic.com/shopping?q=tbn:ANd9GcTewD-Yz-JWb5paVbwR48BN6hTKRBxu0nC4IKH_zNpu9PRUOCdGPrYchNAsSb4&usqp=CAE" style="height:160px;">
+              
                 </div>
-                <p>The Witcher: Wild Hunt est un jeu de rôle à monde ouvert de nouvelle génération situé dans un univers fantastique aux graphismes époustouflants où le moindre choix peut avoir des répercussions profondes. Dans The Witcher, vous incarnez un chasseur de monstres, Geralt de Riv, chargé de retrouver une enfant prophétique dans un vaste monde ouvert, rempli de cités marchandes, d’îles peuplées de pirates vikings, de cols montagneux dangereux et de grottes oubliées à explorer. Incarnez un tueur de monstres professionnel extrêmement bien entraîné Formés dès leur plus jeune âge et soumis à des mutations leur conférant des capacités, une force et des réflexes surhumains, les sorceleurs sont un contrepoids considéré avec méfiance dans un monde infesté de monstres. Formés dès leur plus jeune âge et soumis à des mutations leur conférant des capacités, une force et des réflexes surhumains, les sorceleurs sont un contrepoids considéré avec méfiance dans un monde infesté de monstres. </p>
-                <p>Informations Revendeur</p>
-                <p>Informations Fabricant</p>
+                <p>Description: @game.basename</p>
+                <p>Genre: @game.id_genre</p>
+                <p>Fabricant: @game.id_developer</p>
                 <br>
-                <h2>TITLE PRODUCT</h2>
-                <h5>Title description, Date</h5>
-                <div class="fakeimg" style="height:200px;"> Product Image</div>
-                <p>Some text..</p>
-                <p>Informations Revendeur </p>
-                <p>Informations Fabricant </p>
 
-            </div>-->
+            </div>
         </div>
 
         <div class="footer">
