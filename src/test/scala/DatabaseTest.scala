@@ -87,6 +87,26 @@ class DatabaseTest extends AnyFunSuite
         }
     }
 
+    test("Users.createUser returned future should fail if password confirmation not equals to password") {
+        val users: Users = new Users()
+        val marie: User = new User(
+            1,"marie", "dupont", "dupont@gmail.fr", "md", "3 rue des tulipes, 75011, France", "0134765980"
+        )
+        val createUserFuture: Future[Unit] = users.createUser(
+            marie.id, marie.firstname, marie.lastname, marie.email, marie.password, 
+            marie.address, marie.telephone, marie.password + "d"
+        )
+        Await.ready(createUserFuture, Duration.Inf)
+
+
+        createUserFuture.value match {
+            case Some(Failure(exc: NotSamePasswordException)) => {
+                exc.getMessage should equal ("Passwords are not the same.")
+            }
+            case _ => fail("The future should fail.")
+        }
+    }
+
     test("Users.getUserByUsername should return no user if it does not exist") {
         val users: Users = new Users()
 
