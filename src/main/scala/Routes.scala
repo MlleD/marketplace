@@ -3,9 +3,11 @@ package poca
 
 import scala.concurrent.Future
 import akka.http.scaladsl.server.Directives.{path, get, post, formFieldMap, complete, concat}
+import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.server.Route
 import akka.http.scaladsl.model.{HttpEntity, HttpResponse, ContentTypes, StatusCodes}
 import com.typesafe.scalalogging.LazyLogging
+import akka.http.scaladsl.marshalling.ToResponseMarshallable
 import TwirlMarshaller._
 
 
@@ -147,6 +149,17 @@ class Routes(users: Users , developers: Developers , genres: Genres, publishers:
 
         genreSeqFuture.map(genreSeq => html.genres(genreSeq))    
     }
+
+     def getGame(id : Int) = {
+        logger.info("I got a request to get informations of a game.")
+        
+        val game = games.getGameById(id)
+
+        game.map[ToResponseMarshallable] {
+            case Some(game) => html.product(game)
+        }
+
+     }
     
     
     /*def getPublishers() = {
@@ -209,6 +222,13 @@ class Routes(users: Users , developers: Developers , genres: Genres, publishers:
                 get {
                     complete(getGames)
                 }
+            },
+             path("product"){
+            	get {
+            		parameter('id.as[Int]) { id =>
+                   	 complete(getGame(id))
+                	}
+            	}
             }
 
         )
