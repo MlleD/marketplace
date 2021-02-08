@@ -13,7 +13,7 @@ trait Migration {
 
 class RunMigrations(db: Database) extends LazyLogging {
 
-    val ResetVersion = sqlu"delete from database_version;"
+    /*val ResetVersion = sqlu"delete from database_version;"
 
     val resetFuture: Future[Int] = db.run(ResetVersion)
 
@@ -23,12 +23,12 @@ class RunMigrations(db: Database) extends LazyLogging {
 
     val insertFuture: Future[Int] = db.run(InsertVersion)
     
-    val v2 = Await.result(insertFuture, Duration.Inf)
+    val v2 = Await.result(insertFuture, Duration.Inf)*/
 
     implicit val executionContext = scala.concurrent.ExecutionContext.Implicits.global
 
     val migrationList: List[Migration] = List(
-        //new Migration00AddVersionNumber(db),
+        new Migration00AddVersionNumber(db),
         new Migration09CreateTableUser(db),
         //new Migration01CreateTables(db),
         new Migration15CreateTablePublisher(db),
