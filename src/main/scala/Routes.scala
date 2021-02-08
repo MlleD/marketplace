@@ -9,7 +9,7 @@ import com.typesafe.scalalogging.LazyLogging
 import TwirlMarshaller._
 
 
-class Routes(users: Users, developers: Developers, genres: Genres, publishers: Publishers, games : Games) extends LazyLogging {
+class Routes(users: Users , developers: Developers , genres: Genres, publishers: Publishers, games : Games ) extends LazyLogging {
     implicit val executionContext = scala.concurrent.ExecutionContext.Implicits.global
 
     def getHello() = {
@@ -112,7 +112,7 @@ class Routes(users: Users, developers: Developers, genres: Genres, publishers: P
 
         userSeqFuture.map(userSeq => html.users(userSeq))
     }
-
+    
     def getPublishers() = {
         logger.info("I got a request to get publisher list.")
 
@@ -128,7 +128,7 @@ class Routes(users: Users, developers: Developers, genres: Genres, publishers: P
 
         gameSeqFuture.map(gameSeq => html.games(gameSeq))
     }
-
+    
     def getDevelopers() = {
         logger.info("I got a request to get developer list.")
         //developers.fillDeveloperFromCSV()
@@ -137,7 +137,7 @@ class Routes(users: Users, developers: Developers, genres: Genres, publishers: P
         developerSeqFuture.map(developerSeq => html.developers(developerSeq))
     }
 
-
+    
     def getGenres() = {
         logger.info("I got a request to get genre list.")
 
@@ -145,8 +145,8 @@ class Routes(users: Users, developers: Developers, genres: Genres, publishers: P
 
         genreSeqFuture.map(genreSeq => html.genres(genreSeq))    
     }
-
-
+    
+    
     /*def getPublishers() = {
         logger.info("I got a request to get publisher list.")
 
