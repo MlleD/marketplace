@@ -14,7 +14,9 @@ class Routes(users: Users , developers: Developers , genres: Genres, publishers:
 
     def getHello() = {
         logger.info("I got a request to greet.")
-        html.hello()
+        val gameSeqFuture: Future[Seq[Game]] = games.getAllGames()
+        gameSeqFuture.map(gameSeq => html.hello(gameSeq))
+        //html.hello()
     }
 
     def getSignup() = {
