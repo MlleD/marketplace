@@ -5,11 +5,11 @@ import com.typesafe.scalalogging.LazyLogging
 import slick.jdbc.PostgresProfile.api._
 
 class Migration09CreateTableUser(db: Database) extends Migration with LazyLogging {
-    class UserTable(tag: Tag) extends Table[(String, String)](tag, "user") {
+    /*class UserTable(tag: Tag) extends Table[(String, String)](tag, "user") {
         def userId = column[String]("userId", O.PrimaryKey)
         def username = column[String]("username")
         def * = (userId, username)
-    }
+    }*/
 
     override def apply(): Unit = {
         implicit val executionContext = scala.concurrent.ExecutionContext.Implicits.global
