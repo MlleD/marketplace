@@ -35,7 +35,7 @@ build-dockerfile:
     expire_in: 1 hour
   only:
     refs:
-      - master
+      - master 
 
 build-dockerimage:
   stage: build-dockerimage
