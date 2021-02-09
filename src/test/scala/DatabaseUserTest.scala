@@ -356,8 +356,6 @@ class DatabaseTest extends AnyFunSuite
         )
         Await.ready(createDeveloperFuture, Duration.Inf)
 
-        val games: Developers = new Developers()
-
         val fake_dev2: Developer = new Developer(
             2, "fake_dev_name2"
         )
@@ -446,7 +444,7 @@ class DatabaseTest extends AnyFunSuite
         }
     }
 
-    test("Games.getAllGenres should return a list of genres") {
+    test("Genres.getAllGenres should return a list of genres") {
         val genres: Genres = new Genres()
 
         val fake_dev: Genre = new Genre(
@@ -456,8 +454,6 @@ class DatabaseTest extends AnyFunSuite
             fake_dev.id, fake_dev.name
         )
         Await.ready(createGenreFuture, Duration.Inf)
-
-        val games: Genres = new Genres()
 
         val fake_dev2: Genre = new Genre(
             2, "fake_dev_name2"
