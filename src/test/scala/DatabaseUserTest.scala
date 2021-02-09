@@ -206,20 +206,20 @@ class DatabaseTest extends AnyFunSuite
     test("Games.getGameById should return no id if it does not exist") {
         val games: Games = new Games()
 
-        val fake: Game = new Game(
+        val fake_game: Game = new Game(
             1, "fake_product_1", "basename_fake_product_1", 1, 2005.0, "fake_plateforme", "E", "fake_url.fr", 1, 1
         )
         val createGameFuture: Future[Unit] = games.createGame(
-            fake.id, fake.name, fake.basename, fake.id_genre, fake.year, 
-            fake.plateform, fake.ESRB, fake.url_image, fake.id_publisher, fake.id_developer
+            fake_game.id, fake_game.name, fake_game.basename, fake_game.id_genre, fake_game.year, 
+            fake_game.plateform, fake_game.ESRB, fake_game.url_image, fake_game.id_publisher, fake_game.id_developer
         )
         Await.ready(createGameFuture, Duration.Inf)
 
-        val returnedGameFuture: Future[Option[Game]] = games.getGameById(fake.id)
+        val returnedGameFuture: Future[Option[Game]] = games.getGameById(fake_game.id)
         val returnedGame: Option[Game] = Await.result(returnedGameFuture, Duration.Inf)
 
         returnedGame match {
-            case Some(game) => game should be(fake)
+            case Some(game) => game should be(fake_game)
             case None => fail("Should return a game.")
         }
     }
@@ -227,20 +227,20 @@ class DatabaseTest extends AnyFunSuite
     test("Games.getGameByBaseName should return a game") {
         val games: Games = new Games()
 
-        val fake: Game = new Game(
+        val fake_game: Game = new Game(
             1, "fake_product_1", "basename_fake_product_1", 1, 2005.0, "fake_plateforme", "E", "fake_url.fr", 1, 1
         )
         val createGameFuture: Future[Unit] = games.createGame(
-            fake.id, fake.name, fake.basename, fake.id_genre, fake.year, 
-            fake.plateform, fake.ESRB, fake.url_image, fake.id_publisher, fake.id_developer
+            fake_game.id, fake_game.name, fake_game.basename, fake_game.id_genre, fake_game.year, 
+            fake_game.plateform, fake_game.ESRB, fake_game.url_image, fake_game.id_publisher, fake_game.id_developer
         )
         Await.ready(createGameFuture, Duration.Inf)
 
-        val returnedGameFuture: Future[Option[Game]] = games.getGameByBaseName(fake.basename)
+        val returnedGameFuture: Future[Option[Game]] = games.getGameByBaseName(fake_game.basename)
         val returnedGame: Option[Game] = Await.result(returnedGameFuture, Duration.Inf)
 
         returnedGame match {
-            case Some(game) => game should be(fake)
+            case Some(game) => game should be(fake_game)
             case None => fail("Should return a game.")
         }
     }
