@@ -378,11 +378,11 @@ class DatabaseTest extends AnyFunSuite
 
     test("Genres.createGenre should create a new genre") {
         val genres: Genres = new Genres()
-        val fake_dev: Genre = new Genre(
-            1, "fake_dev_name"
+        val fake_genre: Genre = new Genre(
+            1, "fake_genre_name"
         )
         val createGenreFuture: Future[Unit] = genres.createGenre(
-            fake_dev.id, fake_dev.name
+            fake_genre.id, fake_genre.name
         )
         Await.ready(createGenreFuture, Duration.Inf)
 
@@ -393,7 +393,7 @@ class DatabaseTest extends AnyFunSuite
         var allGenres: Seq[Genre] = Await.result(getGenresFuture, Duration.Inf)
 
         allGenres.length should be(1)
-        allGenres.head should be(fake_dev)
+        allGenres.head should be(fake_genre)
     }
 
 
@@ -401,22 +401,22 @@ class DatabaseTest extends AnyFunSuite
     test("Genres.getGenreById should return no id if it does not exist") {
         val genres: Genres = new Genres()
 
-        val fake_dev: Genre = new Genre(
-            1, "fake_dev_name"
+        val fake_genre: Genre = new Genre(
+            1, "fake_genre_name"
         )
         val createGenreFuture: Future[Unit] = genres.createGenre(
-            fake_dev.id, fake_dev.name
+            fake_genre.id, fake_genre.name
         )
         Await.ready(createGenreFuture, Duration.Inf)
 
         // Check that the future succeeds
         createGenreFuture.value should be(Some(Success(())))
 
-        val returnedGenresFuture: Future[Option[Genre]] = genres.getGenreById(fake_dev.id)
+        val returnedGenresFuture: Future[Option[Genre]] = genres.getGenreById(fake_genre.id)
         var returnedGenre: Option[Genre] = Await.result(returnedGenresFuture, Duration.Inf)
 
         returnedGenre match {
-            case Some(genre) => genre should be(fake_dev)
+            case Some(genre) => genre should be(fake_genre)
             case None => fail("Should return a genre.")
         }
     }
@@ -424,22 +424,22 @@ class DatabaseTest extends AnyFunSuite
     test("Genres.getGenreByName should return a genre") {
         val genres: Genres = new Genres()
 
-        val fake_dev: Genre = new Genre(
+        val fake_genre: Genre = new Genre(
             1, "fake_dev_name"
         )
         val createGenreFuture: Future[Unit] = genres.createGenre(
-            fake_dev.id, fake_dev.name
+            fake_genre.id, fake_genre.name
         )
         Await.ready(createGenreFuture, Duration.Inf)
 
         // Check that the future succeeds
         createGenreFuture.value should be(Some(Success(())))
 
-        val returnedGenresFuture: Future[Option[Genre]] = genres.getGenreByName(fake_dev.name)
+        val returnedGenresFuture: Future[Option[Genre]] = genres.getGenreByName(fake_genre.name)
         var returnedGenre: Option[Genre] = Await.result(returnedGenresFuture, Duration.Inf)
 
         returnedGenre match {
-            case Some(genre) => genre should be(fake_dev)
+            case Some(genre) => genre should be(fake_genre)
             case None => fail("Should return a genre.")
         }
     }
@@ -447,19 +447,19 @@ class DatabaseTest extends AnyFunSuite
     test("Genres.getAllGenres should return a list of genres") {
         val genres: Genres = new Genres()
 
-        val fake_dev: Genre = new Genre(
-            1, "fake_dev_name"
+        val fake_genre: Genre = new Genre(
+            1, "fake_genre_name"
         )
         val createGenreFuture: Future[Unit] = genres.createGenre(
-            fake_dev.id, fake_dev.name
+            fake_genre.id, fake_genre.name
         )
         Await.ready(createGenreFuture, Duration.Inf)
 
-        val fake_dev2: Genre = new Genre(
-            2, "fake_dev_name2"
+        val fake_genre2: Genre = new Genre(
+            2, "fake_genre_name2"
         )
         val createAnotherGenreFuture: Future[Unit] = genres.createGenre(
-            fake_dev2.id, fake_dev2.name
+            fake_genre2.id, fake_genre2.name
         )
         Await.ready(createAnotherGenreFuture, Duration.Inf)
 
@@ -468,8 +468,8 @@ class DatabaseTest extends AnyFunSuite
         val returnedGenreSeq: Seq[Genre] = Await.result(returnedGenreSeqFuture, Duration.Inf)
 
         returnedGenreSeq.length should be(2)
-        returnedGenreSeq(0) should be(fake_dev)
-        returnedGenreSeq(1) should be(fake_dev2)
+        returnedGenreSeq(0) should be(fake_genre)
+        returnedGenreSeq(1) should be(fake_genre2)
     }
 
 }
