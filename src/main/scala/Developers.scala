@@ -76,7 +76,7 @@ type Developer_t = (Int, String)
         })
     }
 
-        def getDevById(id: Int): Future[Option[Developer]] = {
+        def getDeveloperById(id: Int): Future[Option[Developer]] = {
         val query = developers.filter(_.id === id)
 
         val devListFuture = db.run(query.result)

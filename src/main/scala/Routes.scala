@@ -158,7 +158,7 @@ class Routes(users: Users , developers: Developers , genres: Genres, publishers:
         game.map[ToResponseMarshallable] {
             case Some(game) => val genre = genres.getGenreById(game.id_genre)
                 genre.map[ToResponseMarshallable] {
-                    case Some(genre) => val dev = developers.getDevById(game.id_developer)
+                    case Some(genre) => val dev = developers.getDeveloperById(game.id_developer)
                         dev.map[ToResponseMarshallable] {
                                 case Some(dev) => html.product(game, genre, dev)
                         }
