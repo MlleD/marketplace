@@ -71,6 +71,7 @@ type Developer_t = (Int, String)
             developerList.length match {
                 case 0 => None
                 case 1 => Some(Developer tupled developerList.head)
+                case _ => throw new InconsistentStateException(s"Developer $name is linked to several Products in database!")
                // case _ => throw new InconsistentStateException(s"Name $name is linked to several developers in database!")
             }
         })

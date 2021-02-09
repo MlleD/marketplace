@@ -62,6 +62,7 @@ type Genre_t = (Int, String)
             genreList.length match {
                 case 0 => None
                 case 1 => Some(Genre tupled genreList.head)
+                case _ => throw new InconsistentStateException(s"Genre $name is linked to several Products in database!")
             }
         })
     }

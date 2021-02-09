@@ -248,21 +248,21 @@ class DatabaseTest extends AnyFunSuite
     test("Games.getAllGames should return a list of games") {
         val games: Games = new Games()
 
-        val fake: Game = new Game(
+        val fake_game: Game = new Game(
             1, "fake_product_1", "basename_fake_product_1", 1, 2005.0, "fake_plateforme", "E", "fake_url.fr", 1, 1
         )
         val createGameFuture: Future[Unit] = games.createGame(
-            fake.id, fake.name, fake.basename, fake.id_genre, fake.year, 
-            fake.plateform, fake.ESRB, fake.url_image, fake.id_publisher, fake.id_developer
+            fake_game.id, fake_game.name, fake_game.basename, fake_game.id_genre, fake_game.year, 
+            fake_game.plateform, fake_game.ESRB, fake_game.url_image, fake_game.id_publisher, fake_game.id_developer
         )
         Await.ready(createGameFuture, Duration.Inf)
 
-        val fake2: Game = new Game(
+        val fake_game2: Game = new Game(
             2, "fake_product_2", "basename_fake_product_2", 1, 2005.0, "fake2_plateforme", "E", "fake2_url.fr", 1, 1
         )
         val createAnotherGameFuture: Future[Unit] = games.createGame(
-            fake2.id, fake2.name, fake2.basename, fake2.id_genre, fake2.year, 
-            fake2.plateform, fake2.ESRB, fake2.url_image, fake2.id_publisher, fake2.id_developer
+            fake_game2.id, fake_game2.name, fake_game2.basename, fake_game2.id_genre, fake_game2.year, 
+            fake_game2.plateform, fake_game2.ESRB, fake_game2.url_image, fake_game2.id_publisher, fake_game2.id_developer
         )
         Await.ready(createAnotherGameFuture, Duration.Inf)
 
@@ -270,8 +270,8 @@ class DatabaseTest extends AnyFunSuite
         val returnedGameSeq: Seq[Game] = Await.result(returnedGameSeqFuture, Duration.Inf)
 
         returnedGameSeq.length should be(2)
-        returnedGameSeq(0) should be(fake)
-        returnedGameSeq(1) should be(fake2)
+        returnedGameSeq(0) should be(fake_game)
+        returnedGameSeq(1) should be(fake_game2)
     }
 
 
