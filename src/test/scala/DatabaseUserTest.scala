@@ -202,7 +202,6 @@ class DatabaseTest extends AnyFunSuite
     }
 
 
-
     test("Games.getGameById should return no id if it does not exist") {
         val games: Games = new Games()
 
@@ -215,13 +214,49 @@ class DatabaseTest extends AnyFunSuite
         )
         Await.ready(createGameFuture, Duration.Inf)
 
-        val returnedGameFuture: Future[Option[Game]] = games.getGameById(fake_game.id)
+        val returnedGameFuture: Future[Option[Game]] = games.getGameById(0)
+        val returnedGame: Option[Game] = Await.result(returnedGameFuture, Duration.Inf)
+
+        returnedGame should be(None)
+    }
+
+    test("Games.getGameById should return a game") {
+        val games: Games = new Games()
+
+        val fake_game: Game = new Game(
+            1, "fake_product_1", "basename_fake_product_1", 1, 2005.0, "fake_plateforme", "E", "fake_url.fr", 1, 1
+        )
+        val createGameFuture: Future[Unit] = games.createGame(
+            fake_game.id, fake_game.name, fake_game.basename, fake_game.id_genre, fake_game.year, 
+            fake_game.plateform, fake_game.ESRB, fake_game.url_image, fake_game.id_publisher, fake_game.id_developer
+        )
+        Await.ready(createGameFuture, Duration.Inf)
+
+        val returnedGameFuture: Future[Option[Game]] = games.getGameById(1)
         val returnedGame: Option[Game] = Await.result(returnedGameFuture, Duration.Inf)
 
         returnedGame match {
             case Some(game) => game should be(fake_game)
             case None => fail("Should return a game.")
         }
+    }
+
+    test("Games.getGameByBaseName should return no id if it does not exist") {
+        val games: Games = new Games()
+
+        val fake_game: Game = new Game(
+            1, "fake_product_1", "basename_fake_product_1", 1, 2005.0, "fake_plateforme", "E", "fake_url.fr", 1, 1
+        )
+        val createGameFuture: Future[Unit] = games.createGame(
+            fake_game.id, fake_game.name, fake_game.basename, fake_game.id_genre, fake_game.year, 
+            fake_game.plateform, fake_game.ESRB, fake_game.url_image, fake_game.id_publisher, fake_game.id_developer
+        )
+        Await.ready(createGameFuture, Duration.Inf)
+
+        val returnedGameFuture: Future[Option[Game]] = games.getGameByBaseName("basename_fake_product_0")
+        val returnedGame: Option[Game] = Await.result(returnedGameFuture, Duration.Inf)
+
+        returnedGame should be(None)
     }
 
     test("Games.getGameByBaseName should return a game") {
@@ -236,7 +271,7 @@ class DatabaseTest extends AnyFunSuite
         )
         Await.ready(createGameFuture, Duration.Inf)
 
-        val returnedGameFuture: Future[Option[Game]] = games.getGameByBaseName(fake_game.basename)
+        val returnedGameFuture: Future[Option[Game]] = games.getGameByBaseName("basename_fake_product_1")
         val returnedGame: Option[Game] = Await.result(returnedGameFuture, Duration.Inf)
 
         returnedGame match {
@@ -275,6 +310,7 @@ class DatabaseTest extends AnyFunSuite
     }
 
 
+
     // -------------------------- Developer ---------------------------------
 
     test("Developers.createDeveloper should create a new developer") {
@@ -297,9 +333,7 @@ class DatabaseTest extends AnyFunSuite
         allDevelopers.head should be(fake_dev)
     }
 
-
-
-    test("Developers.getDeveloperById should return no id if it does not exist") {
+test("Developers.getDeveloperById should return no id if it does not exist") {
         val developers: Developers = new Developers()
 
         val fake_dev: Developer = new Developer(
@@ -313,13 +347,53 @@ class DatabaseTest extends AnyFunSuite
         // Check that the future succeeds
         createDeveloperFuture.value should be(Some(Success(())))
 
-        val returnedDevelopersFuture: Future[Option[Developer]] = developers.getDeveloperById(fake_dev.id)
+        val returnedDevelopersFuture: Future[Option[Developer]] = developers.getDeveloperById(0)
+        var returnedDeveloper: Option[Developer] = Await.result(returnedDevelopersFuture, Duration.Inf)
+
+        returnedDeveloper should be(None)
+    }
+
+    test("Developers.getDeveloperById should return a developer") {
+        val developers: Developers = new Developers()
+
+        val fake_dev: Developer = new Developer(
+            1, "fake_dev_name"
+        )
+        val createDeveloperFuture: Future[Unit] = developers.createDeveloper(
+            fake_dev.id, fake_dev.name
+        )
+        Await.ready(createDeveloperFuture, Duration.Inf)
+
+        // Check that the future succeeds
+        createDeveloperFuture.value should be(Some(Success(())))
+
+        val returnedDevelopersFuture: Future[Option[Developer]] = developers.getDeveloperById(1)
         var returnedDeveloper: Option[Developer] = Await.result(returnedDevelopersFuture, Duration.Inf)
 
         returnedDeveloper match {
             case Some(developer) => developer should be(fake_dev)
             case None => fail("Should return a developer.")
         }
+    }
+
+    test("Developers.getDeveloperByName should return no id if it does not exist") {
+        val developers: Developers = new Developers()
+
+        val fake_dev: Developer = new Developer(
+            1, "fake_dev_name"
+        )
+        val createDeveloperFuture: Future[Unit] = developers.createDeveloper(
+            fake_dev.id, fake_dev.name
+        )
+        Await.ready(createDeveloperFuture, Duration.Inf)
+
+        // Check that the future succeeds
+        createDeveloperFuture.value should be(Some(Success(())))
+
+        val returnedDevelopersFuture: Future[Option[Developer]] = developers.getDeveloperByName("fake_dev_name0")
+        var returnedDeveloper: Option[Developer] = Await.result(returnedDevelopersFuture, Duration.Inf)
+
+        returnedDeveloper should be(None)
     }
 
     test("Developers.getDeveloperByName should return a developer") {
@@ -336,7 +410,7 @@ class DatabaseTest extends AnyFunSuite
         // Check that the future succeeds
         createDeveloperFuture.value should be(Some(Success(())))
 
-        val returnedDevelopersFuture: Future[Option[Developer]] = developers.getDeveloperByName(fake_dev.name)
+        val returnedDevelopersFuture: Future[Option[Developer]] = developers.getDeveloperByName("fake_dev_name")
         var returnedDeveloper: Option[Developer] = Await.result(returnedDevelopersFuture, Duration.Inf)
 
         returnedDeveloper match {
@@ -396,8 +470,6 @@ class DatabaseTest extends AnyFunSuite
         allGenres.head should be(fake_genre)
     }
 
-
-
     test("Genres.getGenreById should return no id if it does not exist") {
         val genres: Genres = new Genres()
 
@@ -412,20 +484,17 @@ class DatabaseTest extends AnyFunSuite
         // Check that the future succeeds
         createGenreFuture.value should be(Some(Success(())))
 
-        val returnedGenresFuture: Future[Option[Genre]] = genres.getGenreById(fake_genre.id)
+        val returnedGenresFuture: Future[Option[Genre]] = genres.getGenreById(0)
         var returnedGenre: Option[Genre] = Await.result(returnedGenresFuture, Duration.Inf)
 
-        returnedGenre match {
-            case Some(genre) => genre should be(fake_genre)
-            case None => fail("Should return a genre.")
-        }
+        returnedGenre should be(None)
     }
 
-    test("Genres.getGenreByName should return a genre") {
+    test("Genres.getGenreById should return a genre") {
         val genres: Genres = new Genres()
 
         val fake_genre: Genre = new Genre(
-            1, "fake_dev_name"
+            1, "fake_genre_name"
         )
         val createGenreFuture: Future[Unit] = genres.createGenre(
             fake_genre.id, fake_genre.name
@@ -435,7 +504,50 @@ class DatabaseTest extends AnyFunSuite
         // Check that the future succeeds
         createGenreFuture.value should be(Some(Success(())))
 
-        val returnedGenresFuture: Future[Option[Genre]] = genres.getGenreByName(fake_genre.name)
+        val returnedGenresFuture: Future[Option[Genre]] = genres.getGenreById(1)
+        var returnedGenre: Option[Genre] = Await.result(returnedGenresFuture, Duration.Inf)
+
+        returnedGenre match {
+            case Some(genre) => genre should be(fake_genre)
+            case None => fail("Should return a genre.")
+        }
+    }
+
+    test("Genres.getGenreByName should return no id if it does not exist") {
+        val genres: Genres = new Genres()
+
+        val fake_genre: Genre = new Genre(
+            1, "fake_genre_name"
+        )
+        val createGenreFuture: Future[Unit] = genres.createGenre(
+            fake_genre.id, fake_genre.name
+        )
+        Await.ready(createGenreFuture, Duration.Inf)
+
+        // Check that the future succeeds
+        createGenreFuture.value should be(Some(Success(())))
+
+        val returnedGenresFuture: Future[Option[Genre]] = genres.getGenreByName("fake_genre_name0")
+        var returnedGenre: Option[Genre] = Await.result(returnedGenresFuture, Duration.Inf)
+
+        returnedGenre should be(None)
+    }
+
+    test("Genres.getGenreByName should return a genre") {
+        val genres: Genres = new Genres()
+
+        val fake_genre: Genre = new Genre(
+            1, "fake_genre_name"
+        )
+        val createGenreFuture: Future[Unit] = genres.createGenre(
+            fake_genre.id, fake_genre.name
+        )
+        Await.ready(createGenreFuture, Duration.Inf)
+
+        // Check that the future succeeds
+        createGenreFuture.value should be(Some(Success(())))
+
+        val returnedGenresFuture: Future[Option[Genre]] = genres.getGenreByName("fake_genre_name")
         var returnedGenre: Option[Genre] = Await.result(returnedGenresFuture, Duration.Inf)
 
         returnedGenre match {
@@ -471,5 +583,4 @@ class DatabaseTest extends AnyFunSuite
         returnedGenreSeq(0) should be(fake_genre)
         returnedGenreSeq(1) should be(fake_genre2)
     }
-
 }
