@@ -66,6 +66,20 @@ type Genre_t = (Int, String)
         })
     }
 
+    def getGenreById(id: Int): Future[Option[Genre]] = {
+        val query = genres.filter(_.id === id)
+
+        val genreListFuture = db.run(query.result)
+
+        genreListFuture.map((genreList: Seq[Genre_t]) => {
+            genreList.length match {
+                case 0 => None
+                case 1 => Some(Genre tupled genreList.head)
+                case _ => throw new InconsistentStateException(s"Genre $id is linked to several Products in database!")
+            }
+        })
+    }
+
     def getAllGenres(): Future[Seq[Genre]] = {
         val genreListFuture = db.run(genres.result)
 

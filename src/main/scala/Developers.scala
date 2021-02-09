@@ -76,6 +76,20 @@ type Developer_t = (Int, String)
         })
     }
 
+        def getDevById(id: Int): Future[Option[Developer]] = {
+        val query = developers.filter(_.id === id)
+
+        val devListFuture = db.run(query.result)
+
+        devListFuture.map((devList: Seq[Developer_t]) => {
+            devList.length match {
+                case 0 => None
+                case 1 => Some(Developer tupled devList.head)
+                case _ => throw new InconsistentStateException(s"Developer $id is linked to several Products in database!")
+            }
+        })
+    }
+
     def getAllDevelopers(): Future[Seq[Developer]] = {
         val developerListFuture = db.run(developers.result)
 
