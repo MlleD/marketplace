@@ -11,7 +11,7 @@ import ch.qos.logback.classic.{Level, Logger}
 import org.slf4j.LoggerFactory
 import poca.{
     MyDatabase,
-    Users, User, Games, Game, Developers, Developer, Genres, Genre,
+    Users, User, Games, Game, Developers, Developer, Genres, Genre, Publishers, Publisher,
     NotSamePasswordException, EmailAlreadyExistsException, NameAlreadyExistsException,
     RunMigrations}
 
@@ -683,5 +683,134 @@ class DatabaseTest extends AnyFunSuite
         returnedGenreSeq.length should be(2)
         returnedGenreSeq(0) should be(fake_genre)
         returnedGenreSeq(1) should be(fake_genre2)
+    }
+
+
+    // -------------------------- PUBLISHER ---------------------------------
+
+    test("Publishers.createPublisher should create a new publisher") {
+        val publishers: Publishers = new Publishers()
+        val fake_publisher: Publisher = new Publisher(
+            1, "fake_publisher_name"
+        )
+        val createPublisherFuture: Future[Unit] = publishers.createPublisher(
+            fake_publisher.id, fake_publisher.name
+        )
+        Await.ready(createPublisherFuture, Duration.Inf)
+
+        // Check that the future succeeds
+        createPublisherFuture.value should be(Some(Success(())))
+
+        val getPublishersFuture: Future[Seq[Publisher]] = publishers.getAllPublishers()
+        var allPublishers: Seq[Publisher] = Await.result(getPublishersFuture, Duration.Inf)
+
+        allPublishers.length should be(1)
+        allPublishers.head should be(fake_publisher)
+    }
+
+    test("Publishers.createPublisher returned future should fail if name already exists") {
+        val publishers: Publishers = new Publishers()
+        val mypublisher: Publisher = new Publisher(
+            1, "Action"
+        )
+        val createPublisherFuture: Future[Unit] = publishers.createPublisher(
+            mypublisher.id, mypublisher.name
+        )
+        Await.ready(createPublisherFuture, Duration.Inf)
+
+        // Check that the future succeeds
+        createPublisherFuture.value should be(Some(Success(())))
+
+        val double: Publisher = new Publisher(
+            mypublisher.id + 1, mypublisher.name
+        )
+        val createPublisherDoubleFuture: Future[Unit] = publishers.createPublisher(
+            double.id, double.name
+        )
+        Await.ready(createPublisherDoubleFuture, Duration.Inf)
+
+        createPublisherDoubleFuture.value match {
+            case Some(Failure(exc: NameAlreadyExistsException)) => {
+                exc.getMessage should equal("A publisher with name '" + mypublisher.name + "' already exists.")
+            }
+            case _ => fail("The future should fail.")
+        }
+
+        val getPublishersFuture: Future[Seq[Publisher]] = publishers.getAllPublishers()
+        var allPublishers: Seq[Publisher] = Await.result(getPublishersFuture, Duration.Inf)
+
+        allPublishers.length should be(1)
+        allPublishers.head should be(mypublisher)
+    }
+
+    test("Publishers.getPublisherByName should return no id if it does not exist") {
+        val publishers: Publishers = new Publishers()
+
+        val fake_publisher: Publisher = new Publisher(
+            1, "fake_publisher_name"
+        )
+        val createPublisherFuture: Future[Unit] = publishers.createPublisher(
+            fake_publisher.id, fake_publisher.name
+        )
+        Await.ready(createPublisherFuture, Duration.Inf)
+
+        // Check that the future succeeds
+        createPublisherFuture.value should be(Some(Success(())))
+
+        val returnedPublishersFuture: Future[Option[Publisher]] = publishers.getPublisherByName("fake_publisher_name0")
+        var returnedPublisher: Option[Publisher] = Await.result(returnedPublishersFuture, Duration.Inf)
+
+        returnedPublisher should be(None)
+    }
+
+    test("Publishers.getPublisherByName should return a publisher") {
+        val publishers: Publishers = new Publishers()
+
+        val fake_publisher: Publisher = new Publisher(
+            1, "fake_publisher_name"
+        )
+        val createPublisherFuture: Future[Unit] = publishers.createPublisher(
+            fake_publisher.id, fake_publisher.name
+        )
+        Await.ready(createPublisherFuture, Duration.Inf)
+
+        // Check that the future succeeds
+        createPublisherFuture.value should be(Some(Success(())))
+
+        val returnedPublishersFuture: Future[Option[Publisher]] = publishers.getPublisherByName("fake_publisher_name")
+        var returnedPublisher: Option[Publisher] = Await.result(returnedPublishersFuture, Duration.Inf)
+
+        returnedPublisher match {
+            case Some(publisher) => publisher should be(fake_publisher)
+            case None => fail("Should return a publisher.")
+        }
+    }
+
+    test("Publishers.getAllPublishers should return a list of publishers") {
+        val publishers: Publishers = new Publishers()
+
+        val fake_publisher: Publisher = new Publisher(
+            1, "fake_publisher_name"
+        )
+        val createPublisherFuture: Future[Unit] = publishers.createPublisher(
+            fake_publisher.id, fake_publisher.name
+        )
+        Await.ready(createPublisherFuture, Duration.Inf)
+
+        val fake_publisher2: Publisher = new Publisher(
+            2, "fake_publisher_name2"
+        )
+        val createAnotherPublisherFuture: Future[Unit] = publishers.createPublisher(
+            fake_publisher2.id, fake_publisher2.name
+        )
+        Await.ready(createAnotherPublisherFuture, Duration.Inf)
+
+
+        val returnedPublisherSeqFuture: Future[Seq[Publisher]] = publishers.getAllPublishers()
+        val returnedPublisherSeq: Seq[Publisher] = Await.result(returnedPublisherSeqFuture, Duration.Inf)
+
+        returnedPublisherSeq.length should be(2)
+        returnedPublisherSeq(0) should be(fake_publisher)
+        returnedPublisherSeq(1) should be(fake_publisher2)
     }
 }

@@ -46,7 +46,7 @@ type Developer_t = (Int, String)
             }
         })
     }
-    
+    /*
     def fillDeveloperFromCSV() = {
         //println("dans fill dev from csv")
         val db = MyDatabase.db
@@ -61,6 +61,7 @@ type Developer_t = (Int, String)
         bufferedSource.close
         
     }
+    */
 
     def getDeveloperByName(name: String): Future[Option[Developer]] = {
         val query = developers.filter(_.name === name)

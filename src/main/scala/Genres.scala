@@ -39,6 +39,7 @@ type Genre_t = (Int, String)
         })
     }
 
+/*
     def fillGenreFromCSV() = {
         //println("dans fill genre from csv")
         val db = MyDatabase.db
@@ -51,6 +52,7 @@ type Genre_t = (Int, String)
         }
         bufferedSource.close
     }
+    */
 
 
     def getGenreByName(name: String): Future[Option[Genre]] = {

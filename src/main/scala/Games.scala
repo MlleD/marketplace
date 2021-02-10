@@ -33,6 +33,7 @@ type Game_t = (Int, String, String, Int, Double, String, String, String, Int, In
         })
     }
 
+/*
     def fillGameFromCSV() = {
         //println("dans fill game from csv")
         val db = MyDatabase.db
@@ -46,6 +47,7 @@ type Game_t = (Int, String, String, Int, Double, String, String, String, Int, In
         }
         bufferedSource.close
     }
+    */
 
     def getGameByBaseName(basename: String): Future[Option[Game]] = {
         val query = games.filter(_.basename === basename)

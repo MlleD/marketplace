@@ -42,6 +42,7 @@ type Publisher_t = (Int, String)
         })
     }
 
+/*
      def fillPublisherFromCSV() = {
         //println("dans fill publisher from csv")
         val db = MyDatabase.db
@@ -55,6 +56,7 @@ type Publisher_t = (Int, String)
         }
         bufferedSource.close
     }
+    */
 
     def getPublisherByName(name: String): Future[Option[Publisher]] = {
         val query = publishers.filter(_.name === name)
