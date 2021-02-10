@@ -536,6 +536,41 @@ class DatabaseTest extends AnyFunSuite
         allGenres.head should be(fake_genre)
     }
 
+    test("Genres.createGenre returned future should fail if name already exists") {
+        val genres: Genres = new Genres()
+        val mygenre: Genre = new Genre(
+            1, "Action"
+        )
+        val createGenreFuture: Future[Unit] = genres.createGenre(
+            mygenre.id, mygenre.name
+        )
+        Await.ready(createGenreFuture, Duration.Inf)
+
+        // Check that the future succeeds
+        createGenreFuture.value should be(Some(Success(())))
+
+        val double: Genre = new Genre(
+            mygenre.id + 1, mygenre.name
+        )
+        val createGenreDoubleFuture: Future[Unit] = genres.createGenre(
+            double.id, double.name
+        )
+        Await.ready(createGenreDoubleFuture, Duration.Inf)
+
+        createGenreDoubleFuture.value match {
+            case Some(Failure(exc: NameAlreadyExistsException)) => {
+                exc.getMessage should equal("A user with name '" + mygenre.name + "' already exists.")
+            }
+            case _ => fail("The future should fail.")
+        }
+
+        val getGenresFuture: Future[Seq[Genre]] = genres.getAllGenres()
+        var allGenres: Seq[Genre] = Await.result(getGenresFuture, Duration.Inf)
+
+        allGenres.length should be(1)
+        allGenres.head should be(mygenre)
+    }
+
     test("Genres.getGenreById should return no id if it does not exist") {
         val genres: Genres = new Genres()
 
