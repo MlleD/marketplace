@@ -368,7 +368,38 @@ class DatabaseTest extends AnyFunSuite
         allDevelopers.head should be(fake_dev)
     }
 
-test("Developers.getDeveloperById should return no id if it does not exist") {
+    test("Developers.createDeveloper returned future should fail if name already exists") {
+        val developers: Developers = new Developers()
+
+        val fake_dev: Developer = new Developer(
+            1, "fake_dev_name"
+        )
+        val createDeveloperFuture: Future[Unit] = developers.createDeveloper(
+            fake_dev.id, fake_dev.name
+        )
+        Await.ready(createDeveloperFuture, Duration.Inf)
+
+        // Check that the future succeeds
+        createDeveloperFuture.value should be(Some(Success(())))
+
+        val fake_dev2: Developer = new Developer(
+            fake_dev.id + 1, fake_dev.name
+        )
+        val createDoubleDeveloperFuture: Future[Unit] = developers.createDeveloper(
+            fake_dev2.id, fake_dev2.name
+        )
+        Await.ready(createDoubleDeveloperFuture, Duration.Inf)
+
+        createDoubleDeveloperFuture.value match {
+            case Some(Failure(exc: NameAlreadyExistsException)) => {
+                exc.getMessage should equal("A developer with name '" + fake_dev2.name + "' already exists.")
+            }
+            case _ => fail("The future should fail.")
+        }
+
+    }
+
+    test("Developers.getDeveloperById should return no id if it does not exist") {
         val developers: Developers = new Developers()
 
         val fake_dev: Developer = new Developer(
