@@ -34,7 +34,7 @@ type Genre_t = (Int, String)
                 // We do not care about the Int value
                 resultFuture.map(_ => ())
             }else{
-                throw new NameAlreadyExistsException(s"A user with name '$name' already exists.")
+                throw new NameAlreadyExistsException(s"A genre with name '$name' already exists.")
             }
         })
     }
@@ -62,6 +62,21 @@ type Genre_t = (Int, String)
             genreList.length match {
                 case 0 => None
                 case 1 => Some(Genre tupled genreList.head)
+                case _ => throw new InconsistentStateException(s"Genre $name is linked to several Products in database!")
+            }
+        })
+    }
+
+    def getGenreById(id: Int): Future[Option[Genre]] = {
+        val query = genres.filter(_.id === id)
+
+        val genreListFuture = db.run(query.result)
+
+        genreListFuture.map((genreList: Seq[Genre_t]) => {
+            genreList.length match {
+                case 0 => None
+                case 1 => Some(Genre tupled genreList.head)
+                case _ => throw new InconsistentStateException(s"Genre $id is linked to several Products in database!")
             }
         })
     }

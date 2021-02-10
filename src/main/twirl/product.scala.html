@@ -1,4 +1,4 @@
-@(game: poca.Game)
+@(game: poca.Game, genre: poca.Genre, dev: poca.Developer)
 
 <!doctype html>
 <html>
@@ -139,8 +139,8 @@
               
                 </div>
                 <p>Description: @game.basename</p>
-                <p>Genre: @game.id_genre</p>
-                <p>Fabricant: @game.id_developer</p>
+                <p>Genre:</p> <a href="/genre?id=@genre.id">@genre.name</a>
+                <p>Fabricant:</p> <a href="/developer?id=@dev.id">@dev.name</a>
                 <br>
 
             </div>

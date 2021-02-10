@@ -1,7 +1,8 @@
 package poca
 
-import scala.concurrent.Future
+import scala.concurrent.{Future, Await}
 import com.typesafe.scalalogging.LazyLogging
+import scala.concurrent.duration.Duration
 import slick.jdbc.PostgresProfile.api._
 
 class Migration16CreateTableGame(db: Database) extends Migration with LazyLogging {
@@ -27,5 +28,6 @@ class Migration16CreateTableGame(db: Database) extends Migration with LazyLoggin
 
         val creationFuture: Future[Unit] = db.run(TableQuery[GameTable].schema.createIfNotExists)
         creationFuture.onComplete(t => logger.info("Done creating table Game"))
+        Await.result(creationFuture, Duration.Inf)
     }
 }
