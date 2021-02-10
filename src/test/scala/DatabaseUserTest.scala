@@ -9,7 +9,11 @@ import com.typesafe.scalalogging.LazyLogging
 import com.typesafe.config.{ConfigFactory}
 import ch.qos.logback.classic.{Level, Logger}
 import org.slf4j.LoggerFactory
-import poca.{MyDatabase, Users, User, Games, Game, Developers, Developer, Genres, Genre, NotSamePasswordException, EmailAlreadyExistsException, RunMigrations}
+import poca.{
+    MyDatabase,
+    Users, User, Games, Game, Developers, Developer, Genres, Genre,
+    NotSamePasswordException, EmailAlreadyExistsException, NameAlreadyExistsException,
+    RunMigrations}
 
 class DatabaseTest extends AnyFunSuite 
                    with Matchers with BeforeAndAfterAll with BeforeAndAfterEach with LazyLogging {
@@ -201,6 +205,37 @@ class DatabaseTest extends AnyFunSuite
         allGames.head should be(fake)
     }
 
+    test("Games.createGame returned future should fail if game basename already exists") {
+        val games: Games = new Games()
+        val fake1: Game = new Game(
+            1, "fake_product_1", "basename_fake_product_1", 1, 2005.0, "fake_plateforme",
+            "E", "fake_url.fr", 1, 1
+        )
+        val createGame1Future: Future[Unit] = games.createGame(
+            fake1.id, fake1.name, fake1.basename, fake1.id_genre, fake1.year, 
+            fake1.plateform, fake1.ESRB, fake1.url_image, fake1.id_publisher, fake1.id_developer
+        )
+        
+        Await.ready(createGame1Future, Duration.Inf)
+        createGame1Future.value should be(Some(Success(())))
+        
+        val fake2: Game = new Game(
+            fake1.id + 1, fake1.name+ "0", fake1.basename, fake1.id_genre + 1, fake1.year + 8.0,
+            fake1.plateform, fake1.ESRB, "2" + fake1.url_image, fake1.id_publisher, fake1.id_developer
+        )
+        val createGame2Future: Future[Unit] = games.createGame(
+            fake2.id, fake2.name, fake2.basename, fake2.id_genre, fake2.year, 
+            fake2.plateform, fake2.ESRB, fake2.url_image, fake2.id_publisher, fake2.id_developer
+        )
+        Await.ready(createGame2Future, Duration.Inf)
+
+        createGame2Future.value match {
+            case Some(Failure(exc: NameAlreadyExistsException)) => {
+                exc.getMessage should equal("A game with basename '" + fake1.basename + "' already exists.")
+            }
+            case _ => fail("The future should fail.")
+        }
+    }
 
     test("Games.getGameById should return no id if it does not exist") {
         val games: Games = new Games()
