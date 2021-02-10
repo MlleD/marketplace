@@ -34,7 +34,7 @@ type Genre_t = (Int, String)
                 // We do not care about the Int value
                 resultFuture.map(_ => ())
             }else{
-                throw new NameAlreadyExistsException(s"A user with name '$name' already exists.")
+                throw new NameAlreadyExistsException(s"A genre with name '$name' already exists.")
             }
         })
     }

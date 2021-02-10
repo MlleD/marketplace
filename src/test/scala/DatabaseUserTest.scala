@@ -559,7 +559,7 @@ class DatabaseTest extends AnyFunSuite
 
         createGenreDoubleFuture.value match {
             case Some(Failure(exc: NameAlreadyExistsException)) => {
-                exc.getMessage should equal("A user with name '" + mygenre.name + "' already exists.")
+                exc.getMessage should equal("A genre with name '" + mygenre.name + "' already exists.")
             }
             case _ => fail("The future should fail.")
         }
