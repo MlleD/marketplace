@@ -19,5 +19,6 @@ class Migration15CreateTablePublisher(db: Database) extends Migration with LazyL
 
         val creationFuture: Future[Unit] = db.run(TableQuery[PublisherTable].schema.createIfNotExists)
         creationFuture.onComplete(t => logger.info("Done creating table Publisher"))
+        Await.result(creationFuture, Duration.Inf)
     }
 }
