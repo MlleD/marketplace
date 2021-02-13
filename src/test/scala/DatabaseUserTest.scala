@@ -11,7 +11,7 @@ import ch.qos.logback.classic.{Level, Logger}
 import org.slf4j.LoggerFactory
 import poca.{
     MyDatabase,
-    Users, User, Games, Game, Developers, Developer, Genres, Genre, Publishers, Publisher,
+    Users, User, Games, Game, Developers, Developer, Genres, Genre, Publishers, Publisher,InsertData,
     NotSamePasswordException, EmailAlreadyExistsException, NameAlreadyExistsException,
     RunMigrations}
 
@@ -813,4 +813,100 @@ class DatabaseTest extends AnyFunSuite
         returnedPublisherSeq(0) should be(fake_publisher)
         returnedPublisherSeq(1) should be(fake_publisher2)
     }
+
+    test("InsertData.ClearDB should Clear the DB") {
+        val genres: Genres = new Genres()
+        val publishers: Publishers = new Publishers()
+        val games: Games = new Games()
+        val developers: Developers = new Developers()
+
+        val insertdata : InsertData = new InsertData(developers,genres,publishers,games)
+        insertdata.ClearDB()
+
+        val returnedPublisherSeqFuture: Future[Seq[Publisher]] = publishers.getAllPublishers()
+        val returnedPublisherSeq: Seq[Publisher] = Await.result(returnedPublisherSeqFuture, Duration.Inf)
+
+        val getGenresFuture: Future[Seq[Genre]] = genres.getAllGenres()
+        var allGenres: Seq[Genre] = Await.result(getGenresFuture, Duration.Inf)
+
+        val getGamesFuture: Future[Seq[Game]] = games.getAllGames()
+        var allGames: Seq[Game] = Await.result(getGamesFuture, Duration.Inf)
+
+        val returnedDeveloperSeqFuture: Future[Seq[Developer]] = developers.getAllDevelopers()
+        val returnedDeveloperSeq: Seq[Developer] = Await.result(returnedDeveloperSeqFuture, Duration.Inf)
+
+        returnedDeveloperSeq.length should be(0)
+        allGames.length should be(0)
+        returnedPublisherSeq.length should be(0)
+        allGenres.length should be(0)
+
+    }
+
+    test("InsertData.FillDevelopers should add 19 developpers"){
+        val developers: Developers = new Developers()
+        val genres: Genres = new Genres()
+        val publishers: Publishers = new Publishers()
+        val games: Games = new Games()
+
+        val insertdata : InsertData = new InsertData(developers,genres,publishers,games)
+        insertdata.ClearDB()
+        insertdata.FillDevelopers()
+
+        val returnedDeveloperSeqFuture: Future[Seq[Developer]] = developers.getAllDevelopers()
+        val returnedDeveloperSeq: Seq[Developer] = Await.result(returnedDeveloperSeqFuture, Duration.Inf)
+
+        returnedDeveloperSeq.length should be(19)
+    }
+
+    test("InsertData.FillPublishers should add 14 Publishers")
+    {
+        val developers: Developers = new Developers()
+        val genres: Genres = new Genres()
+        val publishers: Publishers = new Publishers()
+        val games: Games = new Games()
+
+        val insertdata : InsertData = new InsertData(developers,genres,publishers,games)
+        insertdata.ClearDB()
+        insertdata.FillPublishers()
+
+        val returnedPublisherSeqFuture: Future[Seq[Publisher]] = publishers.getAllPublishers()
+        val returnedPublisherSeq: Seq[Publisher] = Await.result(returnedPublisherSeqFuture, Duration.Inf)
+
+        returnedPublisherSeq.length should be(14)
+    }
+    test("InsertData.FillGenre should add 19 Genres")
+    {
+        val developers: Developers = new Developers()
+        val genres: Genres = new Genres()
+        val publishers: Publishers = new Publishers()
+        val games: Games = new Games()
+
+        val insertdata : InsertData = new InsertData(developers,genres,publishers,games)
+        insertdata.ClearDB()
+        insertdata.FillGenre()
+
+        val getGenresFuture: Future[Seq[Genre]] = genres.getAllGenres()
+        var allGenres: Seq[Genre] = Await.result(getGenresFuture, Duration.Inf)
+
+        allGenres.length should be(19)
+    }
+
+    test("InsertData.FillGame should add 44 Games")
+    {
+        val developers: Developers = new Developers()
+        val genres: Genres = new Genres()
+        val publishers: Publishers = new Publishers()
+        val games: Games = new Games()
+
+        val insertdata : InsertData = new InsertData(developers,genres,publishers,games)
+        insertdata.ClearDB()
+        insertdata.FillGame()
+
+        val getGamesFuture: Future[Seq[Game]] = games.getAllGames()
+        var allGames: Seq[Game] = Await.result(getGamesFuture, Duration.Inf)
+
+        allGames.length should be(44)
+    }
+
+
 }
