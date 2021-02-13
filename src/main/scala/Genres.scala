@@ -24,7 +24,7 @@ type Genre_t = (Int, String)
         existingGenresFuture.flatMap(existingGenres => {
             if (existingGenres.isEmpty) {
                
-                println("on ajoute un nouveau genre dans la bd")
+                //println("on ajoute un nouveau genre dans la bd")
                 val newGenre = Genre(id, name=name)
                 val newGenreAsTuple: Genre_t = Genre.unapply(newGenre).get
 
