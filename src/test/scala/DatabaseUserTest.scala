@@ -855,7 +855,7 @@ class DatabaseTest extends AnyFunSuite
         val returnedDeveloperSeqFuture: Future[Seq[Developer]] = developers.getAllDevelopers()
         val returnedDeveloperSeq: Seq[Developer] = Await.result(returnedDeveloperSeqFuture, Duration.Inf)
 
-        returnedDeveloperSeq.length should be(20)
+        returnedDeveloperSeq.length should be(19)
     }
 
     test("InsertData.FillPublishers should add 14 Publishers")
@@ -872,7 +872,7 @@ class DatabaseTest extends AnyFunSuite
         val returnedPublisherSeqFuture: Future[Seq[Publisher]] = publishers.getAllPublishers()
         val returnedPublisherSeq: Seq[Publisher] = Await.result(returnedPublisherSeqFuture, Duration.Inf)
 
-        returnedPublisherSeq.length should be(15)
+        returnedPublisherSeq.length should be(14)
     }
     test("InsertData.FillGenre should add 19 Genres")
     {
@@ -888,7 +888,7 @@ class DatabaseTest extends AnyFunSuite
         val getGenresFuture: Future[Seq[Genre]] = genres.getAllGenres()
         var allGenres: Seq[Genre] = Await.result(getGenresFuture, Duration.Inf)
 
-        allGenres.length should be(20)
+        allGenres.length should be(19)
     }
 
     test("InsertData.FillGame should add 44 Games")
@@ -905,7 +905,7 @@ class DatabaseTest extends AnyFunSuite
         val getGamesFuture: Future[Seq[Game]] = games.getAllGames()
         var allGames: Seq[Game] = Await.result(getGamesFuture, Duration.Inf)
 
-        allGames.length should be(43)
+        allGames.length should be(44)
     }
 
 
