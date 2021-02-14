@@ -905,7 +905,7 @@ class DatabaseTest extends AnyFunSuite
         val getGamesFuture: Future[Seq[Game]] = games.getAllGames()
         var allGames: Seq[Game] = Await.result(getGamesFuture, Duration.Inf)
 
-        allGames.length should be(44)
+        allGames.length should be(43)
     }
 
 
