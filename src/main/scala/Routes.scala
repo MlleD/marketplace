@@ -14,11 +14,14 @@ import TwirlMarshaller._
 class Routes(users: Users , developers: Developers , genres: Genres, publishers: Publishers, games : Games ) extends LazyLogging {
     implicit val executionContext = scala.concurrent.ExecutionContext.Implicits.global
 
-    def getHello() = {
+    def getHome() = {
         logger.info("I got a request to greet.")
-        val gameSeqFuture: Future[Seq[Game]] = games.getAllGames()
-        gameSeqFuture.map(gameSeq => html.hello(gameSeq))
-        //html.hello()
+        val genreSeqFuture : Future[Seq[Genre]] = genres.getAllGenres()
+        genreSeqFuture.map[ToResponseMarshallable] {
+            case genreSeq =>
+                val gameSeqFuture: Future[Seq[Game]] = games.getAllGames()
+                gameSeqFuture.map(gameSeq => html.home(gameSeq, genreSeq))
+        }
     }
 
     def getSignup() = {
@@ -179,9 +182,9 @@ class Routes(users: Users , developers: Developers , genres: Genres, publishers:
 
     val routes: Route = 
         concat(
-            path("hello") {
+            path("home") {
                 get {
-                    complete(getHello)
+                    complete(getHome)
                 }
             },
             path("signup") {
