@@ -21,7 +21,7 @@ class RoutesTest extends AnyFunSuite with Matchers with MockFactory with Scalate
         testKit.system.classicSystem
 
 
-    test("Route GET /hello should return the home page  with all the games for now") {
+    test("Route GET /home should return the home page  with all the games for now") {
         val mockGames = mock[Games]
         val mockGenres = mock[Genres]
         val mockDevelopers = mock[Developers]
@@ -36,7 +36,7 @@ class RoutesTest extends AnyFunSuite with Matchers with MockFactory with Scalate
 
         val routesUnderTest = new Routes(mockUsers , mockDevelopers , mockGenres, mockPublishers, mockGames).routes
 
-        val request = HttpRequest(uri = "/hello")
+        val request = HttpRequest(uri = "/home")
         request ~> routesUnderTest ~> check {
             status should ===(StatusCodes.OK)
 
