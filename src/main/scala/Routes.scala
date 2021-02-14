@@ -125,7 +125,7 @@ class Routes(users: Users , developers: Developers , genres: Genres, publishers:
 
         val publisherSeqFuture: Future[Seq[Publisher]] = publishers.getAllPublishers()
 
-        publisherSeqFuture.map(publisherSeq => html.publishers(publisherSeq))
+        publisherSeqFuture.map(publisherSeq => html.all_publishers(publisherSeq))
     }
     
     def getGames() = {
@@ -223,7 +223,7 @@ class Routes(users: Users , developers: Developers , genres: Genres, publishers:
                     complete(getGenres)
                 }
             },
-            path("publisher") {
+            path("all-publishers") {
                 get {
                     complete(getPublishers)
                 }
