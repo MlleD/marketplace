@@ -343,7 +343,7 @@ class RoutesTest extends AnyFunSuite with Matchers with MockFactory with Scalate
     test("Route GET /publisher when publisher with games should display the list of its games ") {
         val mockPublishers = mock[Publishers]
         val mockGames = mock[Games]
-        val inputName: String = "Sega"
+        val inputName: String = "VU Games"
         val publisher: Publisher = Publisher(7, inputName)
         val expectedValue: Option[Publisher] = Some(publisher)
         val gname1: String = "Counter-Strike: Source"
@@ -359,7 +359,7 @@ class RoutesTest extends AnyFunSuite with Matchers with MockFactory with Scalate
         (mockGames.getGamesFromPublisher _).expects(publisher.id).returns(Future(gamesList)).once()
         val routesUnderTest = new Routes(null, null, null, mockPublishers, mockGames).routes
 
-        val request = HttpRequest(uri = "/publisher?name=" + inputName)
+        val request = HttpRequest(uri = "/publisher?name=" + inputName.replace(" ", "%20"))
         request ~> routesUnderTest ~> check {
             status should ===(StatusCodes.OK)
             contentType should ===(ContentTypes.`text/html(UTF-8)`)
