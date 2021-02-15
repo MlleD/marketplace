@@ -171,6 +171,21 @@ class Routes(users: Users , developers: Developers , genres: Genres, publishers:
 
      }
     
+    def getPublisher(name: String) = {
+        logger.info("I got a request to get informations of the publisher " + name + ".")
+        
+        val publisher = publishers.getPublisherByName(name)
+
+        publisher.map[ToResponseMarshallable] {
+            case Some(publisher) => {
+                val pgamesSeqFuture: Future[Seq[Game]] = games.getGamesFromPublisher(publisher.id)
+                pgamesSeqFuture.map(pgamesSeq => html.publisher(publisher, pgamesSeq))
+            }
+            case None => {
+                html.publisher(null, null)
+            }
+        }
+    }
     
     /*def getPublishers() = {
         logger.info("I got a request to get publisher list.")
@@ -226,6 +241,13 @@ class Routes(users: Users , developers: Developers , genres: Genres, publishers:
             path("all-publishers") {
                 get {
                     complete(getPublishers)
+                }
+            },
+            path("publisher") {
+                get {
+            		parameter('name.as[String]) {
+                        name => complete(getPublisher(name))
+                	}
                 }
             },
             path("game") {
