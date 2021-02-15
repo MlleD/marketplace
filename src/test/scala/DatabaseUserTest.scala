@@ -858,7 +858,7 @@ class DatabaseTest extends AnyFunSuite
         returnedDeveloperSeq.length should be(20)
     }
 
-    test("InsertData.FillPublishers should add 14 Publishers")
+    test("InsertData.FillPublishers should add 15 Publishers")
     {
         val developers: Developers = new Developers()
         val genres: Genres = new Genres()
