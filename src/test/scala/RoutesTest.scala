@@ -218,7 +218,7 @@ class RoutesTest extends AnyFunSuite with Matchers with MockFactory with Scalate
         }
     }
 
-    test("Route GET /genre should display the list of genres") {
+    test("Route GET /genres should display the list of genres") {
         val mockGames = mock[Games]
         val mockGenres = mock[Genres]
         val mockDevelopers = mock[Developers]
@@ -233,13 +233,30 @@ class RoutesTest extends AnyFunSuite with Matchers with MockFactory with Scalate
 
         val routesUnderTest = new Routes(mockUsers , mockDevelopers , mockGenres, mockPublishers, mockGames).routes
 
-        val request = HttpRequest(uri = "/genre")
+        val request = HttpRequest(uri = "/genres")
         request ~> routesUnderTest ~> check {
             status should ===(StatusCodes.OK)
 
             contentType should ===(ContentTypes.`text/html(UTF-8)`)
         }
     }
+
+    test("Route GET /genre when unknown genre should display the message 'This genre doesn't exist.'") {
+        val mockGenres = mock[Genres]
+        val expectedValue: Option[Genre] = None
+        val unknownGenre: Int = 99
+        (mockGenres.getGenreById _).expects(unknownGenre).returns(Future(expectedValue)).once()
+
+        val routesUnderTest = new Routes(null, null, mockGenres, null, null).routes
+
+        val request = HttpRequest(uri = "/genre?id=99")
+        request ~> routesUnderTest ~> check {
+            status should ===(StatusCodes.OK)
+            contentType should ===(ContentTypes.`text/html(UTF-8)`)
+            responseAs[String].contains("This genre doesn't exist.") should ===(true)
+        }
+    }
+
 
     test("Route GET /developer should display the list of developers") {
         val mockGames = mock[Games]

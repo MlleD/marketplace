@@ -87,6 +87,16 @@ type Game_t = (Int, String, String, Int, Double, String, String, String, Int, In
         })
     }
 
+    def getGamesFromGenre(idGenre: Int): Future[Seq[Game]] = {
+        val query = games.filter(_.id_genre === idGenre)
+
+        val gameListFuture = db.run(query.result)
+
+        gameListFuture.map((gameList: Seq[Game_t]) => {
+            gameList.map(Game tupled _)
+        })
+    }
+
     def getAllGames(): Future[Seq[Game]] = {
         val gameListFuture = db.run(games.result)
 
