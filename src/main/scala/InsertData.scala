@@ -53,8 +53,8 @@ class InsertData ( developers: Developers , genres: Genres, publishers: Publishe
 		developers.createDeveloper(15, "Sonic Team")
 		developers.createDeveloper(16, "Polyphony Digital")
 		developers.createDeveloper(17, "Infinity Ward")
-		developers.createDeveloper(18, "Bungie Studios")
-		developers.createDeveloper(19, "Rockstar Games")
+		Await.result(developers.createDeveloper(18, "Bungie Studios"), Duration.Inf)
+		Await.result(developers.createDeveloper(19, "Rockstar Games"), Duration.Inf)
 	}
 
 	def FillPublishers(){
@@ -71,8 +71,8 @@ class InsertData ( developers: Developers , genres: Genres, publishers: Publishe
 		publishers.createPublisher(10,"Microsoft Studios")
 		publishers.createPublisher(11,"Blizzard Entertainment")
 		publishers.createPublisher(12,"EA Sports")
-		publishers.createPublisher(13,"Electronic Arts")
-		publishers.createPublisher(14,"Ubisoft")
+		Await.result(publishers.createPublisher(13,"Electronic Arts"), Duration.Inf)
+		Await.result(publishers.createPublisher(14,"Ubisoft"), Duration.Inf)
 
 	}
 
@@ -95,8 +95,8 @@ class InsertData ( developers: Developers , genres: Genres, publishers: Publishe
 		genres.createGenre(15,"MMO")
 		genres.createGenre(16,"Sandbox")
 		genres.createGenre(17,"Visual Novel")
-		genres.createGenre(18,"Board Game")
-		genres.createGenre(19,"Education")
+		Await.result(genres.createGenre(18,"Board Game"), Duration.Inf)
+		Await.result(genres.createGenre(19,"Education"), Duration.Inf)
 
 	}
 
@@ -145,11 +145,11 @@ class InsertData ( developers: Developers , genres: Genres, publishers: Publishe
 		games.createGame(187,	"Link's Crossbow Training"	,"links-crossbow-training",	3,	2007	,"Wii"	,"T"	,"http://www.vgchartz.com/games/boxart/full_links-crossbow-training_1AmericaFront.jpg"	,0,	0)
 		games.createGame(189,	"New Super Mario Bros. U"	,"new-super-mario-bros-u",	1	,2012	,"WiiU",	"E"	,"http://www.vgchartz.com/games/boxart/full_3288399AmericaFrontccc.jpg"	,0	,0)
 		games.createGame(194,	"Super Mario World: Super Mario Advance 2"	,"super-mario-world-super-mario-advance-2",	1	,2002	,"GBA"	,"E"	,"http://www.vgchartz.com/games/boxart/5020276ccc.jpg"	,0	,0)
-		games.createGame(199,	"Super Mario Advance"	,"super-mario-advance",	1	,2001	,"GBA"	,"E"	,"http://www.vgchartz.com/games/boxart/1255012ccc.png"	,0	,0)
-		games.createGame(212,	"Call of Duty: World at War"	,"call-of-duty-world-at-war",	3,	2008,	"PS3"	,"M"	,"http://www.vgchartz.com/games/boxart/full_4070815AmericaFrontccc.jpg"	,6,	12)
-		games.createGame(310,	"Spider-Man: The Movie"	,"spider-man-the-movie",	9	,2002	,"PS2"	,"E"	,"http://www.vgchartz.com/games/boxart/full_9484527AmericaFrontccc.jpg",	6	,12)
-		games.createGame(311,	"Nintendogs + cats"	,"nintendogs-cats",	8	,2011	,"3DS"	,"E"	,"http://www.vgchartz.com/games/boxart/full_98856AmericaFrontccc.jpg"	,0	,0)
-		games.createGame(313,	"The Legend of Zelda: The Wind Waker"	,"the-legend-of-zelda-the-wind-waker",	13	,2003,	"GC",	"E"	,"http://www.vgchartz.com/games/boxart/full_6636308AmericaFrontccc.jpg",	0	,0)
+		Await.result(games.createGame(199,	"Super Mario Advance"	,"super-mario-advance",	1	,2001	,"GBA"	,"E"	,"http://www.vgchartz.com/games/boxart/1255012ccc.png"	,0	,0), Duration.Inf)
+		//Await.result(games.createGame(212,	"Call of Duty: World at War"	,"call-of-duty-world-at-war",	3,	2008,	"PS3"	,"M"	,"http://www.vgchartz.com/games/boxart/full_4070815AmericaFrontccc.jpg"	,6,	12), Duration.Inf)
+		Await.result(games.createGame(310,	"Spider-Man: The Movie"	,"spider-man-the-movie",	9	,2002	,"PS2"	,"E"	,"http://www.vgchartz.com/games/boxart/full_9484527AmericaFrontccc.jpg",	6	,12), Duration.Inf)
+		Await.result(games.createGame(311,	"Nintendogs + cats"	,"nintendogs-cats",	8	,2011	,"3DS"	,"E"	,"http://www.vgchartz.com/games/boxart/full_98856AmericaFrontccc.jpg"	,0	,0), Duration.Inf)
+		Await.result(games.createGame(313,	"The Legend of Zelda: The Wind Waker"	,"the-legend-of-zelda-the-wind-waker",	13	,2003,	"GC",	"E"	,"http://www.vgchartz.com/games/boxart/full_6636308AmericaFrontccc.jpg",	0	,0), Duration.Inf)
 	}
 
 }
