@@ -1,0 +1,15 @@
+@(publishers: Seq[poca.Publisher])
+
+<!doctype html>
+<html>
+    <head></head>
+
+    <h1>List of integrated publishers</h1>
+
+    <ul>
+    @for(publisher <- publishers) {
+        <li>@publisher.name</li>
+    }
+    </ul>
+        
+</html>

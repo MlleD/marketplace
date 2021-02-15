@@ -264,7 +264,7 @@ class RoutesTest extends AnyFunSuite with Matchers with MockFactory with Scalate
         }
     }
 
-    test("Route GET /publisher should display the list of publishers") {
+    test("Route GET /all-publishers should display the list of publishers") {
         val mockGames = mock[Games]
         val mockGenres = mock[Genres]
         val mockDevelopers = mock[Developers]
@@ -279,11 +279,73 @@ class RoutesTest extends AnyFunSuite with Matchers with MockFactory with Scalate
 
         val routesUnderTest = new Routes(mockUsers , mockDevelopers , mockGenres, mockPublishers, mockGames).routes
 
-        val request = HttpRequest(uri = "/publisher")
+        val request = HttpRequest(uri = "/all-publishers")
         request ~> routesUnderTest ~> check {
             status should ===(StatusCodes.OK)
 
             contentType should ===(ContentTypes.`text/html(UTF-8)`)
+        }
+    }
+
+    test("Route GET /publisher when unknown publisher should display the message 'This publisher doesn't exist.'") {
+        val mockPublishers = mock[Publishers]
+        val expectedValue: Option[Publisher] = None
+        val unknownPublisher: String = "MM"
+        (mockPublishers.getPublisherByName _).expects(unknownPublisher).returns(Future(expectedValue)).once()
+
+        val routesUnderTest = new Routes(null, null, null, mockPublishers, null).routes
+
+        val request = HttpRequest(uri = "/publisher?name=MM")
+        request ~> routesUnderTest ~> check {
+            status should ===(StatusCodes.OK)
+            contentType should ===(ContentTypes.`text/html(UTF-8)`)
+            responseAs[String].contains("This publisher doesn't exist.") should ===(true)
+        }
+    }
+
+    test("Route GET /publisher when publisher without game should display the message 'No game for the moment.' ") {
+        val mockPublishers = mock[Publishers]
+        val mockGames = mock[Games]
+        val inputName: String = "Mojang"
+        val publisher: Publisher = Publisher(2, inputName)
+        val expectedValue: Option[Publisher] = Some(publisher)
+
+        (mockPublishers.getPublisherByName _).expects(inputName).returns(Future(expectedValue)).once()
+        (mockGames.getGamesFromPublisher _).expects(publisher.id).returns(Future(Seq())).once()
+
+        val routesUnderTest = new Routes(null, null, null, mockPublishers, mockGames).routes
+
+        val request = HttpRequest(uri = "/publisher?name=" + inputName)
+        request ~> routesUnderTest ~> check {
+            status should ===(StatusCodes.OK)
+            contentType should ===(ContentTypes.`text/html(UTF-8)`)
+            responseAs[String].contains("No game for the moment.") should ===(true)
+        }
+    }
+
+    test("Route GET /publisher when publisher with games should display the list of its games ") {
+        val mockPublishers = mock[Publishers]
+        val mockGames = mock[Games]
+        val inputName: String = "Sega"
+        val publisher: Publisher = Publisher(7, inputName)
+        val expectedValue: Option[Publisher] = Some(publisher)
+        val game1: String = "Counter-Strike: Source"
+        val game2: String = "Half-Life 2"
+        val gamesList = Seq(
+            Game(36, game1, "counter-strike-source", 3, 2004, "PC", "M", "http://www.vgchartz.com/games/boxart/full_9030886AmericaFrontccc.jpg", 7, 14),
+            Game(103, game2, "half-life-2", 3, 2004, "PC", "M", "http://www.vgchartz.com/games/boxart/6354662ccc.jpg", 7, 14)
+        )
+
+        (mockPublishers.getPublisherByName _).expects(inputName).returns(Future(expectedValue)).once()
+        (mockGames.getGamesFromPublisher _).expects(publisher.id).returns(Future(gamesList)).once()
+        val routesUnderTest = new Routes(null, null, null, mockPublishers, mockGames).routes
+
+        val request = HttpRequest(uri = "/publisher?name=" + inputName)
+        request ~> routesUnderTest ~> check {
+            status should ===(StatusCodes.OK)
+            contentType should ===(ContentTypes.`text/html(UTF-8)`)
+            responseAs[String].contains(game1) should ===(true)
+            responseAs[String].contains(game2) should ===(true)
         }
     }
 
