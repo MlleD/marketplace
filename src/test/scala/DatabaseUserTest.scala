@@ -891,7 +891,7 @@ class DatabaseTest extends AnyFunSuite
         allGenres.length should be(20)
     }
 
-    test("InsertData.FillGame should add 46 Games")
+    test("InsertData.FillGame should add 44 Games")
     {
         val developers: Developers = new Developers()
         val genres: Genres = new Genres()
@@ -905,7 +905,7 @@ class DatabaseTest extends AnyFunSuite
         val getGamesFuture: Future[Seq[Game]] = games.getAllGames()
         var allGames: Seq[Game] = Await.result(getGamesFuture, Duration.Inf)
 
-        allGames.length should be(46)
+        allGames.length should be(44)
     }
 
 
