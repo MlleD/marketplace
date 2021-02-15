@@ -346,11 +346,11 @@ class RoutesTest extends AnyFunSuite with Matchers with MockFactory with Scalate
         val inputName: String = "Sega"
         val publisher: Publisher = Publisher(7, inputName)
         val expectedValue: Option[Publisher] = Some(publisher)
-        val game1: String = "Counter-Strike: Source"
-        val game2: String = "Half-Life 2"
+        val gname1: String = "Counter-Strike: Source"
+        val gname2: String = "Half-Life 2"
         val gamesList = Seq(
-            Game(36, game1, "counter-strike-source", 3, 2004, "PC", "M", "http://www.vgchartz.com/games/boxart/full_9030886AmericaFrontccc.jpg", 7, 14),
-            Game(103, game2, "half-life-2", 3, 2004, "PC", "M", "http://www.vgchartz.com/games/boxart/6354662ccc.jpg", 7, 14)
+            Game(36, gname1, "counter-strike-source", 3, 2004, "PC", "M", "http://www.vgchartz.com/games/boxart/full_9030886AmericaFrontccc.jpg", 7, 14),
+            Game(103, gname2, "half-life-2", 3, 2004, "PC", "M", "http://www.vgchartz.com/games/boxart/6354662ccc.jpg", 7, 14)
         )
 
         (mockPublishers.getPublisherByName _).expects(inputName).returns(Future(expectedValue)).once()
@@ -361,8 +361,8 @@ class RoutesTest extends AnyFunSuite with Matchers with MockFactory with Scalate
         request ~> routesUnderTest ~> check {
             status should ===(StatusCodes.OK)
             contentType should ===(ContentTypes.`text/html(UTF-8)`)
-            responseAs[String].contains(game1) should ===(true)
-            responseAs[String].contains(game2) should ===(true)
+            responseAs[String].contains(gname1) should ===(true)
+            responseAs[String].contains(gname2) should ===(true)
         }
     }
 
