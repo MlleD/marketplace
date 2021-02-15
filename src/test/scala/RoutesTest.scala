@@ -264,7 +264,7 @@ class RoutesTest extends AnyFunSuite with Matchers with MockFactory with Scalate
         }
     }
 
-    test("Route GET /publisher should display the list of publishers") {
+    test("Route GET /all-publishers should display the list of publishers") {
         val mockGames = mock[Games]
         val mockGenres = mock[Genres]
         val mockDevelopers = mock[Developers]
@@ -279,7 +279,7 @@ class RoutesTest extends AnyFunSuite with Matchers with MockFactory with Scalate
 
         val routesUnderTest = new Routes(mockUsers , mockDevelopers , mockGenres, mockPublishers, mockGames).routes
 
-        val request = HttpRequest(uri = "/publisher")
+        val request = HttpRequest(uri = "/all-publishers")
         request ~> routesUnderTest ~> check {
             status should ===(StatusCodes.OK)
 
