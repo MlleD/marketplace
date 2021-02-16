@@ -327,13 +327,16 @@ class RoutesTest extends AnyFunSuite with Matchers with MockFactory with Scalate
         val devName: String = "Valve Software"
         val developer: Developer = Developer(inputId, devName)
         val expectedValue: Option[Developer] = Some(developer)
+        val gid1: Int = 36
         val gname1: String = "Counter-Strike: Source"
+        val gid2: Int = 55
         val gname2: String = "Portal 2"
+        val gid3: Int = 103
         val gname3: String = "Half-Life 2"
         val gamesList = Seq(
-            Game(36, gname1, "counter-strike-source", 3, 2004, "PC", "M", "http://www.vgchartz.com/games/boxart/full_9030886AmericaFrontccc.jpg", 7, 14),
-            Game(55, gname2,"portal-2",	3, 2011, "PC", "E10", "http://www.vgchartz.com/games/boxart/full_portal-2_617AmericaFront.jpg", 10, 14),
-            Game(103, gname3, "half-life-2", 3, 2004, "PC", "M", "http://www.vgchartz.com/games/boxart/6354662ccc.jpg", 7, 14)
+            Game(gid1, gname1, "counter-strike-source", 3, 2004, "PC", "M", "http://www.vgchartz.com/games/boxart/full_9030886AmericaFrontccc.jpg", 7, 14),
+            Game(gid2, gname2,"portal-2",	3, 2011, "PC", "E10", "http://www.vgchartz.com/games/boxart/full_portal-2_617AmericaFront.jpg", 10, 14),
+            Game(gid3, gname3, "half-life-2", 3, 2004, "PC", "M", "http://www.vgchartz.com/games/boxart/6354662ccc.jpg", 7, 14)
         )
 
         (mockDevelopers.getDeveloperById _).expects(inputId).returns(Future(expectedValue)).once()
@@ -341,13 +344,18 @@ class RoutesTest extends AnyFunSuite with Matchers with MockFactory with Scalate
 
         val routesUnderTest = new Routes(null, mockDevelopers, null, null, mockGames).routes
 
+        val productRoute: String = "/product?id="
+
         val request = HttpRequest(uri = "/developer?id=" + inputId.toString())
         request ~> routesUnderTest ~> check {
             status should ===(StatusCodes.OK)
             contentType should ===(ContentTypes.`text/html(UTF-8)`)
             responseAs[String].contains(devName) should ===(true)
+            responseAs[String].contains(productRoute + gid1) should ===(true)
             responseAs[String].contains(gname1) should ===(true)
+            responseAs[String].contains(productRoute + gid2) should ===(true)
             responseAs[String].contains(gname2) should ===(true)
+            responseAs[String].contains(productRoute + gid3) should ===(true)
             responseAs[String].contains(gname3) should ===(true)
         }
     }
