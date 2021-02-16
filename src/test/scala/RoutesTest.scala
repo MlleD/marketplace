@@ -281,6 +281,73 @@ class RoutesTest extends AnyFunSuite with Matchers with MockFactory with Scalate
         }
     }
 
+    test("Route GET /developer when unknown developer should display the message 'This developer doesn't exist.'") {
+        val mockDevelopers = mock[Developers]
+        val expectedValue: Option[Developer] = None
+        val unknownId: Int = 9876
+
+        (mockDevelopers.getDeveloperById _).expects(unknownId).returns(Future(expectedValue)).once()
+
+        val routesUnderTest = new Routes(null, mockDevelopers, null, null, null).routes
+
+        val request = HttpRequest(uri = "/developer?id=" + unknownId.toString())
+        request ~> routesUnderTest ~> check {
+            status should ===(StatusCodes.OK)
+            contentType should ===(ContentTypes.`text/html(UTF-8)`)
+            responseAs[String].contains("This developer doesn't exist.") should ===(true)
+        }
+    }
+
+    test("Route GET /developer when developer without game should display the message 'No game for the moment.' ") {
+        val mockDevelopers = mock[Developers]
+        val mockGames = mock[Games]
+        val inputId: Int = 1
+        val developer: Developer = Developer(inputId, "Bullet Proof Software")
+        val expectedValue: Option[Developer] = Some(developer)
+
+        (mockDevelopers.getDeveloperById _).expects(inputId).returns(Future(expectedValue)).once()
+        (mockGames.getGamesFromDeveloper _).expects(inputId).returns(Future(Seq())).once()
+
+        val routesUnderTest = new Routes(null, mockDevelopers, null, null, mockGames).routes
+
+        val request = HttpRequest(uri = "/developer?id=" + inputId.toString())
+        request ~> routesUnderTest ~> check {
+            status should ===(StatusCodes.OK)
+            contentType should ===(ContentTypes.`text/html(UTF-8)`)
+            responseAs[String].contains("No game for the moment.") should ===(true)
+        }
+    }
+
+    test("Route GET /developer when developer with games should display the list of its games ") {
+        val mockDevelopers = mock[Developers]
+        val mockGames = mock[Games]
+        val inputId: Int = 14
+        val developer: Developer = Developer(inputId, "Valve Software")
+        val expectedValue: Option[Developer] = Some(developer)
+        val gname1: String = "Counter-Strike: Source"
+        val gname2: String = "Portal 2"
+        val gname3: String = "Half-Life 2"
+        val gamesList = Seq(
+            Game(36, gname1, "counter-strike-source", 3, 2004, "PC", "M", "http://www.vgchartz.com/games/boxart/full_9030886AmericaFrontccc.jpg", 7, 14),
+            Game(55, gname2,"portal-2",	3, 2011, "PC", "E10", "http://www.vgchartz.com/games/boxart/full_portal-2_617AmericaFront.jpg", 10, 14),
+            Game(103, gname3, "half-life-2", 3, 2004, "PC", "M", "http://www.vgchartz.com/games/boxart/6354662ccc.jpg", 7, 14)
+        )
+
+        (mockDevelopers.getDeveloperById _).expects(inputId).returns(Future(expectedValue)).once()
+        (mockGames.getGamesFromDeveloper _).expects(inputId).returns(Future(gamesList)).once()
+
+        val routesUnderTest = new Routes(null, mockDevelopers, null, null, mockGames).routes
+
+        val request = HttpRequest(uri = "/developer?id=" + inputId.toString())
+        request ~> routesUnderTest ~> check {
+            status should ===(StatusCodes.OK)
+            contentType should ===(ContentTypes.`text/html(UTF-8)`)
+            responseAs[String].contains(gname1) should ===(true)
+            responseAs[String].contains(gname2) should ===(true)
+            responseAs[String].contains(gname3) should ===(true)
+        }
+    }
+
     test("Route GET /all-publishers should display the list of publishers") {
         val mockGames = mock[Games]
         val mockGenres = mock[Genres]
