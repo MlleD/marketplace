@@ -152,8 +152,23 @@ class Routes(users: Users , developers: Developers , genres: Genres, publishers:
 
         genreSeqFuture.map(genreSeq => html.genres(genreSeq))    
     }
+    def getGenre(id: Int) = {
+        logger.info("I got a request to get informations of the genre " + id + ".")
+        
+        val genre = genres.getGenreById(id)
 
-     def getGame(id : Int) = {
+        genre.map[ToResponseMarshallable] {
+            case Some(genre) => {
+                val pgamesSeqFuture: Future[Seq[Game]] = games.getGamesFromGenre(genre.id)
+                pgamesSeqFuture.map(pgamesSeq => html.genre(genre, pgamesSeq))
+            }
+            case None => {
+                html.genre(null, null)
+            }
+        }
+    }
+
+    def getGame(id : Int) = {
         logger.info("I got a request to get informations of a game.")
         
         val game = games.getGameById(id)
@@ -233,9 +248,16 @@ class Routes(users: Users , developers: Developers , genres: Genres, publishers:
                     complete(getDevelopers)
                 }
             },
-            path("genre") {
+            path("genres") {
                 get {
                     complete(getGenres)
+                }
+            },
+            path("genre") {
+                get {
+                    parameter('id.as[Int]) { id =>
+                     complete(getGenre(id))
+                    }
                 }
             },
             path("all-publishers") {

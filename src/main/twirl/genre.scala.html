@@ -1,9 +1,9 @@
-@(genres: Seq[poca.Genre])
+@(genre: poca.Genre, pgames: Seq[poca.Game])
 
 <!doctype html>
 <html>
     <head>
-    	<style>
+        <style>
             * {
               box-sizing: border-box;
             }
@@ -56,23 +56,45 @@
         </style>
     </head>
 
+
+
+
     <body> 
         <div class="header">
-            <h1>List of registred genres</h1>
+            @if(genre == null) {
+                    <p>This genre doesn't exist.</p>
+            }else {
+                <h1>List of registred games for the genre : @genre.name</h1>
+            }
         </div>
 
         <div class="navbar">
           <a href="home" class="right">Home</a>
         </div>
         <div class="main">
-  		    <ul>
-  		    @for(genre <- genres) {
-  		        <li>
-  		        	<a href="/genre?id=@genre.id">@genre.name</a>
-  		        </li>
-  		    }
-  		    </ul>
+            <ul>
+                @if(genre == null) {
+                    <p>This genre doesn't exist.</p>
+                } else {
+                    <p>Game catalog of the genre @genre.name:</p>
+                    <ul>
+                        @if(pgames.length == 0) {
+                            <p>No game for the moment.</p>
+                        } else {
+                            @for(pgame <- pgames) {
+                                <a href="/product?id=@pgame.id">
+                                   <h2> @for(image <- pgame.url_image.split(';')) { 
+                                    <img src="@image" />
+                                    } </h2>
+                                  </a>
+                                  <h5> @pgame.name </h5>
+                                <li>@pgame.name</li>
+                            }
+                        }
+                    </ul>
+                }
+            </ul>
         </div>
     </body>
-        
+
 </html>
