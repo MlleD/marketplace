@@ -273,11 +273,18 @@ class RoutesTest extends AnyFunSuite with Matchers with MockFactory with Scalate
 
         val routesUnderTest = new Routes(mockUsers , mockDevelopers , mockGenres, mockPublishers, mockGames).routes
 
+        val devRoute: String = "/developer?id="
         val request = HttpRequest(uri = "/all-developers")
         request ~> routesUnderTest ~> check {
             status should ===(StatusCodes.OK)
 
             contentType should ===(ContentTypes.`text/html(UTF-8)`)
+            responseAs[String].contains(devRoute + developerList.head.id) should ===(true)
+            responseAs[String].contains(developerList.head.name) should ===(true)
+            responseAs[String].contains(devRoute + developerList.tail.head.id) should ===(true)
+            responseAs[String].contains(developerList.tail.head.name) should ===(true)
+            responseAs[String].contains(devRoute + developerList.tail.tail.head.id) should ===(true)
+            responseAs[String].contains(developerList.tail.tail.head.name) should ===(true)
         }
     }
 
