@@ -243,7 +243,7 @@ class Routes(users: Users , developers: Developers , genres: Genres, publishers:
                     complete(getUsers)
                 }
             },
-            path("developer") {
+            path("all-developers") {
                 get {
                     complete(getDevelopers)
                 }
