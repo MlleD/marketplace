@@ -302,7 +302,8 @@ class RoutesTest extends AnyFunSuite with Matchers with MockFactory with Scalate
         val mockDevelopers = mock[Developers]
         val mockGames = mock[Games]
         val inputId: Int = 1
-        val developer: Developer = Developer(inputId, "Bullet Proof Software")
+        val devName: String = "Bullet Proof Software"
+        val developer: Developer = Developer(inputId, devName)
         val expectedValue: Option[Developer] = Some(developer)
 
         (mockDevelopers.getDeveloperById _).expects(inputId).returns(Future(expectedValue)).once()
@@ -314,6 +315,7 @@ class RoutesTest extends AnyFunSuite with Matchers with MockFactory with Scalate
         request ~> routesUnderTest ~> check {
             status should ===(StatusCodes.OK)
             contentType should ===(ContentTypes.`text/html(UTF-8)`)
+            responseAs[String].contains(devName) should ===(true)
             responseAs[String].contains("No game for the moment.") should ===(true)
         }
     }
@@ -322,7 +324,8 @@ class RoutesTest extends AnyFunSuite with Matchers with MockFactory with Scalate
         val mockDevelopers = mock[Developers]
         val mockGames = mock[Games]
         val inputId: Int = 14
-        val developer: Developer = Developer(inputId, "Valve Software")
+        val devName: String = "Valve Software"
+        val developer: Developer = Developer(inputId, devName)
         val expectedValue: Option[Developer] = Some(developer)
         val gname1: String = "Counter-Strike: Source"
         val gname2: String = "Portal 2"
@@ -342,6 +345,7 @@ class RoutesTest extends AnyFunSuite with Matchers with MockFactory with Scalate
         request ~> routesUnderTest ~> check {
             status should ===(StatusCodes.OK)
             contentType should ===(ContentTypes.`text/html(UTF-8)`)
+            responseAs[String].contains(devName) should ===(true)
             responseAs[String].contains(gname1) should ===(true)
             responseAs[String].contains(gname2) should ===(true)
             responseAs[String].contains(gname3) should ===(true)
