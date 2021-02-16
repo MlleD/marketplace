@@ -13,7 +13,7 @@
                     <p>No game for the moment.</p>
                 } else {
                     @for(pgame <- pgames) {
-                        <li>@pgame.name</li>
+                        <li><a href="/product?id=@pgame.id">@pgame.name</a></li>
                     }
                 }
             </ul>
