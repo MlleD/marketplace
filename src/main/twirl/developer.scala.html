@@ -1,0 +1,22 @@
+@(developer: poca.Developer, dgames: Seq[poca.Game])
+
+<!doctype html>
+<html>
+    <head></head>
+    <body>
+        @if(developer == null) {
+            <p>This developer doesn't exist.</p>
+        } else {
+            <p>Game catalog of the developer @developer.name:</p>
+            <ul>
+                @if(dgames.length == 0) {
+                    <p>No game for the moment.</p>
+                } else {
+                    @for(dgame <- dgames) {
+                        <li>@dgame.name</li>
+                    }
+                }
+            </ul>
+        }
+    </body>
+</html>
