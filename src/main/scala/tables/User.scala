@@ -2,7 +2,7 @@ package poca
 
 import slick.jdbc.PostgresProfile.api._
 
-class UserTable(tag: Tag) extends Table[(Int, String, String, String, String, String, String)](tag, "user") {
+class UserTable(tag: Tag) extends Table[(Int, String, String, String, String, String, String)](tag, "users") {
     def id = column[Int]("id", O.PrimaryKey, O.AutoInc)
     def firstname = column[String]("firstname", O.Length(255))
     def lastname = column[String]("lastname", O.Length(255))

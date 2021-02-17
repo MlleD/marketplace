@@ -11,7 +11,7 @@ import akka.http.scaladsl.marshalling.ToResponseMarshallable
 import TwirlMarshaller._
 
 
-class Routes(users: Users , developers: Developers , genres: Genres, publishers: Publishers, games : Games ) extends LazyLogging {
+class Routes(users: Users , developers: Developers , genres: Genres, publishers: Publishers, games : Games, comments: Comments ) extends LazyLogging {
     implicit val executionContext = scala.concurrent.ExecutionContext.Implicits.global
 
     def getHome() = {
@@ -193,7 +193,12 @@ class Routes(users: Users , developers: Developers , genres: Genres, publishers:
                 genre.map[ToResponseMarshallable] {
                     case Some(genre) => val dev = developers.getDeveloperById(game.id_developer)
                         dev.map[ToResponseMarshallable] {
-                                case Some(dev) => html.product(game, genre, dev)
+                                case Some(dev) => val pub = publishers.getPublisherById(game.id_publisher)
+                                    pub.map[ToResponseMarshallable] {
+                                        case Some(pub) =>
+                                        val comSeqFuture: Future[Seq[Comment]] = comments.getCommentsById(id)
+                                        comSeqFuture.map(comSeq =>html.product(game, genre, dev, comSeq, pub))
+                                    }
                         }
                 }
                                
@@ -217,13 +222,23 @@ class Routes(users: Users , developers: Developers , genres: Genres, publishers:
         }
     }
     
-    /*def getPublishers() = {
-        logger.info("I got a request to get publisher list.")
+    def addComment(fields: Map[String, String]) = {
+        fields.get("commentaire") match {
+            case Some(commentaire) => {
+                val rate = fields.get("rate").get.toInt
+                val idproduct = fields.get("idproduct").get.toInt
+                val commentCreation: Future[Unit] = comments.createComment(0, iduser=1, idproduct=idproduct, comment=commentaire, nbstars=rate)
 
-        val publisherSeqFuture: Future[Seq[Publisher]] = publishers.getAllPublishers()
-
-        publisherSeqFuture.map(publisherSeq => html.publishers(publisherSeq))
-    }*/
+                /*userCreation.map(_ => {
+                    HttpResponse(
+                        StatusCodes.OK,
+                        entity=s"Comment added.",
+                    )
+                })*/
+                getGame(idproduct)
+            }
+        }
+    }
 
     val routes: Route = 
         concat(
@@ -305,6 +320,11 @@ class Routes(users: Users , developers: Developers , genres: Genres, publishers:
                    	 complete(getGame(id))
                 	}
             	}
+            },
+            path("commentaire") {
+                (post & formFieldMap) { fields =>
+                    complete(addComment(fields))
+                }
             }
 
         )

@@ -12,7 +12,7 @@ import com.typesafe.config.{ConfigFactory, ConfigValueFactory}
 import slick.jdbc.PostgresProfile.api._
 import org.postgresql.util.PSQLException
 
-class InsertData ( developers: Developers , genres: Genres, publishers: Publishers, games : Games ) {
+class InsertData ( developers: Developers , genres: Genres, publishers: Publishers, games: Games, users: Users, comments: Comments ) {
 	val db = MyDatabase.db
 
 	def ClearDB(){
@@ -31,6 +31,14 @@ class InsertData ( developers: Developers , genres: Genres, publishers: Publishe
 	    val Resetgenre = sqlu"TRUNCATE TABLE genre ;ALTER SEQUENCE genre_id_seq MINVALUE 0 RESTART WITH 0 ;"
 	    val genreFuture: Future[Int] = db.run(Resetgenre)
 	    val genre = Await.result(genreFuture, Duration.Inf)
+
+		val Resetuser = sqlu"TRUNCATE TABLE users ;ALTER SEQUENCE users_id_seq MINVALUE 0 RESTART WITH 0 ;"
+	    val userFuture: Future[Int] = db.run(Resetuser)
+	    val user = Await.result(userFuture, Duration.Inf)
+
+		val Resetcomment = sqlu"TRUNCATE TABLE comment ;ALTER SEQUENCE comment_id_seq MINVALUE 0 RESTART WITH 0 ;"
+	    val commentFuture: Future[Int] = db.run(Resetcomment)
+	    val comment = Await.result(commentFuture, Duration.Inf)
 
 	}
 
@@ -150,6 +158,38 @@ class InsertData ( developers: Developers , genres: Genres, publishers: Publishe
 		Await.result(games.createGame(310,	"Spider-Man: The Movie"	,"spider-man-the-movie",	9	,2002	,"PS2"	,"E"	,"http://www.vgchartz.com/games/boxart/full_9484527AmericaFrontccc.jpg",	6	,12), Duration.Inf)
 		Await.result(games.createGame(311,	"Nintendogs + cats"	,"nintendogs-cats",	8	,2011	,"3DS"	,"E"	,"http://www.vgchartz.com/games/boxart/full_98856AmericaFrontccc.jpg"	,0	,0), Duration.Inf)
 		Await.result(games.createGame(313,	"The Legend of Zelda: The Wind Waker"	,"the-legend-of-zelda-the-wind-waker",	13	,2003,	"GC",	"E"	,"http://www.vgchartz.com/games/boxart/full_6636308AmericaFrontccc.jpg",	0	,0), Duration.Inf)
+	}
+
+	def FillUser(){
+		Await.result(users.createUser(1, "Jean-Edouard", "de la FesMol", "JEF@gmail.com", "root", "addressJEF", "0666666666", "root"), Duration.Inf)
+		Await.result(users.createUser(2, "Marie", "Kartiol", "MK@gmail.com", "root", "addressMK", "0777777777", "root"), Duration.Inf)
+		Await.result(users.createUser(3, "Nabila", "Aliban", "NA@gmail.com", "root", "addressNA", "0888888888", "root"), Duration.Inf)
+		Await.result(users.createUser(4, "Paul", "Sambousek", "PS@gmail.com", "root", "addressPS", "0111111111", "root"), Duration.Inf)
+		Await.result(users.createUser(5, "Carlita", "Walla", "CW@gmail.com", "root", "addressCW", "0222222222", "root"), Duration.Inf)
+	}
+
+	def FillComment(){
+		Await.result(comments.createComment(1, 1, 0, "Le jeu est bien mais la.cartouche bug souvent.", 3), Duration.Inf)
+		Await.result(comments.createComment(2, 1, 0, "Juste une tuerie ce jeu", 5), Duration.Inf)
+		Await.result(comments.createComment(3, 1, 55, "Très bon jeu les graphismes sont très bien.", 5), Duration.Inf)
+		Await.result(comments.createComment(4, 1, 189, "Super jeux avec une remise et reçu quelques jours après par mail un code pour le jeu pour débloquer super cool", 5), Duration.Inf)
+		Await.result(comments.createComment(5, 2, 0, "En 4 heures de jeux , j’ai eux 9 crash ou le jeu se ferme seul sans sauvegarder , j’ai eux aussi un chargement en plein liberté qui a duré 10 min puis j’ai éteint sa avancer pas plus .", 1), Duration.Inf)
+		Await.result(comments.createComment(6, 2, 2, "Le jeu crash trop souvent", 2), Duration.Inf)
+		Await.result(comments.createComment(7, 2, 4, "Reçu en très bon état mais je n'ai pas reçu le bonus de précommande (mission bonus) qui était promis.", 4), Duration.Inf)
+		Await.result(comments.createComment(8, 3, 0, "Je mets 4 étoiles parce que le jeu est bien et qu'il y a plusieurs niveaux", 4), Duration.Inf)
+		Await.result(comments.createComment(9, 3, 2, "0 bug très fluide monde ouvert très beau jeu mes mdr facile de faire un monde ouvert sans scénario y a rien il manque cruellement d échange et de personnages c est monotones et ennuyeux pour un jeu avec temps de potentiel.", 3), Duration.Inf)
+		Await.result(comments.createComment(10, 4, 0, "Super jeu!", 5), Duration.Inf)
+		Await.result(comments.createComment(11, 1, 189, "Une bouse sans nom", 1), Duration.Inf)
+		Await.result(comments.createComment(12, 2, 174, "Livraison rapide , jeux vraiment fun", 4), Duration.Inf)
+		Await.result(comments.createComment(13, 3, 174, " le jeu est vraiment mauvais", 1), Duration.Inf)
+		Await.result(comments.createComment(14, 1, 62, "Rien à redire sur le rpoduit. En revanche la boîte du jeu à été abîmée lors de la livraison.", 1), Duration.Inf)
+		Await.result(comments.createComment(15, 2, 62, "très bon jeu, par contre je n ai pas reçu le code de mission bonus alors que je l’ai précommandé .", 4), Duration.Inf)
+		Await.result(comments.createComment(16, 3, 103, "Jeux pas trop mal, dommage qu'il n'est pas de mode versus", 3), Duration.Inf)
+		Await.result(comments.createComment(17, 1, 74, "J’ai joué 2 jours car ce jeu est nul", 2), Duration.Inf)
+		Await.result(comments.createComment(18, 2, 74, "Très bon jeu arrivée en avance bien emballé bon état fonctionne très bien", 5), Duration.Inf)
+		Await.result(comments.createComment(19, 3, 74, "Livré sous blister envoie du code cadeau par mail", 5), Duration.Inf)
+		Await.result(comments.createComment(20, 2, 136, "J’adore ! Enfin un jeu a monde ouvert.", 5), Duration.Inf)
+
 	}
 
 }

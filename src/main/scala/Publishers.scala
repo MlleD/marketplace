@@ -72,6 +72,20 @@ type Publisher_t = (Int, String)
         })
     }
 
+    def getPublisherById(id: Int): Future[Option[Publisher]] = {
+        val query = publishers.filter(_.id === id)
+
+        val pubListFuture = db.run(query.result)
+
+        pubListFuture.map((pubList: Seq[Publisher_t]) => {
+            pubList.length match {
+                case 0 => None
+                case 1 => Some(Publisher tupled pubList.head)
+                case _ => throw new InconsistentStateException(s"Publisher $id is linked to several Products in database!")
+            }
+        })
+    }
+
     def getAllPublishers(): Future[Seq[Publisher]] = {
         val publisherListFuture = db.run(publishers.result)
 

@@ -11,7 +11,7 @@ import ch.qos.logback.classic.{Level, Logger}
 import org.slf4j.LoggerFactory
 import poca.{
     MyDatabase,
-    Users, User, Games, Game, Developers, Developer, Genres, Genre, Publishers, Publisher,InsertData,
+    Users, User, Games, Game, Developers, Developer, Genres, Genre, Publishers, Publisher, Comments, Comment, InsertData,
     NotSamePasswordException, EmailAlreadyExistsException, NameAlreadyExistsException,
     RunMigrations}
 
@@ -786,6 +786,50 @@ class DatabaseTest extends AnyFunSuite
         }
     }
 
+    test("Publishers.getPublisherById should return no id if it does not exist") {
+        val publishers: Publishers = new Publishers()
+
+        val fake_publisher: Publisher = new Publisher(
+            1, "fake_publisher_name"
+        )
+        val createPublisherFuture: Future[Unit] = publishers.createPublisher(
+            fake_publisher.id, fake_publisher.name
+        )
+        Await.ready(createPublisherFuture, Duration.Inf)
+
+        // Check that the future succeeds
+        createPublisherFuture.value should be(Some(Success(())))
+
+        val returnedPublishersFuture: Future[Option[Publisher]] = publishers.getPublisherById(0)
+        var returnedPublisher: Option[Publisher] = Await.result(returnedPublishersFuture, Duration.Inf)
+
+        returnedPublisher should be(None)
+    }
+
+    test("Publishers.getPublisherById should return a publisher") {
+        val publishers: Publishers = new Publishers()
+
+        val fake_publisher: Publisher = new Publisher(
+            1, "fake_publisher_name"
+        )
+        val createPublisherFuture: Future[Unit] = publishers.createPublisher(
+            fake_publisher.id, fake_publisher.name
+        )
+        Await.ready(createPublisherFuture, Duration.Inf)
+
+        // Check that the future succeeds
+        createPublisherFuture.value should be(Some(Success(())))
+
+        val returnedPublishersFuture: Future[Option[Publisher]] = publishers.getPublisherById(1)
+        var returnedPublisher: Option[Publisher] = Await.result(returnedPublishersFuture, Duration.Inf)
+
+        returnedPublisher match {
+            case Some(publisher) => publisher should be(fake_publisher)
+            case None => fail("Should return a publisher.")
+        }
+    }
+
+
     test("Publishers.getAllPublishers should return a list of publishers") {
         val publishers: Publishers = new Publishers()
 
@@ -819,8 +863,10 @@ class DatabaseTest extends AnyFunSuite
         val publishers: Publishers = new Publishers()
         val games: Games = new Games()
         val developers: Developers = new Developers()
+        val users: Users = new Users()
+        val comments: Comments = new Comments()
 
-        val insertdata : InsertData = new InsertData(developers,genres,publishers,games)
+        val insertdata : InsertData = new InsertData(developers,genres,publishers,games, users, comments)
         insertdata.ClearDB()
 
         val returnedPublisherSeqFuture: Future[Seq[Publisher]] = publishers.getAllPublishers()
@@ -835,10 +881,21 @@ class DatabaseTest extends AnyFunSuite
         val returnedDeveloperSeqFuture: Future[Seq[Developer]] = developers.getAllDevelopers()
         val returnedDeveloperSeq: Seq[Developer] = Await.result(returnedDeveloperSeqFuture, Duration.Inf)
 
+        val returnedCommentSeqFuture: Future[Seq[Comment]] = comments.getAllComments()
+        val returnedCommentSeq: Seq[Comment] = Await.result(returnedCommentSeqFuture, Duration.Inf)
+
+        val getUsersFuture: Future[Seq[User]] = users.getAllUsers()
+        var allUsers: Seq[User] = Await.result(getUsersFuture, Duration.Inf)
+
+        
+
         returnedDeveloperSeq.length should be(0)
         allGames.length should be(0)
         returnedPublisherSeq.length should be(0)
         allGenres.length should be(0)
+        returnedCommentSeq.length should be(0)
+        allUsers.length should be(0)
+
 
     }
 
@@ -847,8 +904,10 @@ class DatabaseTest extends AnyFunSuite
         val genres: Genres = new Genres()
         val publishers: Publishers = new Publishers()
         val games: Games = new Games()
+        val users: Users = new Users()
+        val comments: Comments = new Comments()
 
-        val insertdata : InsertData = new InsertData(developers,genres,publishers,games)
+        val insertdata : InsertData = new InsertData(developers,genres,publishers,games,users,comments)
         insertdata.ClearDB()
         insertdata.FillDevelopers()
 
@@ -864,8 +923,10 @@ class DatabaseTest extends AnyFunSuite
         val genres: Genres = new Genres()
         val publishers: Publishers = new Publishers()
         val games: Games = new Games()
+        val users: Users = new Users()
+        val comments: Comments = new Comments()
 
-        val insertdata : InsertData = new InsertData(developers,genres,publishers,games)
+        val insertdata : InsertData = new InsertData(developers,genres,publishers,games,users,comments)
         insertdata.ClearDB()
         insertdata.FillPublishers()
 
@@ -880,8 +941,10 @@ class DatabaseTest extends AnyFunSuite
         val genres: Genres = new Genres()
         val publishers: Publishers = new Publishers()
         val games: Games = new Games()
+        val users: Users = new Users()
+        val comments: Comments = new Comments()
 
-        val insertdata : InsertData = new InsertData(developers,genres,publishers,games)
+        val insertdata : InsertData = new InsertData(developers,genres,publishers,games,users,comments)
         insertdata.ClearDB()
         insertdata.FillGenre()
 
@@ -897,8 +960,10 @@ class DatabaseTest extends AnyFunSuite
         val genres: Genres = new Genres()
         val publishers: Publishers = new Publishers()
         val games: Games = new Games()
+        val users: Users = new Users()
+        val comments: Comments = new Comments()
 
-        val insertdata : InsertData = new InsertData(developers,genres,publishers,games)
+        val insertdata : InsertData = new InsertData(developers,genres,publishers,games,users,comments)
         insertdata.ClearDB()
         insertdata.FillGame()
 
@@ -906,6 +971,44 @@ class DatabaseTest extends AnyFunSuite
         var allGames: Seq[Game] = Await.result(getGamesFuture, Duration.Inf)
 
         allGames.length should be(44)
+    }
+
+    test("InsertData.FillUser should add 5 Users")
+    {
+        val developers: Developers = new Developers()
+        val genres: Genres = new Genres()
+        val publishers: Publishers = new Publishers()
+        val games: Games = new Games()
+        val users: Users = new Users()
+        val comments: Comments = new Comments()
+
+        val insertdata : InsertData = new InsertData(developers,genres,publishers,games,users,comments)
+        insertdata.ClearDB()
+        insertdata.FillUser()
+
+        val getUsersFuture: Future[Seq[User]] = users.getAllUsers()
+        var allUsers: Seq[User] = Await.result(getUsersFuture, Duration.Inf)
+
+        allUsers.length should be(5)
+    }
+
+    test("InsertData.FillComment should add 20 Comments")
+    {
+        val developers: Developers = new Developers()
+        val genres: Genres = new Genres()
+        val publishers: Publishers = new Publishers()
+        val games: Games = new Games()
+        val users: Users = new Users()
+        val comments: Comments = new Comments()
+
+        val insertdata : InsertData = new InsertData(developers,genres,publishers,games,users,comments)
+        insertdata.ClearDB()
+        insertdata.FillComment()
+
+        val getCommentsFuture: Future[Seq[Comment]] = comments.getAllComments()
+        var allComments: Seq[Comment] = Await.result(getCommentsFuture, Duration.Inf)
+
+        allComments.length should be(20)
     }
 
 

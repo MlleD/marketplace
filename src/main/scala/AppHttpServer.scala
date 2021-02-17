@@ -51,8 +51,10 @@ object AppHttpServer extends LazyLogging {
         var publishers = new Publishers()
         var developers = new Developers()
         var games = new Games()
+        var comments = new Comments()
 
-        var insertdata = new InsertData(developers,genres,publishers,games)
+        
+        var insertdata = new InsertData(developers, genres, publishers, games, users, comments)
         logger.info("I got a request to clear the DB.")
         insertdata.ClearDB()
         logger.info("I got a request to fill the developer table.")
@@ -63,9 +65,13 @@ object AppHttpServer extends LazyLogging {
         insertdata.FillGenre()
         logger.info("I got a request to fill the game table.")
         insertdata.FillGame()
+        logger.info("I got a request to fill the user table.")
+        insertdata.FillUser()
+        logger.info("I got a request to fill the comment table.")
+        insertdata.FillComment()
        
         
-        val routes = new Routes(users , developers , genres, publishers, games ) ; // , genres, publishers, games)
+        val routes = new Routes(users , developers , genres, publishers, games, comments) ; // , genres, publishers, games)
 
         val bindingFuture = Http().newServerAt("0.0.0.0", 8080).bind(routes.routes)
 

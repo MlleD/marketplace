@@ -39,7 +39,7 @@ class RunMigrations(db: Database) extends LazyLogging {
         //new Migration06CreateTableReseller(db),
         //new Migration07CreateTableProductReseller(db),
         //new Migration08CreateTableOrderStatus(db),
-        //new Migration10CreateTableComment(db),
+        new Migration10CreateTableComment(db),
         //new Migration11CreateTableOrder(db),
         //new Migration12CreateTableOrderLine(db),
         new Migration13CreateTableDeveloper(db),
