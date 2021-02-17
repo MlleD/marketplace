@@ -53,10 +53,15 @@ object AppHttpServer extends LazyLogging {
         var games = new Games()
 
         var insertdata = new InsertData(developers,genres,publishers,games)
+        logger.info("I got a request to clear the DB.")
         insertdata.ClearDB()
+        logger.info("I got a request to fill the developer table.")
         insertdata.FillDevelopers()
+        logger.info("I got a request to fill the publisher table.")
         insertdata.FillPublishers()
+        logger.info("I got a request to fill the genre table.")
         insertdata.FillGenre()
+        logger.info("I got a request to fill the game table.")
         insertdata.FillGame()
        
         
