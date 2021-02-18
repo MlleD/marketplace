@@ -19,10 +19,28 @@ class Routes(users: Users , developers: Developers , genres: Genres, publishers:
         val genreSeqFuture : Future[Seq[Genre]] = genres.getAllGenres()
         genreSeqFuture.map[ToResponseMarshallable] {
             case genreSeq =>
-                val gameSeqFuture: Future[Seq[Game]] = games.getAllGames()
-                gameSeqFuture.map(gameSeq => html.home(gameSeq, genreSeq))
+                //val gameSeqFuture: Future[Seq[Game]] = games.getAllGames()
+                val devSeqFuture : Future[Seq[Developer]] = developers.getAllDevelopers()
+                devSeqFuture.map[ToResponseMarshallable] {
+                    case devSeq =>
+                        val gameSeqFuture: Future[Seq[Game]] = games.getAllGames()
+                        //gameSeqFuture.map(gameSeq => html.home(gameSeq , genreSeq, devSeq))
+                        val publisherSeqFuture : Future[Seq[Publisher]] = publishers.getAllPublishers()
+                        publisherSeqFuture.map[ToResponseMarshallable] {
+                            case publisherSeq =>
+                                //val gameSeqFuture: Future[Seq[Game]] = games.getAllGames()
+                                gameSeqFuture.map(gameSeq => html.home(gameSeq , genreSeq, devSeq , publisherSeq ) )
+                }
+                //gameSeqFuture.map(gameSeq => html.home(gameSeq, genreSeq , ))
         }
-    }
+        /*val devSeqFuture : Future[Seq[Developer]] = developers.getAllDevelopers()
+        devSeqFuture.map[ToResponseMarshallable] {
+            case devSeq =>
+                val gameSeqFuture: Future[Seq[Game]] = games.getAllGames()
+                gameSeqFuture.map(gameSeq => html.home(gameSeq, devSeq))
+        }*/
+        }
+    }   
 
     def getSignup() = {
         logger.info("I got a request for signup.")

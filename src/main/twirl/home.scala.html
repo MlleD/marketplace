@@ -1,4 +1,4 @@
-@(prods: Seq[poca.Game], genres : Seq[poca.Genre])
+@(prods: Seq[poca.Game], genres : Seq[poca.Genre] , developers : Seq[poca.Developer] , publishers : Seq[poca.Publisher])
 
 <!doctype html>
 <html>
@@ -130,7 +130,6 @@
             }
             .dropdown {
               width: inherit;
-              float: left;
               overflow: hidden;
             }
             .dropdown .dropbtn {
@@ -146,7 +145,7 @@
               overflow: scroll;
               max-height: 20%;
               display: none;
-              position: absolute;
+              position: relative;
               background-color: #f9f9f9;
               box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
               
@@ -192,13 +191,38 @@
               <h1> Side Bar </h1>
               <!-- Side navigation -->
               <div class="sidenav">
-                <a href="publisher">Publisher</a>
-                <a href="developer">Developer</a>
+                <br><br>
+                <div class="dropdown">
+                  <div class="dropbtn">
+                    <a href="publisher">Publisher</a>
+                  </div>
+                  <div class="dropdown-content">
+                    @for( p <- publishers) {
+                      
+                        <a href="/publisher?name=@p.name">@p.name</a>
+                      
+                    }
+                  </div>
+                  
+                </div>
+                <br><br>
+                <div class="dropdown">
+                  <div class="dropbtn">
+                    <a href="developer">Developer</a>
+                  </div>
+                  <div class="dropdown-content">
+                    @for( developer <- developers) {
+                      
+                        <a href="/developer?id=@developer.id">@developer.name</a>
+                      
+                    }
+                  </div>
+                </div>
+                <br><br>
                 <div class="dropdown">
                   <div class="dropbtn">
                     <a href="genres">Catégories</a>
                   </div>
-                  
                   <div class="dropdown-content">
                     @for( genre <- genres) {
                       
@@ -206,7 +230,6 @@
                       
                     }
                   </div>
-                  
                 </div>
               
                 
