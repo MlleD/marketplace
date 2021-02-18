@@ -37,8 +37,20 @@ class RoutesTest extends AnyFunSuite with Matchers with MockFactory with Scalate
             Genre(id=2, name="genre2"),
             Genre(id=3, name="genre3")
         )
+        val developerList = List(
+            Developer(id=1, name="dev1"),
+            Developer(id=2, name="dev2"),
+            Developer(id=3, name="dev3")
+        )
+        val publisherList = List(
+            Publisher(id=1, name="pub1"),
+            Publisher(id=2, name="pub2"),
+            Publisher(id=3, name="pub3")
+        )
         (mockGenres.getAllGenres _).expects().returns(Future(genreList)).once()
         (mockGames.getAllGames _).expects().returns(Future(gameList)).once()
+        (mockDevelopers.getAllDevelopers _).expects().returns(Future(developerList)).once()
+        (mockPublishers.getAllPublishers _).expects().returns(Future(publisherList)).once()
 
 
         
