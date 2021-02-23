@@ -53,26 +53,6 @@ type OrderLine_t = (Int, Int, Int, Int, Double, Int)
                     }
 
                 })
-                /*
-
-                val existingCommentsFuture = getCommentsByIdComment(idproduct, comment)
-
-                existingCommentsFuture.flatMap(existingComments => {
-                    if (existingComments.isEmpty) {
-
-                        val newComment = Comment(id, iduser=iduser, idproduct=idproduct, comment=comment, nbstars=nbstars, verify=false)
-                        val newCommentAsTuple: Comment_t = Comment.unapply(newComment).get
-
-                        val dbio: DBIO[Int] = comments += newCommentAsTuple
-                        var resultFuture: Future[Int] = db.run(dbio)
-
-                        // We do not care about the Int value
-                        resultFuture.map(_ => ())
-                    } else {
-                        throw new NameAlreadyExistsException(s"A developer with name '$id' already exists.")
-                    }
-                })
-                */
 
 
                 
@@ -80,16 +60,6 @@ type OrderLine_t = (Int, Int, Int, Int, Double, Int)
 
     def getCommentsById(idproduct: Int): Future[Seq[Comment]] = {
         val query = comments.filter(_.idproduct === idproduct)
-
-        val commentListFuture = db.run(query.result)
-
-        commentListFuture.map((commentList: Seq[Comment_t]) => {
-            commentList.map(Comment tupled _)
-        })
-    }
-
-    def getCommentsByIdComment(idproduct: Int, comment: String): Future[Seq[Comment]] = {
-        val query = comments.filter(x => (x.idproduct === idproduct && x.comment === comment))
 
         val commentListFuture = db.run(query.result)
 
