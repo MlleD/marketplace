@@ -39,7 +39,7 @@ type Order_t = (Int, Int, Timestamp)
     }
 
 
-        def getOrderById(id: Int): Future[Option[Order]] = {
+    def getOrderById(id: Int): Future[Option[Order]] = {
         val query = orders.filter(_.id === id)
 
         val devListFuture = db.run(query.result)
@@ -50,6 +50,16 @@ type Order_t = (Int, Int, Timestamp)
                 case 1 => Some(Order tupled devList.head)
                 case _ => throw new InconsistentStateException(s"Order $id is linked to several Products in database!")
             }
+        })
+    }
+
+    def getOrderByIdUser(iduser: Int): Future[Seq[Order]] = {
+        val query = orders.filter(_.iduser === iduser)
+
+        val orderListFuture = db.run(query.result)
+
+        orderListFuture.map((orderList: Seq[Order_t]) => {
+            orderList.map(Order tupled _)
         })
     }
 

@@ -51,9 +51,10 @@ object AppHttpServer extends LazyLogging {
         var publishers = new Publishers()
         var developers = new Developers()
         var games = new Games()
-        var comments = new Comments()
         var orders = new Orders()
         var orderLines = new OrderLines()
+        var comments = new Comments(orders, orderLines)
+        
 
         
         var insertdata = new InsertData(developers, genres, publishers, games, users, comments, orders, orderLines)
@@ -69,12 +70,13 @@ object AppHttpServer extends LazyLogging {
         insertdata.FillGame()
         logger.info("I got a request to fill the user table.")
         insertdata.FillUser()
-        logger.info("I got a request to fill the comment table.")
-        insertdata.FillComment()
         logger.info("I got a request to fill the order table.")
         insertdata.FillOrder()
         logger.info("I got a request to fill the orderLine table.")
         insertdata.FillOrderLine()
+        logger.info("I got a request to fill the comment table.")
+        insertdata.FillComment()
+
        
         
         val routes = new Routes(users , developers , genres, publishers, games, comments) ; // , genres, publishers, games)
