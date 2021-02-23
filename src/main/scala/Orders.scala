@@ -33,7 +33,7 @@ type Order_t = (Int, Int, Timestamp)
                 // We do not care about the Int value
                 resultFuture.map(_ => ())
             } else {
-                throw new IdAlreadyExistsException(s"A Order with name '$id' already exists.")
+                throw new IdAlreadyExistsException(s"An Order with id '$id' already exists.")
             }
         })
     }
