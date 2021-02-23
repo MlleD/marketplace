@@ -1062,9 +1062,10 @@ class DatabaseTest extends AnyFunSuite
         val games: Games = new Games()
         val developers: Developers = new Developers()
         val users: Users = new Users()
-        val comments: Comments = new Comments()
         val orders: Orders = new Orders()
         val orderLines: OrderLines = new OrderLines()
+        val comments: Comments = new Comments(orders, orderLines)
+        
 
         val insertdata : InsertData = new InsertData(developers,genres,publishers,games, users, comments, orders, orderLines)
         insertdata.ClearDB()
@@ -1113,9 +1114,9 @@ class DatabaseTest extends AnyFunSuite
         val publishers: Publishers = new Publishers()
         val games: Games = new Games()
         val users: Users = new Users()
-        val comments: Comments = new Comments()
         val orders: Orders = new Orders()
         val orderLines: OrderLines = new OrderLines()
+        val comments: Comments = new Comments(orders, orderLines)
 
 
         val insertdata : InsertData = new InsertData(developers,genres,publishers,games,users,comments, orders, orderLines)
@@ -1135,9 +1136,9 @@ class DatabaseTest extends AnyFunSuite
         val publishers: Publishers = new Publishers()
         val games: Games = new Games()
         val users: Users = new Users()
-        val comments: Comments = new Comments()
         val orders: Orders = new Orders()
         val orderLines: OrderLines = new OrderLines()
+        val comments: Comments = new Comments(orders, orderLines)
 
 
         val insertdata : InsertData = new InsertData(developers,genres,publishers,games,users,comments, orders, orderLines)
@@ -1156,9 +1157,9 @@ class DatabaseTest extends AnyFunSuite
         val publishers: Publishers = new Publishers()
         val games: Games = new Games()
         val users: Users = new Users()
-        val comments: Comments = new Comments()
         val orders: Orders = new Orders()
         val orderLines: OrderLines = new OrderLines()
+        val comments: Comments = new Comments(orders, orderLines)
 
 
         val insertdata : InsertData = new InsertData(developers,genres,publishers,games,users,comments, orders, orderLines)
@@ -1178,9 +1179,9 @@ class DatabaseTest extends AnyFunSuite
         val publishers: Publishers = new Publishers()
         val games: Games = new Games()
         val users: Users = new Users()
-        val comments: Comments = new Comments()
         val orders: Orders = new Orders()
         val orderLines: OrderLines = new OrderLines()
+        val comments: Comments = new Comments(orders, orderLines)
 
 
         val insertdata : InsertData = new InsertData(developers,genres,publishers,games,users,comments, orders, orderLines)
@@ -1200,9 +1201,9 @@ class DatabaseTest extends AnyFunSuite
         val publishers: Publishers = new Publishers()
         val games: Games = new Games()
         val users: Users = new Users()
-        val comments: Comments = new Comments()
         val orders: Orders = new Orders()
         val orderLines: OrderLines = new OrderLines()
+        val comments: Comments = new Comments(orders, orderLines)
 
 
         val insertdata : InsertData = new InsertData(developers,genres,publishers,games,users,comments, orders, orderLines)
@@ -1222,9 +1223,9 @@ class DatabaseTest extends AnyFunSuite
         val publishers: Publishers = new Publishers()
         val games: Games = new Games()
         val users: Users = new Users()
-        val comments: Comments = new Comments()
         val orders: Orders = new Orders()
         val orderLines: OrderLines = new OrderLines()
+        val comments: Comments = new Comments(orders, orderLines)
 
 
         val insertdata : InsertData = new InsertData(developers,genres,publishers,games,users,comments, orders, orderLines)
@@ -1244,9 +1245,9 @@ class DatabaseTest extends AnyFunSuite
         val publishers: Publishers = new Publishers()
         val games: Games = new Games()
         val users: Users = new Users()
-        val comments: Comments = new Comments()
         val orders: Orders = new Orders()
         val orderLines: OrderLines = new OrderLines()
+        val comments: Comments = new Comments(orders, orderLines)
 
 
         val insertdata : InsertData = new InsertData(developers,genres,publishers,games,users,comments, orders, orderLines)
@@ -1266,9 +1267,9 @@ class DatabaseTest extends AnyFunSuite
         val publishers: Publishers = new Publishers()
         val games: Games = new Games()
         val users: Users = new Users()
-        val comments: Comments = new Comments()
         val orders: Orders = new Orders()
         val orderLines: OrderLines = new OrderLines()
+        val comments: Comments = new Comments(orders, orderLines)
 
 
         val insertdata : InsertData = new InsertData(developers,genres,publishers,games,users,comments, orders, orderLines)

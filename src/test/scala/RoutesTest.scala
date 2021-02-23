@@ -510,7 +510,8 @@ class RoutesTest extends AnyFunSuite with Matchers with MockFactory with Scalate
             iduser = 1,
             idproduct = 1,
             comment = "fake comment",
-            nbstars = 1
+            nbstars = 1,
+            verify = false
         )
     )
 

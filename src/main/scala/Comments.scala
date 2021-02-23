@@ -24,8 +24,19 @@ type OrderLine_t = (Int, Int, Int, Int, Double, Int)
     def createComment(id: Int, iduser: Int, idproduct: Int, comment: String, nbstars: Int): Future[Unit] = {
                 val orderListFuture : Future[Seq[Order]] = orders.getOrderByIdUser(iduser)
 
-                orderListFuture.map((orderList: Seq[Order]) => {
-                    orderList.map(o => 
+                orderListFuture.flatMap((orderList: Seq[Order]) => {
+                    if(orderList.isEmpty){
+                                            val newComment = Comment(id, iduser=iduser, idproduct=idproduct, comment=comment, nbstars=nbstars, verify=false)
+                                            val newCommentAsTuple: Comment_t = Comment.unapply(newComment).get
+
+                                            val dbio: DBIO[Int] = comments += newCommentAsTuple
+                                            var resultFuture: Future[Int] = db.run(dbio)
+
+                                            // We do not care about the Int value
+                                            resultFuture.map(_ => ())
+                    }else{
+                            orderListFuture.map((orderList: Seq[Order]) => {
+                                orderList.map(o => 
                                         orderLines.getOrderLineById(o.id, idproduct, 1).map((ol: Option[OrderLine]) => {
                                             val verify = if (ol == None) false else true
                                             val newComment = Comment(id, iduser=iduser, idproduct=idproduct, comment=comment, nbstars=nbstars, verify=verify)
@@ -37,7 +48,9 @@ type OrderLine_t = (Int, Int, Int, Int, Double, Int)
                                             // We do not care about the Int value
                                             resultFuture.map(_ => ())
                                         })
-                    )
+                                )
+                            })
+                    }
 
                 })
                 /*
