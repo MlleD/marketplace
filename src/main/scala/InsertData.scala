@@ -11,8 +11,12 @@ import org.slf4j.LoggerFactory
 import com.typesafe.config.{ConfigFactory, ConfigValueFactory}
 import slick.jdbc.PostgresProfile.api._
 import org.postgresql.util.PSQLException
+import java.sql.Timestamp
+import java.time.format.DateTimeFormatter
+import java.time.ZoneId
+import java.time.LocalDateTime
 
-class InsertData ( developers: Developers , genres: Genres, publishers: Publishers, games: Games, users: Users, comments: Comments ) {
+class InsertData ( developers: Developers , genres: Genres, publishers: Publishers, games: Games, users: Users, comments: Comments, orders: Orders, orderLines: OrderLines ) {
 	val db = MyDatabase.db
 
 	def ClearDB(){
@@ -39,6 +43,16 @@ class InsertData ( developers: Developers , genres: Genres, publishers: Publishe
 		val Resetcomment = sqlu"TRUNCATE TABLE comment ;ALTER SEQUENCE comment_id_seq MINVALUE 0 RESTART WITH 0 ;"
 	    val commentFuture: Future[Int] = db.run(Resetcomment)
 	    val comment = Await.result(commentFuture, Duration.Inf)
+/*
+		val Resetorder = sqlu"TRUNCATE TABLE order ;ALTER SEQUENCE order_id_seq MINVALUE 0 RESTART WITH 0 ;"
+	    val orderFuture: Future[Int] = db.run(Resetorder)
+	    val order = Await.result(orderFuture, Duration.Inf)
+
+
+		val ResetorderLine = sqlu"TRUNCATE TABLE orderLine ;ALTER SEQUENCE order_line_id_seq MINVALUE 0 RESTART WITH 0 ;"
+	    val orderLineFuture: Future[Int] = db.run(ResetorderLine)
+	    val orderLine = Await.result(orderLineFuture, Duration.Inf)
+		*/
 
 	}
 
@@ -168,6 +182,21 @@ class InsertData ( developers: Developers , genres: Genres, publishers: Publishe
 		Await.result(users.createUser(5, "Carlita", "Walla", "CW@gmail.com", "root", "addressCW", "0222222222", "root"), Duration.Inf)
 	}
 
+	def FillOrder(){
+		val fmt = DateTimeFormatter.ofPattern("uuuu-MM-dd HH:mm:ss")
+		val time = LocalDateTime.now(ZoneId.of("America/New_York")).format(fmt)
+		Await.result(orders.createOrder(1,3, Timestamp.valueOf(time)), Duration.Inf)
+		Await.result(orders.createOrder(2,1, Timestamp.valueOf(time)), Duration.Inf)
+	}
+
+
+	def FillOrderLine(){
+		Await.result(orderLines.createOrderLine(1, 0, 1, 1, 10.0, 1), Duration.Inf)
+		Await.result(orderLines.createOrderLine(1, 2, 1, 1, 10.0, 1), Duration.Inf)
+		Await.result(orderLines.createOrderLine(2, 0, 1, 1, 10.0, 1), Duration.Inf)
+		Await.result(orderLines.createOrderLine(2, 4, 1, 1, 10.0, 1), Duration.Inf)
+	}
+
 	def FillComment(){
 		Await.result(comments.createComment(1, 1, 0, "Le jeu est bien mais la.cartouche bug souvent.", 3), Duration.Inf)
 		Await.result(comments.createComment(2, 1, 0, "Juste une tuerie ce jeu", 5), Duration.Inf)
@@ -189,7 +218,6 @@ class InsertData ( developers: Developers , genres: Genres, publishers: Publishe
 		Await.result(comments.createComment(18, 2, 74, "Très bon jeu arrivée en avance bien emballé bon état fonctionne très bien", 5), Duration.Inf)
 		Await.result(comments.createComment(19, 3, 74, "Livré sous blister envoie du code cadeau par mail", 5), Duration.Inf)
 		Await.result(comments.createComment(20, 2, 136, "J’adore ! Enfin un jeu a monde ouvert.", 5), Duration.Inf)
-
 	}
 
 }

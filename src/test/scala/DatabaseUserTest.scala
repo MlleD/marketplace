@@ -9,9 +9,13 @@ import com.typesafe.scalalogging.LazyLogging
 import com.typesafe.config.{ConfigFactory}
 import ch.qos.logback.classic.{Level, Logger}
 import org.slf4j.LoggerFactory
+import java.sql.Timestamp
+import java.time.format.DateTimeFormatter
+import java.time.ZoneId
+import java.time.LocalDateTime
 import poca.{
     MyDatabase,
-    Users, User, Games, Game, Developers, Developer, Genres, Genre, Publishers, Publisher, Comments, Comment, InsertData,
+    Users, User, Games, Game, Developers, Developer, Genres, Genre, Publishers, Publisher, Comments, Comment, Order, Orders, OrderLine, OrderLines, InsertData,
     NotSamePasswordException, EmailAlreadyExistsException, NameAlreadyExistsException,
     RunMigrations}
 
@@ -858,15 +862,212 @@ class DatabaseTest extends AnyFunSuite
         returnedPublisherSeq(1) should be(fake_publisher2)
     }
 
+    // -------------------------- ORDER ---------------------------------
+
+    test("Orders.createOrder should create a new order") {
+        val fmt = DateTimeFormatter.ofPattern("uuuu-MM-dd HH:mm:ss")
+		val time = LocalDateTime.now(ZoneId.of("America/New_York")).format(fmt)
+        val orders: Orders = new Orders()
+        val fake_order: Order = new Order(
+            1, 1, Timestamp.valueOf(time)
+        )
+        val createOrderFuture: Future[Unit] = orders.createOrder(
+            fake_order.id, fake_order.iduser, fake_order.date
+        )
+        Await.ready(createOrderFuture, Duration.Inf)
+
+        // Check that the future succeeds
+        createOrderFuture.value should be(Some(Success(())))
+
+        val getOrdersFuture: Future[Seq[Order]] = orders.getAllOrders()
+        var allOrders: Seq[Order] = Await.result(getOrdersFuture, Duration.Inf)
+
+        allOrders.length should be(1)
+        allOrders.head should be(fake_order)
+    }
+
+
+    test("Orders.getOrderById should return no id if it does not exist") {
+        val fmt = DateTimeFormatter.ofPattern("uuuu-MM-dd HH:mm:ss")
+		val time = LocalDateTime.now(ZoneId.of("America/New_York")).format(fmt)
+        val orders: Orders = new Orders()
+        val fake_order: Order = new Order(
+            1, 1, Timestamp.valueOf(time)
+        )
+        val createOrderFuture: Future[Unit] = orders.createOrder(
+            fake_order.id, fake_order.iduser, fake_order.date
+        )
+        Await.ready(createOrderFuture, Duration.Inf)
+
+        // Check that the future succeeds
+        createOrderFuture.value should be(Some(Success(())))
+
+        val returnedOrdersFuture: Future[Option[Order]] = orders.getOrderById(0)
+        var returnedOrder: Option[Order] = Await.result(returnedOrdersFuture, Duration.Inf)
+
+        returnedOrder should be(None)
+    }
+
+    test("Orders.getOrderById should return a order") {
+        val fmt = DateTimeFormatter.ofPattern("uuuu-MM-dd HH:mm:ss")
+		val time = LocalDateTime.now(ZoneId.of("America/New_York")).format(fmt)
+        val orders: Orders = new Orders()
+        val fake_order: Order = new Order(
+            1, 1, Timestamp.valueOf(time)
+        )
+        val createOrderFuture: Future[Unit] = orders.createOrder(
+            fake_order.id, fake_order.iduser, fake_order.date
+        )
+        Await.ready(createOrderFuture, Duration.Inf)
+
+        // Check that the future succeeds
+        createOrderFuture.value should be(Some(Success(())))
+
+        val returnedOrdersFuture: Future[Option[Order]] = orders.getOrderById(1)
+        var returnedOrder: Option[Order] = Await.result(returnedOrdersFuture, Duration.Inf)
+
+        returnedOrder match {
+            case Some(order) => order should be(fake_order)
+            case None => fail("Should return a order.")
+        }
+    }
+
+
+    test("Orders.getAllOrders should return a list of orders") {
+        val fmt = DateTimeFormatter.ofPattern("uuuu-MM-dd HH:mm:ss")
+		val time = LocalDateTime.now(ZoneId.of("America/New_York")).format(fmt)
+        val orders: Orders = new Orders()
+        val fake_order: Order = new Order(
+            1, 1, Timestamp.valueOf(time)
+        )
+        val createOrderFuture: Future[Unit] = orders.createOrder(
+            fake_order.id, fake_order.iduser, fake_order.date
+        )
+        Await.ready(createOrderFuture, Duration.Inf)
+
+        val fake_order2: Order = new Order(
+            2, 1, Timestamp.valueOf(time)
+        )
+        val createAnotherOrderFuture: Future[Unit] = orders.createOrder(
+            fake_order2.id, fake_order2.iduser, fake_order2.date
+        )
+        Await.ready(createAnotherOrderFuture, Duration.Inf)
+
+
+        val returnedOrderSeqFuture: Future[Seq[Order]] = orders.getAllOrders()
+        val returnedOrderSeq: Seq[Order] = Await.result(returnedOrderSeqFuture, Duration.Inf)
+
+        returnedOrderSeq.length should be(2)
+        returnedOrderSeq(0) should be(fake_order)
+        returnedOrderSeq(1) should be(fake_order2)
+    }
+
+        // -------------------------- ORDERLINE ---------------------------------
+
+    test("OrderLines.createOrderLine should create a new orderLine") {
+        val orderLines: OrderLines = new OrderLines()
+        val fake_orderLine: OrderLine = new OrderLine(
+            1, 0, 1, 1, 10.0, 1
+        )
+        val createOrderLineFuture: Future[Unit] = orderLines.createOrderLine(
+            fake_orderLine.idorder, fake_orderLine.idproduct, fake_orderLine.idreseller, fake_orderLine.idstatus, fake_orderLine.price, fake_orderLine.quantity
+        )
+        Await.ready(createOrderLineFuture, Duration.Inf)
+
+        // Check that the future succeeds
+        createOrderLineFuture.value should be(Some(Success(())))
+
+        val getOrderLinesFuture: Future[Seq[OrderLine]] = orderLines.getAllOrderLines()
+        var allOrderLines: Seq[OrderLine] = Await.result(getOrderLinesFuture, Duration.Inf)
+
+        allOrderLines.length should be(1)
+        allOrderLines.head should be(fake_orderLine)
+    }
+
+
+    test("OrderLines.getOrderLineById should return no id if it does not exist") {
+        val orderLines: OrderLines = new OrderLines()
+        val fake_orderLine: OrderLine = new OrderLine(
+            1, 0, 1, 1, 10.0, 1
+        )
+        val createOrderLineFuture: Future[Unit] = orderLines.createOrderLine(
+            fake_orderLine.idorder, fake_orderLine.idproduct, fake_orderLine.idreseller, fake_orderLine.idstatus, fake_orderLine.price, fake_orderLine.quantity
+        )
+        Await.ready(createOrderLineFuture, Duration.Inf)
+
+        // Check that the future succeeds
+        createOrderLineFuture.value should be(Some(Success(())))
+
+        val returnedOrderLinesFuture: Future[Option[OrderLine]] = orderLines.getOrderLineById(0, 0, 1)
+        var returnedOrderLine: Option[OrderLine] = Await.result(returnedOrderLinesFuture, Duration.Inf)
+
+        returnedOrderLine should be(None)
+    }
+
+    test("OrderLines.getOrderLineById should return a orderLine") {
+        val orderLines: OrderLines = new OrderLines()
+        val fake_orderLine: OrderLine = new OrderLine(
+            1, 0, 1, 1, 10.0, 1
+        )
+        val createOrderLineFuture: Future[Unit] = orderLines.createOrderLine(
+            fake_orderLine.idorder, fake_orderLine.idproduct, fake_orderLine.idreseller, fake_orderLine.idstatus, fake_orderLine.price, fake_orderLine.quantity
+        )
+        Await.ready(createOrderLineFuture, Duration.Inf)
+
+        // Check that the future succeeds
+        createOrderLineFuture.value should be(Some(Success(())))
+
+        val returnedOrderLinesFuture: Future[Option[OrderLine]] = orderLines.getOrderLineById(1, 0, 1)
+        var returnedOrderLine: Option[OrderLine] = Await.result(returnedOrderLinesFuture, Duration.Inf)
+
+        returnedOrderLine match {
+            case Some(orderLine) => orderLine should be(fake_orderLine)
+            case None => fail("Should return a orderLine.")
+        }
+    }
+
+
+    test("OrderLines.getAllOrderLines should return a list of orderLines") {
+        val orderLines: OrderLines = new OrderLines()
+        val fake_orderLine: OrderLine = new OrderLine(
+            1, 0, 1, 1, 10.0, 1
+        )
+        val createOrderLineFuture: Future[Unit] = orderLines.createOrderLine(
+            fake_orderLine.idorder, fake_orderLine.idproduct, fake_orderLine.idreseller, fake_orderLine.idstatus, fake_orderLine.price, fake_orderLine.quantity
+        )
+        Await.ready(createOrderLineFuture, Duration.Inf)
+
+        val fake_orderLine2: OrderLine = new OrderLine(
+            1, 1, 1, 1, 10.0, 1
+        )
+        val createAnotherOrderLineFuture: Future[Unit] = orderLines.createOrderLine(
+            fake_orderLine2.idorder, fake_orderLine2.idproduct, fake_orderLine2.idreseller, fake_orderLine2.idstatus, fake_orderLine2.price, fake_orderLine2.quantity
+        )
+        Await.ready(createAnotherOrderLineFuture, Duration.Inf)
+
+
+        val returnedOrderLineSeqFuture: Future[Seq[OrderLine]] = orderLines.getAllOrderLines()
+        val returnedOrderLineSeq: Seq[OrderLine] = Await.result(returnedOrderLineSeqFuture, Duration.Inf)
+
+        returnedOrderLineSeq.length should be(2)
+        returnedOrderLineSeq(0) should be(fake_orderLine)
+        returnedOrderLineSeq(1) should be(fake_orderLine2)
+    }
+
+    // -------------------------- DATABASE ---------------------------------
+
     test("InsertData.ClearDB should Clear the DB") {
         val genres: Genres = new Genres()
         val publishers: Publishers = new Publishers()
         val games: Games = new Games()
         val developers: Developers = new Developers()
         val users: Users = new Users()
-        val comments: Comments = new Comments()
+        val orders: Orders = new Orders()
+        val orderLines: OrderLines = new OrderLines()
+        val comments: Comments = new Comments(orders, orderLines)
+        
 
-        val insertdata : InsertData = new InsertData(developers,genres,publishers,games, users, comments)
+        val insertdata : InsertData = new InsertData(developers,genres,publishers,games, users, comments, orders, orderLines)
         insertdata.ClearDB()
 
         val returnedPublisherSeqFuture: Future[Seq[Publisher]] = publishers.getAllPublishers()
@@ -887,6 +1088,12 @@ class DatabaseTest extends AnyFunSuite
         val getUsersFuture: Future[Seq[User]] = users.getAllUsers()
         var allUsers: Seq[User] = Await.result(getUsersFuture, Duration.Inf)
 
+        val getOrdersFuture: Future[Seq[Order]] = orders.getAllOrders()
+        var allOrders: Seq[Order] = Await.result(getOrdersFuture, Duration.Inf)
+
+        val getOrderLinesFuture: Future[Seq[OrderLine]] = orderLines.getAllOrderLines()
+        var allOrderLines: Seq[OrderLine] = Await.result(getOrderLinesFuture, Duration.Inf)
+
         
 
         returnedDeveloperSeq.length should be(0)
@@ -895,6 +1102,8 @@ class DatabaseTest extends AnyFunSuite
         allGenres.length should be(0)
         returnedCommentSeq.length should be(0)
         allUsers.length should be(0)
+        allOrders.length should be(0)
+        allOrderLines.length should be(0)
 
 
     }
@@ -905,9 +1114,12 @@ class DatabaseTest extends AnyFunSuite
         val publishers: Publishers = new Publishers()
         val games: Games = new Games()
         val users: Users = new Users()
-        val comments: Comments = new Comments()
+        val orders: Orders = new Orders()
+        val orderLines: OrderLines = new OrderLines()
+        val comments: Comments = new Comments(orders, orderLines)
 
-        val insertdata : InsertData = new InsertData(developers,genres,publishers,games,users,comments)
+
+        val insertdata : InsertData = new InsertData(developers,genres,publishers,games,users,comments, orders, orderLines)
         insertdata.ClearDB()
         insertdata.FillDevelopers()
 
@@ -924,9 +1136,12 @@ class DatabaseTest extends AnyFunSuite
         val publishers: Publishers = new Publishers()
         val games: Games = new Games()
         val users: Users = new Users()
-        val comments: Comments = new Comments()
+        val orders: Orders = new Orders()
+        val orderLines: OrderLines = new OrderLines()
+        val comments: Comments = new Comments(orders, orderLines)
 
-        val insertdata : InsertData = new InsertData(developers,genres,publishers,games,users,comments)
+
+        val insertdata : InsertData = new InsertData(developers,genres,publishers,games,users,comments, orders, orderLines)
         insertdata.ClearDB()
         insertdata.FillPublishers()
 
@@ -942,9 +1157,12 @@ class DatabaseTest extends AnyFunSuite
         val publishers: Publishers = new Publishers()
         val games: Games = new Games()
         val users: Users = new Users()
-        val comments: Comments = new Comments()
+        val orders: Orders = new Orders()
+        val orderLines: OrderLines = new OrderLines()
+        val comments: Comments = new Comments(orders, orderLines)
 
-        val insertdata : InsertData = new InsertData(developers,genres,publishers,games,users,comments)
+
+        val insertdata : InsertData = new InsertData(developers,genres,publishers,games,users,comments, orders, orderLines)
         insertdata.ClearDB()
         insertdata.FillGenre()
 
@@ -961,9 +1179,12 @@ class DatabaseTest extends AnyFunSuite
         val publishers: Publishers = new Publishers()
         val games: Games = new Games()
         val users: Users = new Users()
-        val comments: Comments = new Comments()
+        val orders: Orders = new Orders()
+        val orderLines: OrderLines = new OrderLines()
+        val comments: Comments = new Comments(orders, orderLines)
 
-        val insertdata : InsertData = new InsertData(developers,genres,publishers,games,users,comments)
+
+        val insertdata : InsertData = new InsertData(developers,genres,publishers,games,users,comments, orders, orderLines)
         insertdata.ClearDB()
         insertdata.FillGame()
 
@@ -980,9 +1201,12 @@ class DatabaseTest extends AnyFunSuite
         val publishers: Publishers = new Publishers()
         val games: Games = new Games()
         val users: Users = new Users()
-        val comments: Comments = new Comments()
+        val orders: Orders = new Orders()
+        val orderLines: OrderLines = new OrderLines()
+        val comments: Comments = new Comments(orders, orderLines)
 
-        val insertdata : InsertData = new InsertData(developers,genres,publishers,games,users,comments)
+
+        val insertdata : InsertData = new InsertData(developers,genres,publishers,games,users,comments, orders, orderLines)
         insertdata.ClearDB()
         insertdata.FillUser()
 
@@ -999,9 +1223,12 @@ class DatabaseTest extends AnyFunSuite
         val publishers: Publishers = new Publishers()
         val games: Games = new Games()
         val users: Users = new Users()
-        val comments: Comments = new Comments()
+        val orders: Orders = new Orders()
+        val orderLines: OrderLines = new OrderLines()
+        val comments: Comments = new Comments(orders, orderLines)
 
-        val insertdata : InsertData = new InsertData(developers,genres,publishers,games,users,comments)
+
+        val insertdata : InsertData = new InsertData(developers,genres,publishers,games,users,comments, orders, orderLines)
         insertdata.ClearDB()
         insertdata.FillComment()
 
@@ -1011,5 +1238,48 @@ class DatabaseTest extends AnyFunSuite
         allComments.length should be(20)
     }
 
+    test("InsertData.FillOrder should add 2 Orders")
+    {
+        val developers: Developers = new Developers()
+        val genres: Genres = new Genres()
+        val publishers: Publishers = new Publishers()
+        val games: Games = new Games()
+        val users: Users = new Users()
+        val orders: Orders = new Orders()
+        val orderLines: OrderLines = new OrderLines()
+        val comments: Comments = new Comments(orders, orderLines)
+
+
+        val insertdata : InsertData = new InsertData(developers,genres,publishers,games,users,comments, orders, orderLines)
+        insertdata.ClearDB()
+        insertdata.FillOrder()
+
+        val getOrdersFuture: Future[Seq[Order]] = orders.getAllOrders()
+        var allOrders: Seq[Order] = Await.result(getOrdersFuture, Duration.Inf)
+
+        allOrders.length should be(2)
+    }
+
+    test("InsertData.FillOrderLine should add 4 OrderLine")
+    {
+        val developers: Developers = new Developers()
+        val genres: Genres = new Genres()
+        val publishers: Publishers = new Publishers()
+        val games: Games = new Games()
+        val users: Users = new Users()
+        val orders: Orders = new Orders()
+        val orderLines: OrderLines = new OrderLines()
+        val comments: Comments = new Comments(orders, orderLines)
+
+
+        val insertdata : InsertData = new InsertData(developers,genres,publishers,games,users,comments, orders, orderLines)
+        insertdata.ClearDB()
+        insertdata.FillOrderLine()
+
+        val getOrderLinesFuture: Future[Seq[OrderLine]] = orderLines.getAllOrderLines()
+        var allOrderLines: Seq[OrderLine] = Await.result(getOrderLinesFuture, Duration.Inf)
+
+        allOrderLines.length should be(4)
+    }
 
 }
