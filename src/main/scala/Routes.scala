@@ -11,7 +11,7 @@ import akka.http.scaladsl.marshalling.ToResponseMarshallable
 import TwirlMarshaller._
 
 
-class Routes(users: Users , developers: Developers , genres: Genres, publishers: Publishers, games : Games, comments: Comments ) extends LazyLogging {
+class Routes(users: Users , developers: Developers , genres: Genres, publishers: Publishers, games : Games, comments: Comments, carts: Carts, cartlines: CartLines ) extends LazyLogging {
     implicit val executionContext = scala.concurrent.ExecutionContext.Implicits.global
 
     def getHome() = {
@@ -258,6 +258,18 @@ class Routes(users: Users , developers: Developers , genres: Genres, publishers:
         }
     }
 
+    def viewCart(iduser: Int) = {
+        logger.info("I got a request to get informations of the cart.")
+        val cart = carts.getCartByIdUser(iduser)
+        cart.map[ToResponseMarshallable] {
+            case Some(cart) => {
+                val cartlinesFuture = cartlines.getCartLinesByIdCart(cart.id)
+                cartlinesFuture.map[ToResponseMarshallable]{seq => html.cart(seq)}
+            }
+            case None => html.cart(null)
+        }
+    }
+
     val routes: Route = 
         concat(
             path("home") {
@@ -342,6 +354,13 @@ class Routes(users: Users , developers: Developers , genres: Genres, publishers:
             path("commentaire") {
                 (post & formFieldMap) { fields =>
                     complete(addComment(fields))
+                }
+            },
+            path("cart") {
+                get {
+                    parameter('iduser.as[Int]) {
+                        iduser => complete(viewCart(iduser))
+                    }
                 }
             }
 

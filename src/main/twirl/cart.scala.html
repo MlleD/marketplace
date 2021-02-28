@@ -1,0 +1,18 @@
+@(cartlines: Seq[poca.CartLine])
+
+<!doctype html>
+<html>
+    <head></head>
+    <body>
+        <h2>My cart</h2>
+        <ul>
+            @if(cartlines == null || cartlines.length == 0) {
+            <p>You don't have any desired game.</p>
+            } else {
+                @for(cartline <- cartlines) {
+            <li>Product <a href="/product?id=@cartline.idproduct">@cartline.idproduct</a>, sold by reseller @cartline.idreseller, at unit price @cartline.price : quantity @cartline.quantity</li>
+                }
+            }
+        </ul>
+    </body>
+</html>

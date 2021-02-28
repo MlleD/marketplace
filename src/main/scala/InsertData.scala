@@ -16,7 +16,7 @@ import java.time.format.DateTimeFormatter
 import java.time.ZoneId
 import java.time.LocalDateTime
 
-class InsertData ( developers: Developers , genres: Genres, publishers: Publishers, games: Games, users: Users, comments: Comments, orders: Orders, orderLines: OrderLines ) {
+class InsertData ( developers: Developers , genres: Genres, publishers: Publishers, games: Games, users: Users, comments: Comments, orders: Orders, orderLines: OrderLines, carts: Carts, cartlines: CartLines ) {
 	val db = MyDatabase.db
 
 	def ClearDB(){
@@ -43,6 +43,15 @@ class InsertData ( developers: Developers , genres: Genres, publishers: Publishe
 		val Resetcomment = sqlu"TRUNCATE TABLE comment ;ALTER SEQUENCE comment_id_seq MINVALUE 0 RESTART WITH 0 ;"
 	    val commentFuture: Future[Int] = db.run(Resetcomment)
 	    val comment = Await.result(commentFuture, Duration.Inf)
+
+		val Clearorder = sqlu"""DELETE FROM "order";"""
+		val orderFuture: Future[Int] = db.run(Clearorder)
+		val order = Await.result(orderFuture, Duration.Inf)
+
+		val Clearorderline = sqlu"""DELETE FROM "orderLine";"""
+		val orderlineFuture: Future[Int] = db.run(Clearorderline)
+		val orderline = Await.result(orderlineFuture, Duration.Inf)
+
 /*
 		val Resetorder = sqlu"TRUNCATE TABLE order ;ALTER SEQUENCE order_id_seq MINVALUE 0 RESTART WITH 0 ;"
 	    val orderFuture: Future[Int] = db.run(Resetorder)
@@ -54,6 +63,16 @@ class InsertData ( developers: Developers , genres: Genres, publishers: Publishe
 	    val orderLine = Await.result(orderLineFuture, Duration.Inf)
 		*/
 
+		val Resetcart = sqlu"TRUNCATE TABLE cart; ALTER SEQUENCE cart_id_seq MINVALUE 0 RESTART WITH 0;"
+	    val cartFuture: Future[Int] = db.run(Resetcart)
+	    val cart = Await.result(cartFuture, Duration.Inf)
+
+		val Clearcartline = sqlu"DELETE FROM cartline;"
+		val cartlineFuture: Future[Int] = db.run(Clearcartline)
+		val cartline = Await.result(cartlineFuture, Duration.Inf)
+		/*val Resetcartline = sqlu"TRUNCATE TABLE cartline;ALTER SEQUENCE cartline_id_seq MINVALUE 0 RESTART WITH 0;"
+	    val cartlineFuture: Future[Int] = db.run(Resetcartline)
+	    val cartline = Await.result(cartlineFuture, Duration.Inf)*/
 	}
 
 	def FillDevelopers(){
@@ -220,4 +239,13 @@ class InsertData ( developers: Developers , genres: Genres, publishers: Publishe
 		Await.result(comments.createComment(20, 2, 136, "J’adore ! Enfin un jeu a monde ouvert.", 5), Duration.Inf)
 	}
 
+	def FillCart() {
+		Await.result(carts.createCart(0, 1), Duration.Inf)
+	}
+
+	def FillCartLine() {
+		Await.result(cartlines.createCartLine(0, 136, 1, 59.99, 1), Duration.Inf)
+		Await.result(cartlines.createCartLine(0, 313, 2, 45.0, 1), Duration.Inf)
+		Await.result(cartlines.createCartLine(0, 71, 1, 59.99, 1), Duration.Inf)
+	}
 }
