@@ -54,10 +54,12 @@ object AppHttpServer extends LazyLogging {
         var orders = new Orders()
         var orderLines = new OrderLines()
         var comments = new Comments(orders, orderLines)
+        var carts = new Carts()
+        var cartlines = new CartLines()
         
 
         
-        var insertdata = new InsertData(developers, genres, publishers, games, users, comments, orders, orderLines)
+        var insertdata = new InsertData(developers, genres, publishers, games, users, comments, orders, orderLines, carts, cartlines)
         logger.info("I got a request to clear the DB.")
         insertdata.ClearDB()
         logger.info("I got a request to fill the developer table.")
@@ -76,6 +78,10 @@ object AppHttpServer extends LazyLogging {
         insertdata.FillOrderLine()
         logger.info("I got a request to fill the comment table.")
         insertdata.FillComment()
+        logger.info("I got a request to fill the cart table.")
+        insertdata.FillCart()
+        logger.info("I got a request to fill the cartline table.")
+        insertdata.FillCartLine()
 
        
         
