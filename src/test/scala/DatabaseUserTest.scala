@@ -15,7 +15,7 @@ import java.time.ZoneId
 import java.time.LocalDateTime
 import poca.{
     MyDatabase,
-    Users, User, Games, Game, Developers, Developer, Genres, Genre, Publishers, Publisher, Comments, Comment, Order, Orders, OrderLine, OrderLines, InsertData,
+    Users, User, Games, Game, Developers, Developer, Genres, Genre, Publishers, Publisher, Comments, Comment, Order, Orders, OrderLine, OrderLines, InsertData, Wallet , Wallets ,
     NotSamePasswordException, EmailAlreadyExistsException, NameAlreadyExistsException,
     RunMigrations}
 
@@ -1054,6 +1054,82 @@ class DatabaseTest extends AnyFunSuite
         returnedOrderLineSeq(1) should be(fake_orderLine2)
     }
 
+    // --------- Wallets --------------
+
+
+    test("Wallets.createWallets should create a new Wallet") {
+        val wallets : Wallets = new Wallets()
+        val fake: Wallet = new Wallet(
+            1, 100
+        )
+        val createWalletsFuture: Future[Unit] = wallets.createWallets(
+            fake.id, fake.solde
+        )
+        Await.ready(createWalletsFuture, Duration.Inf)
+
+        // Check that the future succeeds
+        createWalletsFuture.value should be(Some(Success(())))
+
+        val getWalletsFuture: Future[Seq[Wallet]] = wallets.getAllWallets()
+        var allwallets: Seq[Wallet] = Await.result(getWalletsFuture, Duration.Inf)
+
+        allwallets.length should be(1)
+        allwallets.head should be (fake)
+    }
+
+    test("Wallets.getAllWallets should return a list of Wallets") {
+        val wallets : Wallets = new Wallets()
+        val fake: Wallet = new Wallet(
+            1, 100
+        )
+        val createWalletsFuture: Future[Unit] = wallets.createWallets(
+            fake.id, fake.solde
+        )
+        Await.ready(createWalletsFuture, Duration.Inf)
+
+        val fake2: Wallet = new Wallet(
+            2, 200
+        )
+        val createWalletsFuture2: Future[Unit] = wallets.createWallets(
+            fake2.id, fake2.solde
+        )
+        Await.ready(createWalletsFuture2, Duration.Inf)
+
+
+        val getWalletsFuture: Future[Seq[Wallet]] = wallets.getAllWallets()
+        var allwallets: Seq[Wallet] = Await.result(getWalletsFuture, Duration.Inf)
+
+        allwallets.length should be(2)
+        allwallets.head should be (fake)
+        allwallets(0) should be(fake)
+        allwallets(1) should be(fake2)
+    }
+    test("Wallets.getWalletById should return none if id does not exist") {
+        val wallets : Wallets = new Wallets()
+        val fake: Wallet = new Wallet(
+            1, 100
+        )
+        val createWalletsFuture: Future[Unit] = wallets.createWallets(
+            fake.id, fake.solde
+        )
+        Await.ready(createWalletsFuture, Duration.Inf)
+
+        val fake2: Wallet = new Wallet(
+            2, 200
+        )
+        val createWalletsFuture2: Future[Unit] = wallets.createWallets(
+            fake2.id, fake2.solde
+        )
+        Await.ready(createWalletsFuture2, Duration.Inf)
+
+        val getWalletsFuture: Future[Option[Wallet]] = wallets.getSoldeById(3)
+        var allwallets: Option[Wallet] = Await.result(getWalletsFuture, Duration.Inf)
+
+        allwallets should be(None)
+    }
+
+
+
     // -------------------------- DATABASE ---------------------------------
 
     test("InsertData.ClearDB should Clear the DB") {
@@ -1065,9 +1141,10 @@ class DatabaseTest extends AnyFunSuite
         val orders: Orders = new Orders()
         val orderLines: OrderLines = new OrderLines()
         val comments: Comments = new Comments(orders, orderLines)
+        val wallets : Wallets = new Wallets()
         
 
-        val insertdata : InsertData = new InsertData(developers,genres,publishers,games, users, comments, orders, orderLines, null, null)
+        val insertdata : InsertData = new InsertData(developers,genres,publishers,games, users, comments, orders, orderLines, null, null ,null)
         insertdata.ClearDB()
 
         val returnedPublisherSeqFuture: Future[Seq[Publisher]] = publishers.getAllPublishers()
@@ -1094,7 +1171,8 @@ class DatabaseTest extends AnyFunSuite
         val getOrderLinesFuture: Future[Seq[OrderLine]] = orderLines.getAllOrderLines()
         var allOrderLines: Seq[OrderLine] = Await.result(getOrderLinesFuture, Duration.Inf)
 
-        
+        val getWalletsFuture: Future[Seq[Wallet]] = wallets.getAllWallets()
+        var allwallets: Seq[Wallet] = Await.result(getWalletsFuture, Duration.Inf)
 
         returnedDeveloperSeq.length should be(0)
         allGames.length should be(0)
@@ -1104,6 +1182,7 @@ class DatabaseTest extends AnyFunSuite
         allUsers.length should be(0)
         allOrders.length should be(0)
         allOrderLines.length should be(0)
+        allwallets.length should be(0)
 
 
     }
@@ -1119,7 +1198,7 @@ class DatabaseTest extends AnyFunSuite
         val comments: Comments = new Comments(orders, orderLines)
 
 
-        val insertdata : InsertData = new InsertData(developers,genres,publishers,games,users,comments, orders, orderLines, null, null)
+        val insertdata : InsertData = new InsertData(developers,genres,publishers,games,users,comments, orders, orderLines, null, null,null)
         insertdata.ClearDB()
         insertdata.FillDevelopers()
 
@@ -1141,7 +1220,7 @@ class DatabaseTest extends AnyFunSuite
         val comments: Comments = new Comments(orders, orderLines)
 
 
-        val insertdata : InsertData = new InsertData(developers,genres,publishers,games,users,comments, orders, orderLines, null, null)
+        val insertdata : InsertData = new InsertData(developers,genres,publishers,games,users,comments, orders, orderLines, null, null,null)
         insertdata.ClearDB()
         insertdata.FillPublishers()
 
@@ -1162,7 +1241,7 @@ class DatabaseTest extends AnyFunSuite
         val comments: Comments = new Comments(orders, orderLines)
 
 
-        val insertdata : InsertData = new InsertData(developers,genres,publishers,games,users,comments, orders, orderLines, null, null)
+        val insertdata : InsertData = new InsertData(developers,genres,publishers,games,users,comments, orders, orderLines, null, null,null)
         insertdata.ClearDB()
         insertdata.FillGenre()
 
@@ -1184,7 +1263,7 @@ class DatabaseTest extends AnyFunSuite
         val comments: Comments = new Comments(orders, orderLines)
 
 
-        val insertdata : InsertData = new InsertData(developers,genres,publishers,games,users,comments, orders, orderLines, null, null)
+        val insertdata : InsertData = new InsertData(developers,genres,publishers,games,users,comments, orders, orderLines, null, null,null)
         insertdata.ClearDB()
         insertdata.FillGame()
 
@@ -1206,7 +1285,7 @@ class DatabaseTest extends AnyFunSuite
         val comments: Comments = new Comments(orders, orderLines)
 
 
-        val insertdata : InsertData = new InsertData(developers,genres,publishers,games,users,comments, orders, orderLines, null, null)
+        val insertdata : InsertData = new InsertData(developers,genres,publishers,games,users,comments, orders, orderLines, null, null,null)
         insertdata.ClearDB()
         insertdata.FillUser()
 
@@ -1228,7 +1307,7 @@ class DatabaseTest extends AnyFunSuite
         val comments: Comments = new Comments(orders, orderLines)
 
 
-        val insertdata : InsertData = new InsertData(developers,genres,publishers,games,users,comments, orders, orderLines, null, null)
+        val insertdata : InsertData = new InsertData(developers,genres,publishers,games,users,comments, orders, orderLines, null, null,null)
         insertdata.ClearDB()
         insertdata.FillComment()
 
@@ -1250,7 +1329,7 @@ class DatabaseTest extends AnyFunSuite
         val comments: Comments = new Comments(orders, orderLines)
 
 
-        val insertdata : InsertData = new InsertData(developers,genres,publishers,games,users,comments, orders, orderLines, null, null)
+        val insertdata : InsertData = new InsertData(developers,genres,publishers,games,users,comments, orders, orderLines, null, null,null)
         insertdata.ClearDB()
         insertdata.FillOrder()
 
@@ -1272,7 +1351,7 @@ class DatabaseTest extends AnyFunSuite
         val comments: Comments = new Comments(orders, orderLines)
 
 
-        val insertdata : InsertData = new InsertData(developers,genres,publishers,games,users,comments, orders, orderLines, null, null)
+        val insertdata : InsertData = new InsertData(developers,genres,publishers,games,users,comments, orders, orderLines, null, null,null)
         insertdata.ClearDB()
         insertdata.FillOrderLine()
 
@@ -1281,5 +1360,21 @@ class DatabaseTest extends AnyFunSuite
 
         allOrderLines.length should be(4)
     }
+
+    test("InsertData.FillWallets should add 5 wallets")
+    {
+        val users: Users = new Users()
+        val wallets : Wallets = new Wallets()
+
+        val insertdata : InsertData = new InsertData(null,null,null,null,users,null, null, null, null, null,wallets)
+        insertdata.ClearDB()
+        insertdata.FillWallets()
+
+        val getWalletsFuture: Future[Seq[Wallet]] = wallets.getAllWallets()
+        var allwallets: Seq[Wallet] = Await.result(getWalletsFuture, Duration.Inf)
+
+        allwallets.length should be(5)
+    }
+
 
 }

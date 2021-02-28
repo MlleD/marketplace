@@ -11,7 +11,7 @@ import akka.http.scaladsl.marshalling.ToResponseMarshallable
 import TwirlMarshaller._
 
 
-class Routes(users: Users , developers: Developers , genres: Genres, publishers: Publishers, games : Games, comments: Comments, carts: Carts, cartlines: CartLines ) extends LazyLogging {
+class Routes(users: Users , developers: Developers , genres: Genres, publishers: Publishers, games : Games, comments: Comments, carts: Carts, cartlines: CartLines , wallets : Wallets) extends LazyLogging {
     implicit val executionContext = scala.concurrent.ExecutionContext.Implicits.global
 
     def getHome() = {
@@ -185,6 +185,23 @@ class Routes(users: Users , developers: Developers , genres: Genres, publishers:
 
         genreSeqFuture.map(genreSeq => html.genres(genreSeq))    
     }
+
+    def getSoldeById(id : Int) = {
+
+        /** 
+        http://localhost:8080/wallet?id=1
+        **/ 
+        logger.info("I got a request to get Solde of the Id : " + id + ".")
+        
+        val wallet = wallets.getSoldeById(id)
+
+        wallet.map[ToResponseMarshallable] {
+            case Some(wallet) => {
+                html.wallets(wallet.id, wallet.solde)
+            }
+        }
+    }
+
     def getGenre(id: Int) = {
         logger.info("I got a request to get informations of the genre " + id + ".")
         
@@ -354,6 +371,13 @@ class Routes(users: Users , developers: Developers , genres: Genres, publishers:
             path("commentaire") {
                 (post & formFieldMap) { fields =>
                     complete(addComment(fields))
+                }
+            },
+             path("wallet"){
+                get {
+                    parameter('id.as[Int]) { id =>
+                     complete(getSoldeById(id))
+                    }
                 }
             },
             path("cart") {

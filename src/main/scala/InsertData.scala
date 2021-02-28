@@ -16,7 +16,7 @@ import java.time.format.DateTimeFormatter
 import java.time.ZoneId
 import java.time.LocalDateTime
 
-class InsertData ( developers: Developers , genres: Genres, publishers: Publishers, games: Games, users: Users, comments: Comments, orders: Orders, orderLines: OrderLines, carts: Carts, cartlines: CartLines ) {
+class InsertData ( developers: Developers , genres: Genres, publishers: Publishers, games: Games, users: Users, comments: Comments, orders: Orders, orderLines: OrderLines, carts: Carts, cartlines: CartLines , wallets : Wallets ) {
 	val db = MyDatabase.db
 
 	def ClearDB(){
@@ -27,6 +27,12 @@ class InsertData ( developers: Developers , genres: Genres, publishers: Publishe
 	    val Resetgame = sqlu"TRUNCATE TABLE game ;"
 	    val gameFuture: Future[Int] = db.run(Resetgame)
 	    val game = Await.result(gameFuture, Duration.Inf)
+
+	    
+	    val Resetwallet = sqlu"""TRUNCATE TABLE "Wallets" ;"""
+	    val walletFuture: Future[Int] = db.run(Resetwallet)
+	    val wallet = Await.result(walletFuture, Duration.Inf)
+		
 
 	    val Resetpub = sqlu"TRUNCATE TABLE publisher; ALTER SEQUENCE publisher_id_seq MINVALUE 0 RESTART WITH 0 ; "
 	    val pubFuture: Future[Int] = db.run(Resetpub)
@@ -247,5 +253,13 @@ class InsertData ( developers: Developers , genres: Genres, publishers: Publishe
 		Await.result(cartlines.createCartLine(0, 136, 1, 59.99, 1), Duration.Inf)
 		Await.result(cartlines.createCartLine(0, 313, 2, 45.0, 1), Duration.Inf)
 		Await.result(cartlines.createCartLine(0, 71, 1, 59.99, 1), Duration.Inf)
+	}
+	def FillWallets() {
+		Await.result(wallets.createWallets(1 , 100 ), Duration.Inf)
+		Await.result(wallets.createWallets(2 , 200 ), Duration.Inf)
+		Await.result(wallets.createWallets(3 , 300 ), Duration.Inf)
+		Await.result(wallets.createWallets(4 , 400 ), Duration.Inf)
+		Await.result(wallets.createWallets(5 , 500 ), Duration.Inf)
+
 	}
 }

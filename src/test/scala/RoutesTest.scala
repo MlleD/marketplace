@@ -54,7 +54,7 @@ class RoutesTest extends AnyFunSuite with Matchers with MockFactory with Scalate
 
 
         
-        val routesUnderTest = new Routes(mockUsers , mockDevelopers , mockGenres, mockPublishers, mockGames, null, null, null).routes
+        val routesUnderTest = new Routes(mockUsers , mockDevelopers , mockGenres, mockPublishers, mockGames, null, null, null,null ).routes
 
         val request = HttpRequest(uri = "/home")
         request ~> routesUnderTest ~> check {
@@ -72,7 +72,7 @@ class RoutesTest extends AnyFunSuite with Matchers with MockFactory with Scalate
             .returning(Future(()))
             .once()
 
-        val routesUnderTest = new Routes(mockUsers , null , null, null, null, null, null, null).routes
+        val routesUnderTest = new Routes(mockUsers , null , null, null, null, null, null, null,null ).routes
 
         val request = HttpRequest(
             method = HttpMethods.POST,
@@ -105,7 +105,7 @@ class RoutesTest extends AnyFunSuite with Matchers with MockFactory with Scalate
       }))
             .once()
 
-        val routesUnderTest = new Routes(mockUsers , null, null, null, null, null, null, null).routes
+        val routesUnderTest = new Routes(mockUsers , null, null, null, null, null, null, null,null ).routes
 
         val request = HttpRequest(
             method = HttpMethods.POST,
@@ -138,7 +138,7 @@ class RoutesTest extends AnyFunSuite with Matchers with MockFactory with Scalate
       }))
             .once()
 
-        val routesUnderTest = new Routes(mockUsers , null, null, null, null, null, null, null).routes
+        val routesUnderTest = new Routes(mockUsers , null, null, null, null, null, null, null,null ).routes
 
         val request = HttpRequest(
             method = HttpMethods.POST,
@@ -163,7 +163,7 @@ class RoutesTest extends AnyFunSuite with Matchers with MockFactory with Scalate
     }
 
     test("Route GET /signin should returns the signin page") {
-        val routesUnderTest = new Routes(null, null, null, null, null, null, null, null).routes
+        val routesUnderTest = new Routes(null, null, null, null, null, null, null, null,null ).routes
 
         val request = HttpRequest(uri = "/signin")
         request ~> routesUnderTest ~> check {
@@ -174,7 +174,7 @@ class RoutesTest extends AnyFunSuite with Matchers with MockFactory with Scalate
   }
 
   test("Route GET /signup should returns the signup page") {
-        val routesUnderTest = new Routes(null, null, null, null, null, null, null, null).routes
+        val routesUnderTest = new Routes(null, null, null, null, null, null, null, null,null ).routes
 
         val request = HttpRequest(uri = "/signup")
         request ~> routesUnderTest ~> check {
@@ -194,7 +194,7 @@ class RoutesTest extends AnyFunSuite with Matchers with MockFactory with Scalate
         )
         (mockUsers.getAllUsers _).expects().returns(Future(userList)).once()
 
-        val routesUnderTest = new Routes(mockUsers , null, null, null, null, null, null, null).routes
+        val routesUnderTest = new Routes(mockUsers , null, null, null, null, null, null, null,null ).routes
 
         val request = HttpRequest(uri = "/users")
         request ~> routesUnderTest ~> check {
@@ -214,7 +214,7 @@ class RoutesTest extends AnyFunSuite with Matchers with MockFactory with Scalate
         )
         (mockGenres.getAllGenres _).expects().returns(Future(genreList)).once()
 
-        val routesUnderTest = new Routes(null, null , mockGenres, null, null, null, null, null).routes
+        val routesUnderTest = new Routes(null, null , mockGenres, null, null, null, null, null,null ).routes
 
         val request = HttpRequest(uri = "/genres")
         request ~> routesUnderTest ~> check {
@@ -230,7 +230,7 @@ class RoutesTest extends AnyFunSuite with Matchers with MockFactory with Scalate
         val unknownGenre: Int = 99
         (mockGenres.getGenreById _).expects(unknownGenre).returns(Future(expectedValue)).once()
 
-        val routesUnderTest = new Routes(null, null, mockGenres, null, null, null, null, null).routes
+        val routesUnderTest = new Routes(null, null, mockGenres, null, null, null, null, null,null ).routes
 
         val request = HttpRequest(uri = "/genre?id=99")
         request ~> routesUnderTest ~> check {
@@ -250,7 +250,7 @@ class RoutesTest extends AnyFunSuite with Matchers with MockFactory with Scalate
         )
         (mockDevelopers.getAllDevelopers _).expects().returns(Future(developerList)).once()
 
-        val routesUnderTest = new Routes(null , mockDevelopers , null, null, null, null, null, null).routes
+        val routesUnderTest = new Routes(null , mockDevelopers , null, null, null, null, null, null,null ).routes
 
         val devRoute: String = "/developer?id="
         val request = HttpRequest(uri = "/all-developers")
@@ -274,7 +274,7 @@ class RoutesTest extends AnyFunSuite with Matchers with MockFactory with Scalate
 
         (mockDevelopers.getDeveloperById _).expects(unknownId).returns(Future(expectedValue)).once()
 
-        val routesUnderTest = new Routes(null, mockDevelopers, null, null, null, null, null, null).routes
+        val routesUnderTest = new Routes(null, mockDevelopers, null, null, null, null, null, null,null ).routes
 
         val request = HttpRequest(uri = "/developer?id=" + unknownId.toString())
         request ~> routesUnderTest ~> check {
@@ -295,7 +295,7 @@ class RoutesTest extends AnyFunSuite with Matchers with MockFactory with Scalate
         (mockDevelopers.getDeveloperById _).expects(inputId).returns(Future(expectedValue)).once()
         (mockGames.getGamesFromDeveloper _).expects(inputId).returns(Future(Seq())).once()
 
-        val routesUnderTest = new Routes(null, mockDevelopers, null, null, mockGames, null, null, null).routes
+        val routesUnderTest = new Routes(null, mockDevelopers, null, null, mockGames, null, null, null,null ).routes
 
         val request = HttpRequest(uri = "/developer?id=" + inputId.toString())
         request ~> routesUnderTest ~> check {
@@ -328,7 +328,7 @@ class RoutesTest extends AnyFunSuite with Matchers with MockFactory with Scalate
         (mockDevelopers.getDeveloperById _).expects(inputId).returns(Future(expectedValue)).once()
         (mockGames.getGamesFromDeveloper _).expects(inputId).returns(Future(gamesList)).once()
 
-        val routesUnderTest = new Routes(null, mockDevelopers, null, null, mockGames, null, null, null).routes
+        val routesUnderTest = new Routes(null, mockDevelopers, null, null, mockGames, null, null, null,null ).routes
 
         val productRoute: String = "/product?id="
 
@@ -359,7 +359,7 @@ class RoutesTest extends AnyFunSuite with Matchers with MockFactory with Scalate
         )
         (mockPublishers.getAllPublishers _).expects().returns(Future(publisherList)).once()
 
-        val routesUnderTest = new Routes(mockUsers , mockDevelopers , mockGenres, mockPublishers, mockGames, null, null, null).routes
+        val routesUnderTest = new Routes(mockUsers , mockDevelopers , mockGenres, mockPublishers, mockGames, null, null, null,null ).routes
 
         val request = HttpRequest(uri = "/all-publishers")
         request ~> routesUnderTest ~> check {
@@ -375,7 +375,7 @@ class RoutesTest extends AnyFunSuite with Matchers with MockFactory with Scalate
         val unknownPublisher: String = "MM"
         (mockPublishers.getPublisherByName _).expects(unknownPublisher).returns(Future(expectedValue)).once()
 
-        val routesUnderTest = new Routes(null, null, null, mockPublishers, null, null, null, null).routes
+        val routesUnderTest = new Routes(null, null, null, mockPublishers, null, null, null, null,null ).routes
 
         val request = HttpRequest(uri = "/publisher?name=MM")
         request ~> routesUnderTest ~> check {
@@ -395,7 +395,7 @@ class RoutesTest extends AnyFunSuite with Matchers with MockFactory with Scalate
         (mockPublishers.getPublisherByName _).expects(inputName).returns(Future(expectedValue)).once()
         (mockGames.getGamesFromPublisher _).expects(publisher.id).returns(Future(Seq())).once()
 
-        val routesUnderTest = new Routes(null, null, null, mockPublishers, mockGames, null, null, null).routes
+        val routesUnderTest = new Routes(null, null, null, mockPublishers, mockGames, null, null, null,null ).routes
 
         val request = HttpRequest(uri = "/publisher?name=" + inputName)
         request ~> routesUnderTest ~> check {
@@ -422,7 +422,7 @@ class RoutesTest extends AnyFunSuite with Matchers with MockFactory with Scalate
 
         (mockPublishers.getPublisherByName _).expects(inputName).returns(Future(expectedValue)).once()
         (mockGames.getGamesFromPublisher _).expects(publisher.id).returns(Future(gamesList)).once()
-        val routesUnderTest = new Routes(null, null, null, mockPublishers, mockGames, null, null, null).routes
+        val routesUnderTest = new Routes(null, null, null, mockPublishers, mockGames, null, null, null,null ).routes
 
         val request = HttpRequest(uri = "/publisher?name=" + inputName.replace(" ", "%20"))
         request ~> routesUnderTest ~> check {
@@ -448,7 +448,7 @@ class RoutesTest extends AnyFunSuite with Matchers with MockFactory with Scalate
         )
         (mockGames.getAllGames _).expects().returns(Future(gameList)).once()
 
-        val routesUnderTest = new Routes(mockUsers , mockDevelopers , mockGenres, mockPublishers, mockGames, null, null, null).routes
+        val routesUnderTest = new Routes(mockUsers , mockDevelopers , mockGenres, mockPublishers, mockGames, null, null, null,null ).routes
 
         val request = HttpRequest(uri = "/game")
         request ~> routesUnderTest ~> check {
@@ -515,7 +515,7 @@ class RoutesTest extends AnyFunSuite with Matchers with MockFactory with Scalate
         )
     )
 
-    val routesUnderTest = new Routes(mockUsers, mockDevelopers , mockGenres, mockPublishers, mockGames, mockComments, null, null).routes
+    val routesUnderTest = new Routes(mockUsers, mockDevelopers , mockGenres, mockPublishers, mockGames, mockComments, null, null,null ).routes
     (mockGames.getGameById _).expects(1).returns(Future(Some(game))).once()
 
     (mockDevelopers.getDeveloperById _).expects(1).returns(Future(Some(developer))).once()
