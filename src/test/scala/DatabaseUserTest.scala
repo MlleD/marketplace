@@ -1067,7 +1067,7 @@ class DatabaseTest extends AnyFunSuite
         val comments: Comments = new Comments(orders, orderLines)
         
 
-        val insertdata : InsertData = new InsertData(developers,genres,publishers,games, users, comments, orders, orderLines)
+        val insertdata : InsertData = new InsertData(developers,genres,publishers,games, users, comments, orders, orderLines, null, null)
         insertdata.ClearDB()
 
         val returnedPublisherSeqFuture: Future[Seq[Publisher]] = publishers.getAllPublishers()
@@ -1119,7 +1119,7 @@ class DatabaseTest extends AnyFunSuite
         val comments: Comments = new Comments(orders, orderLines)
 
 
-        val insertdata : InsertData = new InsertData(developers,genres,publishers,games,users,comments, orders, orderLines)
+        val insertdata : InsertData = new InsertData(developers,genres,publishers,games,users,comments, orders, orderLines, null, null)
         insertdata.ClearDB()
         insertdata.FillDevelopers()
 
@@ -1141,7 +1141,7 @@ class DatabaseTest extends AnyFunSuite
         val comments: Comments = new Comments(orders, orderLines)
 
 
-        val insertdata : InsertData = new InsertData(developers,genres,publishers,games,users,comments, orders, orderLines)
+        val insertdata : InsertData = new InsertData(developers,genres,publishers,games,users,comments, orders, orderLines, null, null)
         insertdata.ClearDB()
         insertdata.FillPublishers()
 
@@ -1162,7 +1162,7 @@ class DatabaseTest extends AnyFunSuite
         val comments: Comments = new Comments(orders, orderLines)
 
 
-        val insertdata : InsertData = new InsertData(developers,genres,publishers,games,users,comments, orders, orderLines)
+        val insertdata : InsertData = new InsertData(developers,genres,publishers,games,users,comments, orders, orderLines, null, null)
         insertdata.ClearDB()
         insertdata.FillGenre()
 
@@ -1184,7 +1184,7 @@ class DatabaseTest extends AnyFunSuite
         val comments: Comments = new Comments(orders, orderLines)
 
 
-        val insertdata : InsertData = new InsertData(developers,genres,publishers,games,users,comments, orders, orderLines)
+        val insertdata : InsertData = new InsertData(developers,genres,publishers,games,users,comments, orders, orderLines, null, null)
         insertdata.ClearDB()
         insertdata.FillGame()
 
@@ -1206,7 +1206,7 @@ class DatabaseTest extends AnyFunSuite
         val comments: Comments = new Comments(orders, orderLines)
 
 
-        val insertdata : InsertData = new InsertData(developers,genres,publishers,games,users,comments, orders, orderLines)
+        val insertdata : InsertData = new InsertData(developers,genres,publishers,games,users,comments, orders, orderLines, null, null)
         insertdata.ClearDB()
         insertdata.FillUser()
 
@@ -1228,7 +1228,7 @@ class DatabaseTest extends AnyFunSuite
         val comments: Comments = new Comments(orders, orderLines)
 
 
-        val insertdata : InsertData = new InsertData(developers,genres,publishers,games,users,comments, orders, orderLines)
+        val insertdata : InsertData = new InsertData(developers,genres,publishers,games,users,comments, orders, orderLines, null, null)
         insertdata.ClearDB()
         insertdata.FillComment()
 
@@ -1250,7 +1250,7 @@ class DatabaseTest extends AnyFunSuite
         val comments: Comments = new Comments(orders, orderLines)
 
 
-        val insertdata : InsertData = new InsertData(developers,genres,publishers,games,users,comments, orders, orderLines)
+        val insertdata : InsertData = new InsertData(developers,genres,publishers,games,users,comments, orders, orderLines, null, null)
         insertdata.ClearDB()
         insertdata.FillOrder()
 
@@ -1272,7 +1272,7 @@ class DatabaseTest extends AnyFunSuite
         val comments: Comments = new Comments(orders, orderLines)
 
 
-        val insertdata : InsertData = new InsertData(developers,genres,publishers,games,users,comments, orders, orderLines)
+        val insertdata : InsertData = new InsertData(developers,genres,publishers,games,users,comments, orders, orderLines, null, null)
         insertdata.ClearDB()
         insertdata.FillOrderLine()
 
