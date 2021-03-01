@@ -17,7 +17,7 @@ import poca.{
     MyDatabase,
     Users, User, Games, Game, Developers, Developer, Genres, Genre, Publishers, Publisher,
     Comments, Comment, Order, Orders, OrderLine, OrderLines, InsertData, Wallet , Wallets ,
-    Cart, Carts,
+    Cart, Carts, CartLine, CartLines,
     NotSamePasswordException, EmailAlreadyExistsException, NameAlreadyExistsException,
     IdAlreadyExistsException, IdUserAlreadyExistsException,
     RunMigrations}
@@ -1182,6 +1182,148 @@ class DatabaseTest extends AnyFunSuite
         allCarts.head should be (cart1)
         allCarts(0) should be (cart1)
         allCarts(1) should be (cart2)
+    }
+
+    // -------------------------- CARTLINE ---------------------------------
+
+    test("CartLines.createCartLine should create a new cartline") {
+        val cartlines: CartLines = new CartLines()
+        val mycartline: CartLine = new CartLine(1, 311, 1, 19.99, 1)
+
+        val createCartlineFuture: Future[Unit] = cartlines.createCartLine(
+            mycartline.idcart, mycartline.idproduct, mycartline.idreseller,
+            mycartline.price, mycartline.quantity
+        )
+        Await.ready(createCartlineFuture, Duration.Inf)
+
+        // Check that the future succeeds
+        createCartlineFuture.value should be(Some(Success(())))
+
+        val getCartlinesFuture: Future[Seq[CartLine]] = cartlines.getAllCartLines()
+        var allcartlines: Seq[CartLine] = Await.result(getCartlinesFuture, Duration.Inf)
+
+        allcartlines.length should be(1)
+        allcartlines.head should be (mycartline)
+    }
+
+    test("CartLines.createCartLine returned future should fail if the id of the cartline already exists") {
+        val cartlines: CartLines = new CartLines()
+        val cartline1: CartLine = new CartLine(1, 311, 1, 19.99, 1)
+
+        val createCartline1Future: Future[Unit] = cartlines.createCartLine(
+            cartline1.idcart, cartline1.idproduct, cartline1.idreseller,
+            cartline1.price, cartline1.quantity
+        )
+        Await.ready(createCartline1Future, Duration.Inf)
+
+        val cartline2: CartLine = new CartLine(
+            cartline1.idcart, cartline1.idproduct, cartline1.idreseller, 19.99, 2
+        )
+
+        val createCartline2Future: Future[Unit] = cartlines.createCartLine(
+            cartline1.idcart, cartline1.idproduct, cartline1.idreseller,
+            cartline2.price, cartline2.quantity
+        )
+        Await.ready(createCartline2Future, Duration.Inf)
+
+        createCartline2Future.value match {
+            case Some(Failure(exc: IdAlreadyExistsException)) => {
+                exc.getMessage should equal ("A CartLine with name '" + cartline1.idcart 
+                + "', '" + cartline1.idproduct + "', '" + cartline1.idreseller + "' already exists.")
+            }
+            case _ => fail("The future should fail.")
+        }
+    }
+
+    test("CartLines.getCartLineById should return a cartline") {
+        val cartlines: CartLines = new CartLines()
+        val mycartline: CartLine = new CartLine(1, 311, 1, 19.99, 1)
+
+        val createCartlineFuture: Future[Unit] = cartlines.createCartLine(
+            mycartline.idcart, mycartline.idproduct, mycartline.idreseller,
+            mycartline.price, mycartline.quantity
+        )
+        Await.ready(createCartlineFuture, Duration.Inf)
+
+        val getCartlineFuture: Future[Option[CartLine]] = cartlines.getCartLineById(
+            mycartline.idcart, mycartline.idproduct, mycartline.idreseller
+        )
+        val allCartlines: Option[CartLine] = Await.result(getCartlineFuture, Duration.Inf)
+
+        allCartlines should be (Some(mycartline))
+    }
+
+    test("CartLines.getCartLineById should return None if id doesn't exist") {
+        val cartlines: CartLines = new CartLines()
+        val mycartline: CartLine = new CartLine(1, 311, 1, 19.99, 1)
+
+        val createCartlineFuture: Future[Unit] = cartlines.createCartLine(
+            mycartline.idcart, mycartline.idproduct, mycartline.idreseller,
+            mycartline.price, mycartline.quantity
+        )
+        Await.ready(createCartlineFuture, Duration.Inf)
+
+        val getCartlineFuture: Future[Option[CartLine]] = cartlines.getCartLineById(
+            mycartline.idcart + 2, mycartline.idproduct, mycartline.idreseller
+        )
+        val allCartlines: Option[CartLine] = Await.result(getCartlineFuture, Duration.Inf)
+
+        allCartlines should be (None)
+    }
+
+    test("CartLines.getCartLinesByIdCart should return a list of cartlines") {
+        val cartlines: CartLines = new CartLines()
+        val idcart: Int = 1
+        val cartline1: CartLine = new CartLine(idcart, 311, 1, 19.99, 1)
+
+        val createCartline1Future: Future[Unit] = cartlines.createCartLine(
+            cartline1.idcart, cartline1.idproduct, cartline1.idreseller,
+            cartline1.price, cartline1.quantity
+        )
+        Await.ready(createCartline1Future, Duration.Inf)
+
+        val cartline2: CartLine = new CartLine(idcart, 35, 1, 59.99, 1)
+
+        val createCartline2Future: Future[Unit] = cartlines.createCartLine(
+            cartline2.idcart, cartline2.idproduct, cartline2.idreseller,
+            cartline2.price, cartline2.quantity
+        )
+        Await.ready(createCartline2Future, Duration.Inf)
+
+        val getCartlinesFuture: Future[Seq[CartLine]] = cartlines.getCartLinesByIdCart(idcart)
+        val allCartlines: Seq[CartLine] = Await.result(getCartlinesFuture, Duration.Inf)
+
+        allCartlines.length should be(2)
+        allCartlines.head should be (cartline1)
+        allCartlines(0) should be (cartline1)
+        allCartlines(1) should be (cartline2)
+    }
+
+    test("CartLines.getAllCartLines should return a list of cartlines") {
+        val cartlines: CartLines = new CartLines()
+        val cartline1: CartLine = new CartLine(1, 311, 1, 19.99, 1)
+
+        val createCartline1Future: Future[Unit] = cartlines.createCartLine(
+            cartline1.idcart, cartline1.idproduct, cartline1.idreseller,
+            cartline1.price, cartline1.quantity
+        )
+        Await.ready(createCartline1Future, Duration.Inf)
+
+        val cartline2: CartLine = new CartLine(2, 35, 1, 59.99, 1)
+
+        val createCartline2Future: Future[Unit] = cartlines.createCartLine(
+            cartline2.idcart, cartline2.idproduct, cartline2.idreseller,
+            cartline2.price, cartline2.quantity
+        )
+        Await.ready(createCartline2Future, Duration.Inf)
+
+        val getCartlinesFuture: Future[Seq[CartLine]] = cartlines.getAllCartLines()
+        val allCartlines: Seq[CartLine] = Await.result(getCartlinesFuture, Duration.Inf)
+
+        allCartlines.length should be(2)
+        allCartlines.head should be (cartline1)
+        allCartlines(0) should be (cartline1)
+        allCartlines(1) should be (cartline2)        
     }
 
     // --------- Wallets --------------
