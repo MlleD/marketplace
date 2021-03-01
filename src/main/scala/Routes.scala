@@ -201,7 +201,6 @@ class Routes(users: Users , developers: Developers , genres: Genres, publishers:
             }
         }
     }
-
     def getGenre(id: Int) = {
         logger.info("I got a request to get informations of the genre " + id + ".")
         
@@ -271,6 +270,25 @@ class Routes(users: Users , developers: Developers , genres: Genres, publishers:
                     )
                 })*/
                 getGame(idproduct)
+            }
+        }
+    }
+   
+    def creditCashToSolde( id: Int, cash: Int) = {
+        logger.info("I got a request to add to wallet "+ id +" cash :" + cash + ".")
+        val wallet = wallets.creditWallet(id, cash)  
+        wallet.map[ToResponseMarshallable] {
+            case Some(wallet) => {
+                html.wallets(wallet.id, wallet.solde)
+            }
+        }
+    }
+    def debitCashToSolde( id: Int, cash: Int) = {
+        logger.info("I got a request to add to wallet "+ id +" cash :" + cash + ".")
+        val wallet = wallets.debitWallet(id, cash)  
+        wallet.map[ToResponseMarshallable] {
+            case Some(wallet) => {
+                html.wallets(wallet.id, wallet.solde)
             }
         }
     }
@@ -373,10 +391,31 @@ class Routes(users: Users , developers: Developers , genres: Genres, publishers:
                     complete(addComment(fields))
                 }
             },
-             path("wallet"){
+            path("wallet"){
                 get {
                     parameter('id.as[Int]) { id =>
                      complete(getSoldeById(id))
+                    }
+                }
+            },
+            path("add-wallet"){
+                get {
+                    parameter('id.as[Int], 'cash.as[Int]){
+                        (id, cash) => {
+                            val i = (id,cash)._1
+                            val c = (id,cash)._2
+                            complete( creditCashToSolde(i ,c ))
+                        }
+                    }
+                }
+            },path("debit-wallet"){
+                get {
+                    parameter('id.as[Int], 'cash.as[Int]){
+                        (id, cash) => {
+                            val i = (id,cash)._1
+                            val c = (id,cash)._2
+                            complete( debitCashToSolde(i ,c ))
+                        }
                     }
                 }
             },
