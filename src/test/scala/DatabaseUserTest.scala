@@ -1127,6 +1127,34 @@ class DatabaseTest extends AnyFunSuite
 
         allwallets should be(None)
     }
+    test("Wallets.creditWalletFuture should return none if id does not exist") {
+        val wallets : Wallets = new Wallets()
+        
+        val fake2: Wallet = new Wallet(
+            2, 200
+        )
+        val createWalletsFuture2: Future[Unit] = wallets.createWallets(
+            fake2.id, fake2.solde
+        )
+        Await.ready(createWalletsFuture2, Duration.Inf)
+        val creditWalletFuture: Future[Option[Wallet]] = wallets.creditWallet(2,200)
+        var allwallets: Option[Wallet] = Await.result(creditWalletFuture, Duration.Inf)
+        allwallets should be(Some(Wallet(2,400)))
+    }
+    test("Wallets.debitWalletFuture should return none if id does not exist") {
+        val wallets : Wallets = new Wallets()
+        
+        val fake2: Wallet = new Wallet(
+            2, 200
+        )
+        val createWalletsFuture2: Future[Unit] = wallets.createWallets(
+            fake2.id, fake2.solde
+        )
+        Await.ready(createWalletsFuture2, Duration.Inf)
+        val debitWalletFuture: Future[Option[Wallet]] = wallets.debitWallet(2,200)
+        var allwallets: Option[Wallet] = Await.result(debitWalletFuture, Duration.Inf)
+        allwallets should be(Some(Wallet(2,0)))
+    }
 
 
 

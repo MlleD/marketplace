@@ -1,7 +1,8 @@
 
 package poca
 
-import scala.concurrent.Future
+import scala.concurrent.{Future, Await}
+import scala.concurrent.duration.Duration
 import slick.jdbc.PostgresProfile.api._
 import java.util.UUID
 
@@ -57,6 +58,22 @@ type Wallet_t = (Int, Int)
         walletListFuture.map((walletList: Seq[Wallet_t]) => {
             walletList.map(Wallet tupled _)
         })
+    }
+
+    def creditWallet(id: Int, cash: Int): Future[Option[Wallet]] = {
+        
+        val updateWallet = sqlu"""update "Wallets" set "WalletSolde" = "WalletSolde" + ${cash} where "WalletId" = ${id};"""
+        val walFuture: Future[Int] = db.run(updateWallet)
+        val wal = Await.result(walFuture, Duration.Inf)
+        getSoldeById(id)
+    }
+
+    def debitWallet(id: Int, cash: Int): Future[Option[Wallet]] = {
+
+        val updateWallet = sqlu"""update "Wallets" set "WalletSolde" = "WalletSolde" - ${cash} where "WalletId" = ${id};"""
+        val walFuture: Future[Int] = db.run(updateWallet)
+        val wal = Await.result(walFuture, Duration.Inf)
+        getSoldeById(id)
     }
 
 }
