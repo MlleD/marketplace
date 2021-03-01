@@ -15,8 +15,11 @@ import java.time.ZoneId
 import java.time.LocalDateTime
 import poca.{
     MyDatabase,
-    Users, User, Games, Game, Developers, Developer, Genres, Genre, Publishers, Publisher, Comments, Comment, Order, Orders, OrderLine, OrderLines, InsertData, Wallet , Wallets ,
+    Users, User, Games, Game, Developers, Developer, Genres, Genre, Publishers, Publisher,
+    Comments, Comment, Order, Orders, OrderLine, OrderLines, InsertData, Wallet , Wallets ,
+    Cart, Carts,
     NotSamePasswordException, EmailAlreadyExistsException, NameAlreadyExistsException,
+    IdAlreadyExistsException, IdUserAlreadyExistsException,
     RunMigrations}
 
 class DatabaseTest extends AnyFunSuite 
@@ -1052,6 +1055,133 @@ class DatabaseTest extends AnyFunSuite
         returnedOrderLineSeq.length should be(2)
         returnedOrderLineSeq(0) should be(fake_orderLine)
         returnedOrderLineSeq(1) should be(fake_orderLine2)
+    }
+
+    // -------------------------- CART ---------------------------------
+
+    test("Carts.createCart should create a new cart") {
+        val carts: Carts = new Carts()
+        val mycart: Cart = new Cart(1, 1)
+
+        val createCartFuture: Future[Unit] = carts.createCart(mycart.id, mycart.iduser)
+        Await.ready(createCartFuture, Duration.Inf)
+
+        // Check that the future succeeds
+        createCartFuture.value should be(Some(Success(())))
+
+        val getCartsFuture: Future[Seq[Cart]] = carts.getAllCarts()
+        var allcarts: Seq[Cart] = Await.result(getCartsFuture, Duration.Inf)
+
+        allcarts.length should be(1)
+        allcarts.head should be (mycart)
+    }
+
+    test("Carts.createCart returned future should fail if the id of the cart already exists") {
+        val carts: Carts = new Carts()
+        val cart1: Cart = new Cart(1, 1)
+
+        val createCart1Future: Future[Unit] = carts.createCart(cart1.id, cart1.iduser)
+        Await.ready(createCart1Future, Duration.Inf)
+
+        val createCart2Future: Future[Unit] = carts.createCart(cart1.id, cart1.iduser + 1)
+        Await.ready(createCart2Future, Duration.Inf)
+
+        createCart2Future.value match {
+            case Some(Failure(exc: IdAlreadyExistsException)) => {
+                exc.getMessage should equal ("A Cart with id '" + cart1.id + "' already exists.")
+            }
+            case _ => fail("The future should fail.")
+        }
+    }
+
+    test("Carts.createCart returned future should fail if the iduser of the cart already exists") {
+        val carts: Carts = new Carts()
+        val cart1: Cart = new Cart(1, 1)
+
+        val createCart1Future: Future[Unit] = carts.createCart(cart1.id, cart1.iduser)
+        Await.ready(createCart1Future, Duration.Inf)
+
+        val createCart2Future: Future[Unit] = carts.createCart(cart1.id + 1, cart1.iduser)
+        Await.ready(createCart2Future, Duration.Inf)
+
+        createCart2Future.value match {
+            case Some(Failure(exc: IdUserAlreadyExistsException)) => {
+                exc.getMessage should equal ("A Cart with user id '" + cart1.iduser + "' already exists.")
+            }
+            case _ => fail("The future should fail.")
+        }
+    }
+
+    test("Carts.getCartById should return a cart") {
+        val carts: Carts = new Carts()
+        val cart: Cart = new Cart(1, 1)
+
+        val createCartFuture: Future[Unit] = carts.createCart(cart.id, cart.iduser)
+        Await.ready(createCartFuture, Duration.Inf)
+
+        val getCartFuture: Future[Option[Cart]] = carts.getCartById(cart.id)
+        val allCarts: Option[Cart] = Await.result(getCartFuture, Duration.Inf)
+
+        allCarts should be (Some(cart))
+    }
+
+    test("Carts.getCartById should return none if id doesn't exist") {
+        val carts: Carts = new Carts()
+        val cart: Cart = new Cart(1, 1)
+
+        val createCartFuture: Future[Unit] = carts.createCart(cart.id, cart.iduser)
+        Await.ready(createCartFuture, Duration.Inf)
+
+        val getCartFuture: Future[Option[Cart]] = carts.getCartById(cart.id + 2)
+        val allCarts: Option[Cart] = Await.result(getCartFuture, Duration.Inf)
+
+        allCarts should be (None)
+    }
+
+    test("Carts.getCartByIdUser should return a cart") {
+        val carts: Carts = new Carts()
+        val cart: Cart = new Cart(1, 1)
+
+        val createCartFuture: Future[Unit] = carts.createCart(cart.id, cart.iduser)
+        Await.ready(createCartFuture, Duration.Inf)
+
+        val getCartFuture: Future[Option[Cart]] = carts.getCartByIdUser(cart.iduser)
+        val allCarts: Option[Cart] = Await.result(getCartFuture, Duration.Inf)
+
+        allCarts should be (Some(cart))
+    }
+
+    test("Carts.getCartByIdUser should return none if id doesn't exist") {
+        val carts: Carts = new Carts()
+        val cart: Cart = new Cart(1, 1)
+
+        val createCartFuture: Future[Unit] = carts.createCart(cart.id, cart.iduser)
+        Await.ready(createCartFuture, Duration.Inf)
+
+        val getCartFuture: Future[Option[Cart]] = carts.getCartByIdUser(cart.iduser + 2)
+        val allCarts: Option[Cart] = Await.result(getCartFuture, Duration.Inf)
+
+        allCarts should be (None)
+    }
+
+    test("Carts.getAllCarts should return a list of carts") {
+        val carts: Carts = new Carts()
+        val cart1: Cart = new Cart(1, 1)
+
+        val createCart1Future: Future[Unit] = carts.createCart(cart1.id, cart1.iduser)
+        Await.ready(createCart1Future, Duration.Inf)
+
+        val cart2: Cart = new Cart(cart1.id + 1, cart1.iduser + 1)
+        val createCart2Future: Future[Unit] = carts.createCart(cart2.id, cart2.iduser)
+        Await.ready(createCart2Future, Duration.Inf)
+
+        val getAllCartsFuture: Future[Seq[Cart]] = carts.getAllCarts()
+        val allCarts: Seq[Cart] = Await.result(getAllCartsFuture, Duration.Inf)
+
+        allCarts.length should be(2)
+        allCarts.head should be (cart1)
+        allCarts(0) should be (cart1)
+        allCarts(1) should be (cart2)
     }
 
     // --------- Wallets --------------
