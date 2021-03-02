@@ -268,7 +268,7 @@ class Routes(users: Users , developers: Developers , genres: Genres, publishers:
             case Some(id) =>
                 val product = games.getGameById(id.toInt)
                 // reseller n'étant toujours pas implémenté, on met idreseller à 1 et prix à 50
-                val creationCartLine = cartlines.createCartLine(idcart=0, idproduct=id.toInt, idreseller=1, price=50, quantity=1)
+                val creationCartLine = cartlines.createCartLine(idcart=0, idproduct=id.toInt, idreseller=1, price=50.0, quantity=1)
                 creationCartLine.map(_ => {
                             HttpResponse(
                                 StatusCodes.OK,
@@ -387,25 +387,24 @@ class Routes(users: Users , developers: Developers , genres: Genres, publishers:
                     }
                 }
             },
+            /*
             path("cart") {
                 get {
                     parameter('iduser.as[Int]) {
                         iduser => complete(viewCart(iduser))
                     }
                 }
-            },
+            },*/
             path("add_cart"){
                 (post & formFieldMap) { fields =>
                     complete(add_to_cart(fields))
                 }
             },
-            /*
             path("cart"){
                 get {
                     complete(viewCart(1))
                 }
             }
-            */
 
         )
 
