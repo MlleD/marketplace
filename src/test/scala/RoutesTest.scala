@@ -9,7 +9,7 @@ import org.scalatest.Matchers
 
 import org.scalatest.funsuite.AnyFunSuite
 import org.scalamock.scalatest.MockFactory
-import poca.{Game, Games, Developer, Developers, Genre, Genres, Users, User, Publishers, Publisher, Comments, Comment, Routes, EmailAlreadyExistsException, NotSamePasswordException}
+import poca.{Game, Games, Developer, Developers, Genre, Genres, Users, User, Publishers, Publisher, Comments, Comment, Routes, Cart, Carts, CartLine, CartLines, EmailAlreadyExistsException, NotSamePasswordException}
 //import poca.{MyDatabase, Users, User, UserAlreadyExistsException, Routes}
 
 class RoutesTest extends AnyFunSuite with Matchers with MockFactory with ScalatestRouteTest {
@@ -528,5 +528,45 @@ class RoutesTest extends AnyFunSuite with Matchers with MockFactory with Scalate
       contentType should ===(ContentTypes.`text/html(UTF-8)`)
     }
   }
+
+  test("Route POST /add_cart should put the product to the cart") {
+      val mockGames = mock[Games]
+      val mockCartLines = mock[CartLines]
+
+
+      val game = Game(
+        id = 1,
+        name = "fake_product_1",
+        basename = "basename_fake_product_1",
+        id_genre = 1,
+        year = 2005.0,
+        plateform = "fake_plateforme",
+        ESRB = "E",
+        url_image = "fake_url.fr",
+        id_publisher = 1,
+        id_developer = 1
+    )
+
+    (mockGames.getGameById _).expects(1).returns(Future(Some(game))).once()
+    (mockCartLines.createCartLine _)
+            .expects(0, 1, 1, 50, 1)
+            .returning(Future(()))
+            .once()
+        
+
+        val routesUnderTest = new Routes(null , null, null, null, mockGames, null, null, mockCartLines,null ).routes
+        
+
+        val request = HttpRequest(
+            method = HttpMethods.POST,
+            uri = "/add_cart",
+            entity = FormData(("id", "1")
+                              ).toEntity
+        )
+        request ~> routesUnderTest ~> check {
+            status should ===(StatusCodes.OK)
+            entityAs[String] should ===("Product '1' added to cart.")
+        }
+    }
 
 }

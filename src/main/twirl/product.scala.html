@@ -222,6 +222,16 @@
                       <input type="submit" value="submit">
                   </form>
                   </section>
+
+                  <section class="add_product">
+                    <form action=/add_cart method="post">
+                        <input name="id" type="hidden" value="@(game.id)"></input>
+                      <input type="submit" value="add to cart">
+                  </form>
+                  </section>
+                  <section class="cart">
+                    <a href="/cart" >Go to cart</a>
+                  </section>
           </div>
 
             </div>

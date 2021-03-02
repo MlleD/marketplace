@@ -86,49 +86,7 @@ class Routes(users: Users , developers: Developers , genres: Genres, publishers:
             }
         }
     }
-/*
-    def checkUser(fields: Map[String, String]): Future[HttpResponse] = {
-        logger.info("I got a request to checkUser.")
 
-        fields.get("email") match {
-            case Some(username) => {
-                val pwd = fields.get("pwd").get
-                val existingUsersFuture = getUserByEmail(email)
-
-                userCreation.map(_ => {
-                    HttpResponse(
-                        StatusCodes.OK,
-                        entity=s"Welcome '$username'! You've just been registered to our great marketplace.",
-                    )
-                }).recover({
-                    case exc: UserAlreadyExistsException => {
-                        HttpResponse(
-                            StatusCodes.OK,
-                            entity=s"The username '$username' is already taken. Please choose another username.",
-                        )
-                    }
-
-                    case exc: WrongPasswordException => {
-                        HttpResponse(
-                            StatusCodes.OK,
-                            entity=s"Wrong password.",
-                        )
-                    }
-                })
-            }
-            /*
-            case None => {
-                Future(
-                    HttpResponse(
-                        StatusCodes.BadRequest,
-                        entity="Field 'username' not found."
-                    )
-                )
-            }
-            */
-        }
-    }
-    */
 
     def getUsers() = {
         logger.info("I got a request to get user list.")
@@ -305,6 +263,22 @@ class Routes(users: Users , developers: Developers , genres: Genres, publishers:
         }
     }
 
+    def add_to_cart(fields: Map[String, String]) = {
+        fields.get("id") match {
+            case Some(id) =>
+                val product = games.getGameById(id.toInt)
+                // reseller n'étant toujours pas implémenté, on met idreseller à 1 et prix à 50
+                val creationCartLine = cartlines.createCartLine(idcart=0, idproduct=id.toInt, idreseller=1, price=50.0, quantity=1)
+                creationCartLine.map(_ => {
+                            HttpResponse(
+                                StatusCodes.OK,
+                                entity = s"Product '$id' added to cart.",
+                            )
+                        })
+        }
+        
+    }
+
     val routes: Route = 
         concat(
             path("home") {
@@ -327,12 +301,6 @@ class Routes(users: Users , developers: Developers , genres: Genres, publishers:
                     complete(register(fields))
                 }
             },
-            /*
-            path("checkUser") {
-                (post & formFieldMap) { fields =>
-                    complete(checkUser(fields))
-                }
-            },*/
             path("users") {
                 get {
                     complete(getUsers)
@@ -419,11 +387,22 @@ class Routes(users: Users , developers: Developers , genres: Genres, publishers:
                     }
                 }
             },
+            /*
             path("cart") {
                 get {
                     parameter('iduser.as[Int]) {
                         iduser => complete(viewCart(iduser))
                     }
+                }
+            },*/
+            path("add_cart"){
+                (post & formFieldMap) { fields =>
+                    complete(add_to_cart(fields))
+                }
+            },
+            path("cart"){
+                get {
+                    complete(viewCart(1))
                 }
             }
 
