@@ -263,16 +263,19 @@ class Routes(users: Users , developers: Developers , genres: Genres, publishers:
         }
     }
 
-    def add_to_cart(id: Int) = {
-        val product = games.getGameById(id)
-        // reseller n'étant toujours pas implémenté, on met idreseller à 1 et prix à 50
-        val creationCartLine = cartlines.createCartLine(idcart=0, idproduct=id, idreseller=1, price=50, quantity=1)
-        creationCartLine.map(_ => {
-                    HttpResponse(
-                        StatusCodes.OK,
-                        entity = s"Product '$id' added to cart.",
-                    )
-                })
+    def add_to_cart(fields: Map[String, String]) = {
+        fields.get("id") match {
+            case Some(id) =>
+                val product = games.getGameById(id.toInt)
+                // reseller n'étant toujours pas implémenté, on met idreseller à 1 et prix à 50
+                val creationCartLine = cartlines.createCartLine(idcart=0, idproduct=id.toInt, idreseller=1, price=50, quantity=1)
+                creationCartLine.map(_ => {
+                            HttpResponse(
+                                StatusCodes.OK,
+                                entity = s"Product '$id' added to cart.",
+                            )
+                        })
+        }
         
     }
 
@@ -392,17 +395,17 @@ class Routes(users: Users , developers: Developers , genres: Genres, publishers:
                 }
             },
             path("add_cart"){
-            	get {
-            		parameter('id.as[Int]) { id =>
-                   	 complete(add_to_cart(id))
-                	}
-            	}
+                (post & formFieldMap) { fields =>
+                    complete(add_to_cart(fields))
+                }
             },
+            /*
             path("cart"){
                 get {
                     complete(viewCart(1))
                 }
             }
+            */
 
         )
 
