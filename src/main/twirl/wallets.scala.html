@@ -74,12 +74,46 @@
                 @if(id == null) {
                     <p>This user's wallet doesn't exist.</p>
                 } else {
-                    <p>User @id :</p>
-                    Solde : @solde
+                    <p><h1>Hello User @id :</h1></p>
+                    <h3>Currently you have @solde € on your account.</h3>
                 }
             </ul>
-            <a href="/add-wallet?id=@id&cash=10">credit 10</a>
-            <a href="/debit-wallet?id=@id&cash=10">debit 10</a>
+            <h2>Would you want to Add Cash to your account , complete this form please : </h2>
+            <form action="/add-wallet">
+              <li>
+                Account n° : <input type="text" id="id" name="id" readonly="readonly" value=@id>
+              </li>
+              <br>
+              <li>
+                <label for="quantity">Amount (between 1 and 100):</label>
+                <input type="number" id="cash" name="cash" min="1" max="100" value="10">
+              </li>
+              <br>
+              <li>
+                <input type="submit" value="Add Cash">
+              </li>
+            </form>
+            <br>
+            -------------------------------------------------------------------------------------
+            <br>
+            <br>
+            <h2>Would you want to Debite Cash to your account , complete this form please : </h2><br>
+            <form action="/debit-wallet">
+              <li>
+                Account n° : <input type="text" id="id" name="id" readonly="readonly" value=@id>
+              </li>
+              <br>
+              <li>
+                <label for="quantity">Amount ( must be between 1 and @solde):</label>
+                <input type="number" id="cash" name="cash" min="1" max="@solde" value="10">
+              </li>
+              <br>
+              <li>
+                <input type="submit" value="Debit Cash">
+              </li>
+            </form>
+            <!--<a href="/add-wallet?id=@id&cash=10">credit 10</a>  -->
+            <!--<a href="/debit-wallet?id=@id&cash=10">debit 10</a>  -->
         </div>
     </body>
 

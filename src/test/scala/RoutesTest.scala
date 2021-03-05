@@ -9,7 +9,7 @@ import org.scalatest.Matchers
 
 import org.scalatest.funsuite.AnyFunSuite
 import org.scalamock.scalatest.MockFactory
-import poca.{Game, Games, Developer, Developers, Genre, Genres, Users, User, Publishers, Publisher, Comments, Comment, Routes, Cart, Carts, CartLine, CartLines, EmailAlreadyExistsException, NotSamePasswordException}
+import poca.{Game, Games, Developer, Developers, Genre, Genres, Users, User, Publishers, Publisher, Comments, Comment, Routes, Cart, Carts, CartLine, CartLines,Wallet , Wallets , EmailAlreadyExistsException, NotSamePasswordException}
 //import poca.{MyDatabase, Users, User, UserAlreadyExistsException, Routes}
 
 class RoutesTest extends AnyFunSuite with Matchers with MockFactory with ScalatestRouteTest {
@@ -566,6 +566,31 @@ class RoutesTest extends AnyFunSuite with Matchers with MockFactory with Scalate
         request ~> routesUnderTest ~> check {
             status should ===(StatusCodes.OK)
             entityAs[String] should ===("Product '1' added to cart.")
+        }
+    }
+    test("Route GET /wallet should return the wallet page of user 1") {
+      val mockWallets = mock[Wallets]
+
+      val fake: Wallet = new Wallet(
+            1, 100
+        )
+      
+    (mockWallets.getSoldeById _).expects(1).returns(Future(Some(fake))).once()
+         
+
+        val routesUnderTest = new Routes(null , null, null, null, null, null, null, null ,mockWallets ).routes
+        
+
+        /*val request = HttpRequest(
+            method = HttpMethods.GET,
+            uri = "/wallet",
+            entity = FormData(("id", "1")
+                              ).toEntity
+        )*/
+        val request = HttpRequest(uri = "/wallet?id=1")
+        request ~> routesUnderTest ~> check {
+            status should ===(StatusCodes.OK)
+            contentType should ===(ContentTypes.`text/html(UTF-8)`)
         }
     }
 
