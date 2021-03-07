@@ -580,13 +580,6 @@ class RoutesTest extends AnyFunSuite with Matchers with MockFactory with Scalate
 
         val routesUnderTest = new Routes(null , null, null, null, null, null, null, null ,mockWallets ).routes
         
-
-        /*val request = HttpRequest(
-            method = HttpMethods.GET,
-            uri = "/wallet",
-            entity = FormData(("id", "1")
-                              ).toEntity
-        )*/
         val request = HttpRequest(uri = "/wallet?id=1")
         request ~> routesUnderTest ~> check {
             status should ===(StatusCodes.OK)
@@ -594,4 +587,39 @@ class RoutesTest extends AnyFunSuite with Matchers with MockFactory with Scalate
         }
     }
 
+    test("Route GET /debit-wallet should return the wallet page of user 1") {
+      val mockWallets = mock[Wallets]
+
+      val fake: Wallet = new Wallet(
+            1, 100
+        )
+      
+    (mockWallets.debitWallet _).expects(1,20).returns(Future(Some(fake))).once()
+
+        val routesUnderTest = new Routes(null , null, null, null, null, null, null, null ,mockWallets ).routes
+        
+        val request = HttpRequest(uri = "/debit-wallet?id=1&cash=20")
+        request ~> routesUnderTest ~> check {
+            status should ===(StatusCodes.OK)
+            contentType should ===(ContentTypes.`text/html(UTF-8)`)
+        }
+    }
+
+    test("Route GET /credit-wallet should return the wallet page of user 1") {
+      val mockWallets = mock[Wallets]
+
+      val fake: Wallet = new Wallet(
+            1, 100
+        )
+      
+    (mockWallets.creditWallet _).expects(1,20).returns(Future(Some(fake))).once()
+
+        val routesUnderTest = new Routes(null , null, null, null, null, null, null, null ,mockWallets ).routes
+        
+        val request = HttpRequest(uri = "/add-wallet?id=1&cash=20")
+        request ~> routesUnderTest ~> check {
+            status should ===(StatusCodes.OK)
+            contentType should ===(ContentTypes.`text/html(UTF-8)`)
+        }
+    }
 }
