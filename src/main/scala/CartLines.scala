@@ -71,4 +71,13 @@ class CartLines {
         val updateAction = query.update(quantity)
         db.run(updateAction).map(_ => ())
     }
+
+    def deleteCartline(idcart: Int, idproduct: Int, idreseller: Int): Future[Unit] = {
+        val query = cartLines.filter(x => x.idcart === idcart && x.idproduct === idproduct && x.idreseller === idreseller)
+        val deleteAction = query.delete
+        val affectedRowsCount: Future[Int] = db.run(deleteAction)
+
+        // We do not care about the Int value
+        affectedRowsCount.map(_ => ())
+    }
 }

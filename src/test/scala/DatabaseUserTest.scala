@@ -1353,6 +1353,37 @@ class DatabaseTest extends AnyFunSuite
         allcartlines.head.quantity should be(newQuantity)
     }
 
+    test("CartLines.deleteCartline should delete the cartline") {
+        val cartlines: CartLines = new CartLines()
+        val cartline1: CartLine = new CartLine(1, 117, 1, 59.99, 1)
+
+        val createFuture: Future[Unit] = cartlines.createCartLine(
+            cartline1.idcart, cartline1.idproduct, cartline1.idreseller,
+            cartline1.price, cartline1.quantity
+        )
+        Await.ready(createFuture, Duration.Inf)
+
+        // Check that the cartline is really here, otherwise the test is useless
+        val getCartlineFuture: Future[Option[CartLine]] = cartlines.getCartLineById(
+            cartline1.idcart, cartline1.idproduct, cartline1.idreseller
+        )
+        val cartline: Option[CartLine] = Await.result(getCartlineFuture, Duration.Inf)
+        cartline should be(Some(cartline1))
+
+        // Delete the cartline
+        val deleteFuture: Future[Unit] = cartlines.deleteCartline(
+            cartline1.idcart, cartline1.idproduct, cartline1.idreseller
+        )
+        Await.ready(deleteFuture, Duration.Inf)
+
+        // Check that the cartline is deleted
+        val getCartlineFuture2: Future[Option[CartLine]] = cartlines.getCartLineById(
+            cartline1.idcart, cartline1.idproduct, cartline1.idreseller
+        )
+        val cartline2: Option[CartLine] = Await.result(getCartlineFuture2, Duration.Inf)
+        cartline2 should be(None)
+    }
+
     // --------- Wallets --------------
 
 

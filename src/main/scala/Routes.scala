@@ -281,7 +281,12 @@ class Routes(users: Users , developers: Developers , genres: Genres, publishers:
 
     def updateCartQuantities(idcart: Int, hashmap: HashMap[(Int, Int), Int]) = {
         logger.info("I got a request to update the cart " + idcart + ".")
-        hashmap.keys.foreach{key => cartlines.updateCartlineQuantity(idcart, key._1, key._2, hashmap(key))}
+        hashmap.keys.foreach{
+            key => hashmap(key) match {
+                case 0 => cartlines.deleteCartline(idcart, key._1, key._2)
+                case _ => cartlines.updateCartlineQuantity(idcart, key._1, key._2, hashmap(key))
+            }
+        }
         val getCartFuture: Future[Option[Cart]] = carts.getCartById(idcart)
         getCartFuture.map[ToResponseMarshallable] {
             case Some(cart) => html.cart_updated(cart.iduser)
