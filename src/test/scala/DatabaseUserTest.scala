@@ -1326,6 +1326,33 @@ class DatabaseTest extends AnyFunSuite
         allCartlines(1) should be (cartline2)        
     }
 
+    test("CartLines.updateCartlineQuantity should update quantity") {
+        val cartlines: CartLines = new CartLines()
+        val cartline1: CartLine = new CartLine(1, 311, 1, 19.99, 1)
+
+        val createCartline1Future: Future[Unit] = cartlines.createCartLine(
+            cartline1.idcart, cartline1.idproduct, cartline1.idreseller,
+            cartline1.price, cartline1.quantity
+        )
+        Await.ready(createCartline1Future, Duration.Inf)
+
+        val newQuantity: Int = cartline1.quantity + 1
+        val updateCartlineFuture: Future[Unit] = cartlines.updateCartlineQuantity(
+            cartline1.idcart, cartline1.idproduct,
+            cartline1.idreseller, newQuantity
+        )
+        Await.ready(updateCartlineFuture, Duration.Inf)
+
+        val getCartlinesFuture: Future[Seq[CartLine]] = cartlines.getAllCartLines()
+        var allcartlines: Seq[CartLine] = Await.result(getCartlinesFuture, Duration.Inf)
+
+        allcartlines.length should be(1)
+        allcartlines.head.idcart should be (cartline1.idcart)
+        allcartlines.head.idproduct should be(cartline1.idproduct)
+        allcartlines.head.idreseller should be(cartline1.idreseller)
+        allcartlines.head.quantity should be(newQuantity)
+    }
+
     // --------- Wallets --------------
 
 

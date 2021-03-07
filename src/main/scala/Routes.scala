@@ -280,6 +280,7 @@ class Routes(users: Users , developers: Developers , genres: Genres, publishers:
     }
 
     def updateCartQuantities(idcart: Int, hashmap: HashMap[(Int, Int), Int]) = {
+        logger.info("I got a request to update the cart " + idcart + ".")
         hashmap.keys.foreach{key => cartlines.updateCartlineQuantity(idcart, key._1, key._2, hashmap(key))}
         val getCartFuture: Future[Option[Cart]] = carts.getCartById(idcart)
         getCartFuture.map[ToResponseMarshallable] {
