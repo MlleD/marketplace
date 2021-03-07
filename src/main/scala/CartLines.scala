@@ -65,4 +65,10 @@ class CartLines {
             cartLineList.map(CartLine tupled _)
         })
     }
+
+    def updateCartlineQuantity(idcart: Int, idproduct: Int, idreseller: Int, quantity: Int): Future[Unit] = {
+        val query = for {c <- cartLines if c.idcart === idcart && c.idproduct === idproduct && c.idreseller === idreseller} yield c.quantity
+        val updateAction = query.update(quantity)
+        db.run(updateAction).map(_ => ())
+    }
 }

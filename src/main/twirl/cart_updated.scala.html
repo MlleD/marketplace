@@ -1,0 +1,15 @@
+@(iduser: Int)
+
+<!doctype html>
+<html>
+    <head></head>
+    <body>
+        <h3>Your cart has been successfully updated.</h3>
+        @if(iduser == -1) {
+        <p>You don't have any desired game.</p>
+        <p>Return to <a href="/home">home</a></p>
+        } else {
+        <p>Return to my <a href="/cart?iduser=@iduser">cart</a></p>
+        }
+    </body>
+</html>

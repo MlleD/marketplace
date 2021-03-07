@@ -9,7 +9,7 @@ import akka.http.scaladsl.model.{HttpEntity, HttpResponse, ContentTypes, StatusC
 import com.typesafe.scalalogging.LazyLogging
 import akka.http.scaladsl.marshalling.ToResponseMarshallable
 import TwirlMarshaller._
-
+import scala.collection.mutable.HashMap
 
 class Routes(users: Users , developers: Developers , genres: Genres, publishers: Publishers, games : Games, comments: Comments, carts: Carts, cartlines: CartLines , wallets : Wallets) extends LazyLogging {
     implicit val executionContext = scala.concurrent.ExecutionContext.Implicits.global
@@ -279,6 +279,15 @@ class Routes(users: Users , developers: Developers , genres: Genres, publishers:
         
     }
 
+    def updateCartQuantities(idcart: Int, hashmap: HashMap[(Int, Int), Int]) = {
+        hashmap.keys.foreach{key => cartlines.updateCartlineQuantity(idcart, key._1, key._2, hashmap(key))}
+        val getCartFuture: Future[Option[Cart]] = carts.getCartById(idcart)
+        getCartFuture.map[ToResponseMarshallable] {
+            case Some(cart) => html.cart_updated(cart.iduser)
+            case None => html.cart_updated(-1)
+        }
+    }
+
     val routes: Route = 
         concat(
             path("home") {
@@ -404,8 +413,26 @@ class Routes(users: Users , developers: Developers , genres: Genres, publishers:
                 get {
                     complete(viewCart(1))
                 }
-            }
-
+            },
+            path("cart-update-quantities") {
+                get {
+                    parameterMap { params => {
+                        var hashmap: HashMap[(Int, Int), Int] = HashMap()
+                        var idcart: Int = -1
+                        params.map(param => {
+                            param._1 match {
+                                case "idcart" => idcart = param._2.toInt
+                                case _ => {
+                                    val arr: Array[String] = param._1.split("-")
+                                    hashmap += ((arr(1).toInt, arr(2).toInt) -> param._2.toInt)
+                                }
+                            }
+                            })
+                        complete(updateCartQuantities(idcart, hashmap))
+                        }
+                    }
+                }
+            },
         )
 
 }
