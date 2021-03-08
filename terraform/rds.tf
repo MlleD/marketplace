@@ -8,7 +8,7 @@ resource "aws_db_instance" "db_poca" {
   allocated_storage = 20
   db_subnet_group_name = aws_db_subnet_group.dbsubnet_poca.name
   engine = "postgres"
-  engine_version = "12.4"
+  engine_version = "12.5"
   instance_class = "db.t2.micro"
   skip_final_snapshot = true
 
