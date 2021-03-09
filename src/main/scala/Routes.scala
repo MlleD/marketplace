@@ -231,22 +231,43 @@ class Routes(users: Users , developers: Developers , genres: Genres, publishers:
             }
         }
     }
-   
     def creditCashToSolde( id: Int, cash: Int) = {
         logger.info("I got a request to add to wallet "+ id +" cash :" + cash + ".")
         val wallet = wallets.creditWallet(id, cash)  
         wallet.map[ToResponseMarshallable] {
             case Some(wallet) => {
-                html.wallets(wallet.id, wallet.solde)
+                if( cash <= 0){
+                    logger.info("cash < 0")
+                    val w = wallets.debitWallet(id,cash)
+                    w.map[ToResponseMarshallable] {
+                        case Some(w) => {
+                            html.wallets(w.id, w.solde)
+                        }
+                    }
+                }else{
+                    html.wallets(wallet.id, wallet.solde)
+                }
             }
         }
     }
     def debitCashToSolde( id: Int, cash: Int) = {
-        logger.info("I got a request to add to wallet "+ id +" cash :" + cash + ".")
+        logger.info("I got a request to get back to wallet "+ id +" cash :" + cash + ".")
+        
         val wallet = wallets.debitWallet(id, cash)  
         wallet.map[ToResponseMarshallable] {
             case Some(wallet) => {
-                html.wallets(wallet.id, wallet.solde)
+                if( wallet.solde < 0 || cash <= 0){
+                    logger.info("solde < 0 || cash <= 0")
+                    val w = wallets.creditWallet(id,cash)
+                    w.map[ToResponseMarshallable] {
+                        case Some(w) => {
+                            html.wallets(w.id, w.solde)
+                        }
+                    }
+                }
+                else{
+                    html.wallets(wallet.id, wallet.solde)
+                }
             }
         }
     }
