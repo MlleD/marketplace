@@ -278,9 +278,15 @@ class Routes(users: Users , developers: Developers , genres: Genres, publishers:
         cart.map[ToResponseMarshallable] {
             case Some(cart) => {
                 val cartlinesFuture = cartlines.getCartLinesByIdCart(cart.id)
-                cartlinesFuture.map[ToResponseMarshallable]{seq => html.cart(seq)}
+                var total = 0.0
+                cartlinesFuture.map[ToResponseMarshallable] {
+                    seq => {
+                        seq.map(item => total += item.quantity * item.price)
+                        html.cart(seq, "%.2f".format(total))
+                    }
+                }
             }
-            case None => html.cart(null)
+            case None => html.cart(null, "0")
         }
     }
 
