@@ -5,18 +5,22 @@
     <head></head>
     <body>
         <h2>My cart</h2>
+        @if(cartlines == null || cartlines.length == 0) {
+        <p>You don't have any desired game.</p>
+        } else {
         <form action="/cart-update-quantities">
             <ul>
-                @if(cartlines == null || cartlines.length == 0) {
-                <p>You don't have any desired game.</p>
-                } else {
                 <input type="number" id="idcart" name="idcart" readonly="readonly" value="@cartlines(0).idcart" hidden>    
-                    @for(cartline <- cartlines) {
+                @for(cartline <- cartlines) {
                 <li>Product <a href="/product?id=@cartline.idproduct">@cartline.idproduct</a>, sold by reseller @cartline.idreseller, at unit price @cartline.price : quantity @cartline.quantity <input type="number" class="quantity" id="qty-@cartline.idproduct-@cartline.idreseller" name="quantity-@cartline.idproduct-@cartline.idreseller" min="0" max="20" value=@cartline.quantity></li>
-                    }
                 }
             </ul>
             <input type="submit" value="Update quantities">
         </form>
+        <form action="/checkout">
+            <input type="number" id="idcart" name="idcart" readonly="readonly" value="@cartlines(0).idcart" hidden>    
+            <input type="submit" value="Proceed to checkout">
+        </form>
+        }
     </body>
 </html>
