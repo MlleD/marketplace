@@ -1,0 +1,23 @@
+@(cartTotal: Double, wallet: poca.Wallet, cartId: Int)
+
+<!doctype html>
+<html>
+    <head></head>
+    <body>
+        <p>
+            Your total order amount is € @cartTotal. <br>
+            You currently have € @wallet.solde in your wallet.
+        </p>
+        @if(cartTotal > wallet.solde) {
+        <p>
+            You don't have enough money in your wallet. <br>
+            Please go to your <a href="/wallet?id=@wallet.id">wallet</a> to credit at least € @("%.2f".format(cartTotal - wallet.solde)).
+        </p>
+        } else {
+        <form action="/order">
+            <input type="number" id="idcart" name="idcart" readonly="readonly" value="@cartId" hidden>
+            <input type="submit" value="Order">   
+        </form>
+        }
+    </body>
+</html>

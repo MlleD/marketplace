@@ -321,6 +321,33 @@ class Routes(users: Users , developers: Developers , genres: Genres, publishers:
         }
     }
 
+    def checkout(idcart: Int) = {
+        logger.info("I got a request to checkout the cart " + idcart + ".")
+        carts.getCartById(idcart).map[ToResponseMarshallable] {
+            case Some(cart) => {
+                cartlines.getCartLinesByIdCart(idcart).map[ToResponseMarshallable] {
+                    seq => {
+                        val total: Double = seq.foldLeft(0.0) {(s,a) => s + a.quantity * a.price }
+                        val roundTotal: Double = "%.2f".format(total).replace(",", ".").toDouble
+                        wallets.getSoldeById(cart.iduser).map[ToResponseMarshallable] {
+                            case Some(wallet) => {
+                                html.checkout(roundTotal, wallet, idcart)
+                            }
+                            case None => HttpResponse(
+                                        StatusCodes.OK,
+                                        entity = s"The user doesn't have a wallet.",
+                                    )
+                        }
+                    }
+                }
+            }
+            case None => HttpResponse(
+                                StatusCodes.OK,
+                                entity = s"Cannot checkout a nonexistent cart with id '$idcart'.",
+                            )
+        }
+    }
+
     val routes: Route = 
         concat(
             path("home") {
@@ -466,6 +493,15 @@ class Routes(users: Users , developers: Developers , genres: Genres, publishers:
                     }
                 }
             },
+            path("checkout") {
+                get {
+                    parameter('idcart.as[Int]) {
+                        idcart => {
+                            complete(checkout(idcart))
+                        }
+                    }
+                }
+            }
         )
 
 }
