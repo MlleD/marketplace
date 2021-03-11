@@ -1,0 +1,31 @@
+@(orderlines: Seq[poca.OrderLine])
+
+<!doctype html>
+<html>
+    <head></head>
+    <body>
+        <h1>Order n° @orderlines(0).idorder</h1>
+        <table>
+            <thead>
+                <tr>
+                    <th>Id product</th>
+                    <th>Id reseller</th>
+                    <th>Id status</th>
+                    <th>Unit price</th>
+                    <th>Quantity</th>
+                </tr>
+            </thead>
+            <tbody>
+                @for(line <- orderlines) {
+                <tr>
+                    <td><a href="/product?id=@line.idproduct">@line.idproduct</a></td>
+                    <td>@line.idreseller</td>
+                    <td>@line.idstatus</td>
+                    <td>@line.price</td>
+                    <td>@line.quantity</td>
+                </tr>
+                }
+            </tbody>
+        </table>   
+    </body>
+</html>

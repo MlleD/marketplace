@@ -55,6 +55,16 @@ type OrderLine_t = (Int, Int, Int, Int, Double, Int)
         })
     }
 
+    def getOrderLinesByIdOrder(idorder: Int): Future[Seq[OrderLine]] = {
+        val query = orderLines.filter(_.idorder === idorder)
+
+        val orderLineListFuture = db.run(query.result)
+
+        orderLineListFuture.map((orderLineList: Seq[OrderLine_t]) => {
+            orderLineList.map(OrderLine tupled _)
+        })
+    }
+
     def getAllOrderLines(): Future[Seq[OrderLine]] = {
         val orderLineListFuture = db.run(orderLines.result)
 

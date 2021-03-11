@@ -418,6 +418,12 @@ class Routes(users: Users , developers: Developers , genres: Genres, publishers:
         }
     }
 
+    def viewOrder(id: Int) = {
+        orderlines.getOrderLinesByIdOrder(id).map[ToResponseMarshallable] {
+            myorderlines => html.order(myorderlines)
+        }
+    }
+
     val routes: Route = 
         concat(
             path("home") {
@@ -583,6 +589,13 @@ class Routes(users: Users , developers: Developers , genres: Genres, publishers:
                 get {
                     parameter('iduser.as[Int]) {
                         iduser => complete(getMyOrders(iduser))
+                    }
+                }
+            },
+            path("my-order") {
+                get {
+                    parameter('id.as[Int]) {
+                        id => complete(viewOrder(id))
                     }
                 }
             },
