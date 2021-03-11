@@ -1,4 +1,4 @@
-@(orderlines: Seq[poca.OrderLine])(content: Html)
+@(orderlines: Seq[poca.OrderLine])
 <!DOCTYPE html>
 <html>
   <head>
@@ -13,11 +13,11 @@
         <tbody>
             @for(line <- orderlines) {
             <tr>
-                <td>@line.idproduct </td>
-                <td>@line.idreseller</td>
-                <td>@line.idstatus</td>
-                <td>@line.price</td>
-                <td>@line.quantity</td>
+                <td>product n° @line.idproduct </td>
+                <td>reseller n° @line.idreseller</td>
+                <td>status: @line.idstatus</td>
+                <td>price: @line.price</td>
+                <td>quantity: @line.quantity</td>
             </tr>
             }
         </tbody>

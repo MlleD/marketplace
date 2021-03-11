@@ -417,20 +417,16 @@ class Routes(users: Users , developers: Developers , genres: Genres, publishers:
         logger.info(s"I got a request send an email at '$email'.")
         import mail._
 
-        send a new Mail (
-                            from = ("noreply@equipe7.fr", "Équipe 7"),
-                            to = email,
-                            subject = "Recap Order n° " + idorder.toString,
-                            message = "ceci est un test"
-                        )
-        /*val ol = orderlines.getOrderLinesByIdOrder(idorder).map {
+        orderlines.getOrderLinesByIdOrder(idorder).map {
             olList =>  send a new Mail (
                             from = ("noreply@equipe7.fr", "Équipe 7"),
                             to = email,
                             subject = "Recap Order n° " + idorder.toString,
-                            message = "ceci est un test"
+                            message = html.email(olList).toString
                         )
-        }*/
+        }
+
+        
        
     }
 
