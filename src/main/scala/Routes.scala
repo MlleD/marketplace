@@ -382,7 +382,7 @@ class Routes(users: Users , developers: Developers , genres: Genres, publishers:
                                             if (wallet.solde >= total) {
                                                 wallets.debitWallet(wallet.id, total)
                                                 users.getEmailFromUser(cart.iduser).map[ToResponseMarshallable] {
-                                                    case Some(email) => html.order(order.id, email)
+                                                    case Some(email) => html.order_confirmed(order.id, email)
                                                     case None => HttpResponse(
                                                                     StatusCodes.OK,
                                                                     entity = s"The user doesn't have an email address.")
