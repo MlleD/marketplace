@@ -418,11 +418,13 @@ class Routes(users: Users , developers: Developers , genres: Genres, publishers:
         import mail._
 
         orderlines.getOrderLinesByIdOrder(idorder).map {
-            olList =>  send a new Mail (
+            olList =>
+                        send a new Mail (
                             from = ("noreply@equipe7.fr", "Équipe 7"),
                             to = email,
                             subject = "Recap Order n° " + idorder.toString,
-                            message = html.email(olList).toString
+                            message = "test",
+                            richMessage = html.email(olList).toString
                         )
         }
 
