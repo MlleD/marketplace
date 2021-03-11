@@ -70,4 +70,17 @@ type User_t = (Int, String, String, String, String, String, String)
             userList.map(User tupled _)
         })
     }
+
+    def getEmailFromUser(iduser: Int) : Future[Option[String]] = {
+        val query = users.filter(_.id === iduser)
+
+        val userListFuture = db.run(query.result)
+
+        userListFuture.map((userList: Seq[User_t]) => {
+            userList.length match {
+                case 0 => None
+                case _ => Some((User tupled userList.head).email)
+            }
+        })
+    }
 }

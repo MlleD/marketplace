@@ -10,8 +10,12 @@ import com.typesafe.scalalogging.LazyLogging
 import akka.http.scaladsl.marshalling.ToResponseMarshallable
 import TwirlMarshaller._
 import scala.collection.mutable.HashMap
+import java.sql.Timestamp
+import java.time.format.DateTimeFormatter
+import java.time.ZoneId
+import java.time.LocalDateTime
 
-class Routes(users: Users , developers: Developers , genres: Genres, publishers: Publishers, games : Games, comments: Comments, carts: Carts, cartlines: CartLines , wallets : Wallets) extends LazyLogging {
+class Routes(users: Users , developers: Developers , genres: Genres, publishers: Publishers, games : Games, comments: Comments, carts: Carts, cartlines: CartLines , wallets : Wallets, orders: Orders, orderlines: OrderLines) extends LazyLogging {
     implicit val executionContext = scala.concurrent.ExecutionContext.Implicits.global
 
     def getHome() = {
@@ -348,6 +352,66 @@ class Routes(users: Users , developers: Developers , genres: Genres, publishers:
         }
     }
 
+    def order(idcart: Int) = {
+        logger.info(s"I got a request to create an order from the cart id '$idcart'.")
+        carts.getCartById(idcart).map[ToResponseMarshallable] {
+            case Some(cart) => {
+                cartlines.getCartLinesByIdCart(idcart).map[ToResponseMarshallable] {
+                    var total: Double = 0.0
+                    seq => seq.length match {
+                        case 0 => HttpResponse(
+                                    StatusCodes.OK,
+                                    entity = s"Cannot create an order from am empty cart.")
+                        case _ => {
+                            val fmt = DateTimeFormatter.ofPattern("uuuu-MM-dd HH:mm:ss")
+                            val time = LocalDateTime.now(ZoneId.of("America/New_York")).format(fmt)
+                            orders.createOrder(1, cart.iduser, Timestamp.valueOf(time))
+                            orders.getLastOrderFromUser(cart.iduser).map[ToResponseMarshallable] {
+                                case Some(order) => {
+                                    seq.map(
+                                        cLine => {
+                                            cartlines.deleteCartline(cLine.idcart, cLine.idproduct, cLine.idreseller)
+                                            orderlines.createOrderLine(order.id, cLine.idproduct, cLine.idreseller, 1, cLine.price, cLine.quantity)
+                                            total += cLine.price * cLine.quantity
+                                        }
+                                    )
+                                    // arrondir au centième le total
+                                    total = (total * 100).toInt / 100.0
+                                    wallets.getSoldeById(order.iduser).map[ToResponseMarshallable] {
+                                        case Some (wallet) => {
+                                            if (wallet.solde >= total) {
+                                                wallets.debitWallet(wallet.id, total)
+                                                users.getEmailFromUser(cart.iduser).map[ToResponseMarshallable] {
+                                                    case Some(email) => html.order(order.id, email)
+                                                    case None => HttpResponse(
+                                                                    StatusCodes.OK,
+                                                                    entity = s"The user doesn't have an email address.")
+                                                }
+                                            }
+                                            else {
+                                                html.checkout(total, wallet, idcart)
+                                            }
+                                        }
+                                        case None => HttpResponse(
+                                                        StatusCodes.OK,
+                                                        entity = s"The user doesn't have a wallet.")
+                                    }
+                                }
+                                case None => HttpResponse(
+                                    StatusCodes.OK,
+                                    entity = s"The creation of the order failed.")
+
+                            }
+                        }
+                    }
+                }
+            }
+            case None => HttpResponse(
+                            StatusCodes.OK,
+                            entity = s"Cannot create an order from a nonexistent cart with id '$idcart'.")
+        }
+    }
+
     val routes: Route = 
         concat(
             path("home") {
@@ -501,7 +565,14 @@ class Routes(users: Users , developers: Developers , genres: Genres, publishers:
                         }
                     }
                 }
-            }
+            },
+            path("order") {
+                get {
+                    parameter('idcart.as[Int]) {
+                        idcart => complete(order(idcart))
+                    }
+                }
+            },
         )
 
 }
