@@ -382,7 +382,8 @@ class Routes(users: Users , developers: Developers , genres: Genres, publishers:
                                             if (wallet.solde >= total) {
                                                 wallets.debitWallet(wallet.id, total)
                                                 users.getEmailFromUser(cart.iduser).map[ToResponseMarshallable] {
-                                                    case Some(email) => html.order_confirmed(order.id, email)
+                                                    case Some(email) => send_email(email, order.id)
+                                                                        html.order_confirmed(order.id, email)
                                                     case None => HttpResponse(
                                                                     StatusCodes.OK,
                                                                     entity = s"The user doesn't have an email address.")
@@ -410,6 +411,27 @@ class Routes(users: Users , developers: Developers , genres: Genres, publishers:
                             StatusCodes.OK,
                             entity = s"Cannot create an order from a nonexistent cart with id '$idcart'.")
         }
+    }
+
+    def send_email(email: String, idorder: Int) = {
+        logger.info(s"I got a request send an email at '$email'.")
+        import mail._
+
+        send a new Mail (
+                            from = ("noreply@equipe7.fr", "Équipe 7"),
+                            to = email,
+                            subject = "Recap Order n° " + idorder.toString,
+                            message = "ceci est un test"
+                        )
+        /*val ol = orderlines.getOrderLinesByIdOrder(idorder).map {
+            olList =>  send a new Mail (
+                            from = ("noreply@equipe7.fr", "Équipe 7"),
+                            to = email,
+                            subject = "Recap Order n° " + idorder.toString,
+                            message = "ceci est un test"
+                        )
+        }*/
+       
     }
 
     def getMyOrders(iduser: Int) = {
