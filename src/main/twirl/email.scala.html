@@ -1,0 +1,26 @@
+@(orderlines: Seq[poca.OrderLine])
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta name="viewport" content="width=device-width">
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <title>Recap of your order</title>
+  </head>
+  <body>
+    <div>You are receiving this as you are a registered user of this application. This email address is for notifications only and replies are not monitored.</div>
+    <div>Recap of your order:</div>
+    <div>
+        <tbody>
+            @for(line <- orderlines) {
+            <tr>
+                <td>product n° @line.idproduct </td>
+                <td>reseller n° @line.idreseller</td>
+                <td>status: @line.idstatus</td>
+                <td>price: @line.price</td>
+                <td>quantity: @line.quantity</td>
+            </tr>
+            }
+        </tbody>
+    </div>
+  </body>
+</html>

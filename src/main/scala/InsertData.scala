@@ -201,7 +201,7 @@ class InsertData ( developers: Developers , genres: Genres, publishers: Publishe
 
 	def FillUser(){
 		Await.result(users.createUser(1, "Jean-Edouard", "de la FesMol", "JEF@gmail.com", "root", "addressJEF", "0666666666", "root"), Duration.Inf)
-		Await.result(users.createUser(2, "Marie", "Kartiol", "MK@gmail.com", "root", "addressMK", "0777777777", "root"), Duration.Inf)
+		Await.result(users.createUser(2, "Marie", "Kartiol", "merat.laure@gmail.com", "root", "addressMK", "0777777777", "root"), Duration.Inf)
 		Await.result(users.createUser(3, "Nabila", "Aliban", "NA@gmail.com", "root", "addressNA", "0888888888", "root"), Duration.Inf)
 		Await.result(users.createUser(4, "Paul", "Sambousek", "PS@gmail.com", "root", "addressPS", "0111111111", "root"), Duration.Inf)
 		Await.result(users.createUser(5, "Carlita", "Walla", "CW@gmail.com", "root", "addressCW", "0222222222", "root"), Duration.Inf)
