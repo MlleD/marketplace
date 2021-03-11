@@ -1,0 +1,25 @@
+@(orders: Seq[poca.Order])
+
+<!doctype html>
+<html>
+    <head></head>
+    <body>
+        <h1>My orders</h1>
+        <table>
+            <thead>
+                <tr>
+                    <th>Id</th>
+                    <th>Date</th>
+                </tr>
+            </thead>
+            <tbody>
+                @for(order <- orders) {
+                <tr>
+                    <td><a href="/my-order?id=@order.id">@order.id</a></td>
+                    <td>@order.date</td>
+                </tr>
+                }
+            </tbody>
+        </table>    
+    </body>
+</html>
