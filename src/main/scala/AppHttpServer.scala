@@ -87,7 +87,7 @@ object AppHttpServer extends LazyLogging {
 
        
         
-        val routes = new Routes(users , developers , genres, publishers, games, comments, carts, cartlines , wallets ) ; // , genres, publishers, games)
+        val routes = new Routes(users , developers , genres, publishers, games, comments, carts, cartlines , wallets, orders, orderLines ) ; // , genres, publishers, games)
 
         val bindingFuture = Http().newServerAt("0.0.0.0", 8080).bind(routes.routes)
 

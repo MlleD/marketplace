@@ -70,4 +70,17 @@ type Order_t = (Int, Int, Timestamp)
             orderList.map(Order tupled _)
         })
     }
+
+    def getLastOrderFromUser(iduser: Int): Future[Option[Order]] = {
+        val query = orders.filter(_.iduser === iduser).sortBy(o => (o.date.desc, o.id))
+
+        val orderListFuture = db.run(query.result)
+
+        orderListFuture.map((orderList: Seq[Order_t]) => {
+            orderList.length match {
+                case 0 => None
+                case _ => Some(orderList.map(Order tupled _).head)
+            }
+        })
+    }
 }

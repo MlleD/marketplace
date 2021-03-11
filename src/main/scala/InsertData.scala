@@ -58,13 +58,13 @@ class InsertData ( developers: Developers , genres: Genres, publishers: Publishe
 		val orderlineFuture: Future[Int] = db.run(Clearorderline)
 		val orderline = Await.result(orderlineFuture, Duration.Inf)
 
+
+		val Resetorder = sqlu"""TRUNCATE TABLE "order" ;ALTER SEQUENCE order_id_seq MINVALUE 0 RESTART WITH 0 ;"""
+	    val resetOrderFuture: Future[Int] = db.run(Resetorder)
+	    val cleanedOrder = Await.result(resetOrderFuture, Duration.Inf)
+
 /*
-		val Resetorder = sqlu"TRUNCATE TABLE order ;ALTER SEQUENCE order_id_seq MINVALUE 0 RESTART WITH 0 ;"
-	    val orderFuture: Future[Int] = db.run(Resetorder)
-	    val order = Await.result(orderFuture, Duration.Inf)
-
-
-		val ResetorderLine = sqlu"TRUNCATE TABLE orderLine ;ALTER SEQUENCE order_line_id_seq MINVALUE 0 RESTART WITH 0 ;"
+		val ResetorderLine = sqlu"TRUNCATE TABLE "orderLine" ;ALTER SEQUENCE order_line_id_seq MINVALUE 0 RESTART WITH 0 ;"
 	    val orderLineFuture: Future[Int] = db.run(ResetorderLine)
 	    val orderLine = Await.result(orderLineFuture, Duration.Inf)
 		*/

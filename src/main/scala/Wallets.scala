@@ -68,7 +68,7 @@ type Wallet_t = (Int, Int)
         getSoldeById(id)
     }
 
-    def debitWallet(id: Int, cash: Int): Future[Option[Wallet]] = {
+    def debitWallet(id: Int, cash: Double): Future[Option[Wallet]] = {
 
         val updateWallet = sqlu"""update "Wallets" set "WalletSolde" = "WalletSolde" - ${cash} where "WalletId" = ${id};"""
         val walFuture: Future[Int] = db.run(updateWallet)
