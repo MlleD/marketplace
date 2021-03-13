@@ -965,6 +965,37 @@ class DatabaseTest extends AnyFunSuite
         returnedOrderSeq(1) should be(fake_order2)
     }
 
+    test("Orders.getLastOrderFromUser should return None if no order from the user")
+    {
+        var orders: Orders = new Orders()
+        val getOrderFuture: Future[Option[Order]] = orders.getLastOrderFromUser(1)
+
+        val order: Option[Order] = Await.result(getOrderFuture, Duration.Inf);
+
+        order should be(None)
+    }
+
+    test("Orders.getLastOrderFromUser should return the last order of the user")
+    {
+        var orders: Orders = new Orders()
+
+        val fmt = DateTimeFormatter.ofPattern("uuuu-MM-dd HH:mm:ss")
+		var time = LocalDateTime.now(ZoneId.of("America/New_York")).format(fmt)
+
+        val iduser: Int = 2
+        var createOrderFuture: Future[Unit] = orders.createOrder(0, iduser, Timestamp.valueOf(time))
+        Await.ready(createOrderFuture, Duration.Inf)
+        time = LocalDateTime.now(ZoneId.of("America/New_York")).format(fmt)
+        val order: Order = new Order(1, iduser, Timestamp.valueOf(time))
+        createOrderFuture = orders.createOrder(order.id, iduser, order.date)
+        Await.ready(createOrderFuture, Duration.Inf)
+
+        val getOrderFuture: Future[Option[Order]] = orders.getLastOrderFromUser(iduser)
+
+        val lastOrder: Option[Order] = Await.result(getOrderFuture, Duration.Inf);
+
+        lastOrder should be(Some(order))
+    }
         // -------------------------- ORDERLINE ---------------------------------
 
     test("OrderLines.createOrderLine should create a new orderLine") {
