@@ -186,7 +186,24 @@ class DatabaseTest extends AnyFunSuite
         returnedUserSeq(1) should be(theo)
     }
 
+    test("Users.getEmailFromUser should return None if the user doesn't exist") {
+        val users: Users = new Users()
+        val noemail: Option[String] = Await.result(users.getEmailFromUser(5), Duration.Inf)
+        noemail should be(None)
+    }
 
+    test("Users.getEmailFromUser should the email if the user exists") {
+        val users: Users = new Users()
+        val id: Int = 1
+        val email: String = "dr@gmail.com"
+        val createFuture: Future[Unit] = users.createUser(
+            id, "Dana", "Reyes", email, "drpw",
+            "5 rue du soleil", "0294570644", "drpw")
+        Await.ready(createFuture, Duration.Inf)
+
+        val result_email: Option[String] = Await.result(users.getEmailFromUser(id), Duration.Inf)
+        result_email should be(Some(email))
+    }
 
 
     // -------------------------- GAME ---------------------------------
