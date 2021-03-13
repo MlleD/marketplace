@@ -365,11 +365,14 @@ class Routes(users: Users , developers: Developers , genres: Genres, publishers:
                         case _ => {
                             val fmt = DateTimeFormatter.ofPattern("uuuu-MM-dd HH:mm:ss")
                             val time = LocalDateTime.now(ZoneId.of("America/New_York")).format(fmt)
-                            orders.createOrder(1, cart.iduser, Timestamp.valueOf(time))
+
+                            //orders.createOrder(1, cart.iduser, Timestamp.valueOf(time))
+
                             orders.getLastOrderFromUser(cart.iduser).map[ToResponseMarshallable] {
                                 case Some(order) => {
                                     seq.map(
                                         cLine => {
+                                            orders.createOrder((order.id+1).toInt, cart.iduser, Timestamp.valueOf(time))
                                             cartlines.deleteCartline(cLine.idcart, cLine.idproduct, cLine.idreseller)
                                             orderlines.createOrderLine(order.id, cLine.idproduct, cLine.idreseller, 1, cLine.price, cLine.quantity)
                                             total += cLine.price * cLine.quantity
@@ -384,6 +387,7 @@ class Routes(users: Users , developers: Developers , genres: Genres, publishers:
                                                 users.getEmailFromUser(cart.iduser).map[ToResponseMarshallable] {
                                                     case Some(email) => send_email(email, order.id)
                                                                         html.order_confirmed(order.id, email)
+
                                                     case None => HttpResponse(
                                                                     StatusCodes.OK,
                                                                     entity = s"The user doesn't have an email address.")

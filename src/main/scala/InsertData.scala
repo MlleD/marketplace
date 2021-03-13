@@ -201,7 +201,7 @@ class InsertData ( developers: Developers , genres: Genres, publishers: Publishe
 
 	def FillUser(){
 		Await.result(users.createUser(1, "Jean-Edouard", "de la FesMol", "JEF@gmail.com", "root", "addressJEF", "0666666666", "root"), Duration.Inf)
-		Await.result(users.createUser(2, "Marie", "Kartiol", "merat.laure@gmail.com", "root", "addressMK", "0777777777", "root"), Duration.Inf)
+		Await.result(users.createUser(2, "Marie", "Kartiol", "lp.cadiou1996@gmail.com", "root", "addressMK", "0777777777", "root"), Duration.Inf)
 		Await.result(users.createUser(3, "Nabila", "Aliban", "NA@gmail.com", "root", "addressNA", "0888888888", "root"), Duration.Inf)
 		Await.result(users.createUser(4, "Paul", "Sambousek", "PS@gmail.com", "root", "addressPS", "0111111111", "root"), Duration.Inf)
 		Await.result(users.createUser(5, "Carlita", "Walla", "CW@gmail.com", "root", "addressCW", "0222222222", "root"), Duration.Inf)
@@ -216,10 +216,10 @@ class InsertData ( developers: Developers , genres: Genres, publishers: Publishe
 
 
 	def FillOrderLine(){
-		Await.result(orderLines.createOrderLine(1, 0, 1, 1, 10.0, 1), Duration.Inf)
-		Await.result(orderLines.createOrderLine(1, 2, 1, 1, 10.0, 1), Duration.Inf)
-		Await.result(orderLines.createOrderLine(2, 0, 1, 1, 10.0, 1), Duration.Inf)
-		Await.result(orderLines.createOrderLine(2, 4, 1, 1, 10.0, 1), Duration.Inf)
+		Await.result(orderLines.createOrderLine(9999, 0, 1, 1, 10.0, 1), Duration.Inf)
+		Await.result(orderLines.createOrderLine(9999, 2, 1, 1, 10.0, 1), Duration.Inf)
+		Await.result(orderLines.createOrderLine(1001, 0, 1, 1, 10.0, 1), Duration.Inf)
+		Await.result(orderLines.createOrderLine(1001, 4, 1, 1, 10.0, 1), Duration.Inf)
 	}
 
 	def FillComment(){
@@ -251,11 +251,11 @@ class InsertData ( developers: Developers , genres: Genres, publishers: Publishe
 
 	def FillCartLine() {
 		Await.result(cartlines.createCartLine(0, 136, 1, 59.99, 1), Duration.Inf)
-		Await.result(cartlines.createCartLine(0, 313, 2, 45.0, 1), Duration.Inf)
-		Await.result(cartlines.createCartLine(0, 71, 1, 59.99, 1), Duration.Inf)
+		//Await.result(cartlines.createCartLine(0, 313, 2, 45.0, 1), Duration.Inf)
+		//Await.result(cartlines.createCartLine(0, 71, 1, 59.99, 1), Duration.Inf)
 	}
 	def FillWallets() {
-		Await.result(wallets.createWallets(1 , 100 ), Duration.Inf)
+		Await.result(wallets.createWallets(1 , 500 ), Duration.Inf)
 		Await.result(wallets.createWallets(2 , 200 ), Duration.Inf)
 		Await.result(wallets.createWallets(3 , 300 ), Duration.Inf)
 		Await.result(wallets.createWallets(4 , 400 ), Duration.Inf)
