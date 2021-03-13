@@ -1501,9 +1501,10 @@ class DatabaseTest extends AnyFunSuite
         val comments: Comments = new Comments(orders, orderLines)
         val wallets : Wallets = new Wallets()
         val carts: Carts = new Carts()
+        val cartlines: CartLines = new CartLines()
         
 
-        val insertdata : InsertData = new InsertData(developers,genres,publishers,games, users, comments, orders, orderLines, carts, null ,null)
+        val insertdata : InsertData = new InsertData(developers,genres,publishers,games, users, comments, orders, orderLines, carts, cartlines ,null)
         insertdata.ClearDB()
 
         val returnedPublisherSeqFuture: Future[Seq[Publisher]] = publishers.getAllPublishers()
@@ -1533,6 +1534,9 @@ class DatabaseTest extends AnyFunSuite
         val getCartsFuture: Future[Seq[Cart]] = carts.getAllCarts()
         var allcarts: Seq[Cart] = Await.result(getCartsFuture, Duration.Inf)
 
+        val getCartlinesFuture: Future[Seq[CartLine]] = cartlines.getAllCartLines()
+        var allcartlines: Seq[CartLine] = Await.result(getCartlinesFuture, Duration.Inf)
+
         val getWalletsFuture: Future[Seq[Wallet]] = wallets.getAllWallets()
         var allwallets: Seq[Wallet] = Await.result(getWalletsFuture, Duration.Inf)
 
@@ -1545,6 +1549,7 @@ class DatabaseTest extends AnyFunSuite
         allOrders.length should be(0)
         allOrderLines.length should be(0)
         allcarts.length should be(0)
+        allcartlines.length should be(0)
         allwallets.length should be(0)
 
 
@@ -1736,6 +1741,20 @@ class DatabaseTest extends AnyFunSuite
         var allcarts: Seq[Cart] = Await.result(getCartsFuture, Duration.Inf)
 
         allcarts.length should be(1)
+    }
+
+    test("InsertData.FillCartLines should add 3 cartlines")
+    {
+        val cartlines: CartLines = new CartLines()
+        
+        val insertdata : InsertData = new InsertData(null, null, null, null, null, null, null, null, null, cartlines, null)
+        insertdata.ClearDB()
+        insertdata.FillCartLine()
+
+        val getCartlinesFuture: Future[Seq[CartLine]] = cartlines.getAllCartLines()
+        var allcartlines: Seq[CartLine] = Await.result(getCartlinesFuture, Duration.Inf)
+
+        allcartlines.length should be(3)
     }
 
     test("InsertData.FillWallets should add 5 wallets")
