@@ -639,6 +639,7 @@ class RoutesTest extends AnyFunSuite with Matchers with MockFactory with Scalate
         request ~> routesUnderTest ~> check {
             status should ===(StatusCodes.OK)
             contentType should ===(ContentTypes.`text/html(UTF-8)`)
+            responseAs[String] should ===("e")
             responseAs[String].contains("""Product <a href="/product?id=136">136</a>, sold by reseller 1, at unit price 59.99 : quantity 1""") should ===(true)
             responseAs[String].contains("""Product <a href="/product?id=313">313</a>, sold by reseller 2, at unit price 45.0 : quantity 1""") should ===(true)
             responseAs[String].contains("""Product <a href="/product?id=71">71</a>, sold by reseller 1, at unit price 59.99 : quantity 1""") should ===(true)
@@ -666,6 +667,7 @@ class RoutesTest extends AnyFunSuite with Matchers with MockFactory with Scalate
         request ~> routesUnderTest ~> check {
             status should ===(StatusCodes.OK)
             contentType should ===(ContentTypes.`text/html(UTF-8)`)
+            responseAs[String] should ===("e")
             responseAs[String].contains("You don't have enough money in your wallet.") should ===(true)
             responseAs[String].contains("""Please go to your <a href="/wallet?id=1">wallet</a> to credit at least € 64,98.""") should ===(true)
         }
