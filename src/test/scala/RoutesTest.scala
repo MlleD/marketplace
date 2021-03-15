@@ -644,6 +644,76 @@ class RoutesTest extends AnyFunSuite with Matchers with MockFactory with Scalate
             responseAs[String].contains("""Product <a href="/product?id=71">71</a>, sold by reseller 1, at unit price 59.99 : quantity 1""") should ===(true)
             responseAs[String].contains("Total: € 164,98") should ===(true)
         }
+    }
 
+    test("Route GET /checkout when no enough money in the wallet should display the wallet link") {
+        val mockCarts = mock[Carts]
+        val mockCartlines = mock[CartLines]
+        val mockWallets = mock[Wallets]
+        
+        val cart: Cart = Cart(0,1)
+        val clines: Seq[CartLine] = Seq(CartLine(0, 136, 1, 59.99, 1),
+        CartLine(0, 313, 2, 45.0, 1), CartLine(0, 71, 1, 59.99, 1))
+        val wallet: Wallet = Wallet(1, 100)
+
+        (mockCarts.getCartById _).expects(0).returns(Future(Some(cart))).once()
+        (mockCartlines.getCartLinesByIdCart _).expects(0).returns(Future(clines)).once()
+        (mockWallets.getSoldeById _).expects(1).returns(Future(Some(wallet))).once()
+
+        val routesUnderTest = new Routes(null , null, null, null, null, null, mockCarts, mockCartlines, mockWallets, null, null).routes
+        
+        var request = HttpRequest(uri = "/checkout?idcart=0")
+        request ~> routesUnderTest ~> check {
+            status should ===(StatusCodes.OK)
+            contentType should ===(ContentTypes.`text/html(UTF-8)`)
+            responseAs[String].contains("You don't have enough money in your wallet.") should ===(true)
+            responseAs[String].contains("""Please go to your <a href="/wallet?id=1">wallet</a> to credit at least € 64,98.""") should ===(true)
+        }
+    }
+
+    test("Route GET /checkout when enough money should display the order button") {
+        val mockCarts = mock[Carts]
+        val mockCartlines = mock[CartLines]
+        val mockWallets = mock[Wallets]
+        
+        val cart: Cart = Cart(0,1)
+        val clines: Seq[CartLine] = Seq(CartLine(0, 136, 1, 59.99, 1),
+        CartLine(0, 313, 2, 45.0, 1), CartLine(0, 71, 1, 59.99, 1))
+        val wallet: Wallet = new Wallet(1, 200)
+
+        (mockCarts.getCartById _).expects(0).returns(Future(Some(cart))).once()
+        (mockCartlines.getCartLinesByIdCart _).expects(0).returns(Future(clines)).once()
+        (mockWallets.getSoldeById _).expects(1).returns(Future(Some(wallet))).once()
+
+        val routesUnderTest = new Routes(null , null, null, null, null, null, mockCarts, mockCartlines, mockWallets, null, null).routes
+        
+        var request = HttpRequest(uri = "/checkout?idcart=0")
+        request ~> routesUnderTest ~> check {
+            status should ===(StatusCodes.OK)
+            contentType should ===(ContentTypes.`text/html(UTF-8)`)
+            responseAs[String].contains("""<input type="submit" value="Order">""") should ===(true)
+        }
+    }
+
+    test("Route GET /checkout when nonexistent cart should display the message saying that") {
+        val mockCarts = mock[Carts]
+        val mockCartlines = mock[CartLines]
+        val mockWallets = mock[Wallets]
+        
+        val cart: Cart = Cart(0,1)
+        val clines: Seq[CartLine] = Seq(CartLine(0, 136, 1, 59.99, 1),
+        CartLine(0, 313, 2, 45.0, 1), CartLine(0, 71, 1, 59.99, 1))
+        val wallet: Wallet = new Wallet(1, 200)
+
+        (mockCarts.getCartById _).expects(5).returns(Future(None)).once()
+
+        val routesUnderTest = new Routes(null , null, null, null, null, null, mockCarts, mockCartlines, mockWallets, null, null).routes
+        
+        var request = HttpRequest(uri = "/checkout?idcart=5")
+        request ~> routesUnderTest ~> check {
+            status should ===(StatusCodes.OK)
+            contentType should ===(ContentTypes.`text/plain(UTF-8)`)
+            responseAs[String].contains("""Cannot checkout a nonexistent cart with id '5'.""") should ===(true)
+        }
     }
 }
