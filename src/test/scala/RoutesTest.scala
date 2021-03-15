@@ -622,4 +622,28 @@ class RoutesTest extends AnyFunSuite with Matchers with MockFactory with Scalate
             contentType should ===(ContentTypes.`text/html(UTF-8)`)
         }
     }
+
+    test("Route GET /cart should return the cart page of user 1") {
+        val mockCarts = mock[Carts]
+        val mockCartlines = mock[CartLines]
+        val cart: Cart = Cart(0,1)
+        val clines: Seq[CartLine] = Seq(CartLine(0, 136, 1, 59.99, 1),
+        CartLine(0, 313, 2, 45.0, 1), CartLine(0, 71, 1, 59.99, 1))
+
+        (mockCarts.getCartByIdUser _).expects(1).returns(Future(Some(cart))).once()
+        (mockCartlines.getCartLinesByIdCart _).expects(0).returns(Future(clines)).once()
+
+        val routesUnderTest = new Routes(null , null, null, null, null, null, mockCarts, mockCartlines , null, null, null).routes
+        
+        var request = HttpRequest(uri = "/cart")
+        request ~> routesUnderTest ~> check {
+            status should ===(StatusCodes.OK)
+            contentType should ===(ContentTypes.`text/html(UTF-8)`)
+            responseAs[String].contains("""Product <a href="/product?id=136">136</a>, sold by reseller 1, at unit price 59.99 : quantity 1""") should ===(true)
+            responseAs[String].contains("""Product <a href="/product?id=313">313</a>, sold by reseller 2, at unit price 45.0 : quantity 1""") should ===(true)
+            responseAs[String].contains("""Product <a href="/product?id=71">71</a>, sold by reseller 1, at unit price 59.99 : quantity 1""") should ===(true)
+            responseAs[String].contains("Total: € 164,98") should ===(true)
+        }
+
+    }
 }
