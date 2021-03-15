@@ -186,7 +186,24 @@ class DatabaseTest extends AnyFunSuite
         returnedUserSeq(1) should be(theo)
     }
 
+    test("Users.getEmailFromUser should return None if the user doesn't exist") {
+        val users: Users = new Users()
+        val noemail: Option[String] = Await.result(users.getEmailFromUser(5), Duration.Inf)
+        noemail should be(None)
+    }
 
+    test("Users.getEmailFromUser should the email if the user exists") {
+        val users: Users = new Users()
+        val id: Int = 1
+        val email: String = "dr@gmail.com"
+        val createFuture: Future[Unit] = users.createUser(
+            id, "Dana", "Reyes", email, "drpw",
+            "5 rue du soleil", "0294570644", "drpw")
+        Await.ready(createFuture, Duration.Inf)
+
+        val result_email: Option[String] = Await.result(users.getEmailFromUser(id), Duration.Inf)
+        result_email should be(Some(email))
+    }
 
 
     // -------------------------- GAME ---------------------------------
@@ -965,6 +982,37 @@ class DatabaseTest extends AnyFunSuite
         returnedOrderSeq(1) should be(fake_order2)
     }
 
+    test("Orders.getLastOrderFromUser should return None if no order from the user")
+    {
+        var orders: Orders = new Orders()
+        val getOrderFuture: Future[Option[Order]] = orders.getLastOrderFromUser(1)
+
+        val order: Option[Order] = Await.result(getOrderFuture, Duration.Inf);
+
+        order should be(None)
+    }
+
+    test("Orders.getLastOrderFromUser should return the last order of the user")
+    {
+        var orders: Orders = new Orders()
+
+        val fmt = DateTimeFormatter.ofPattern("uuuu-MM-dd HH:mm:ss")
+		var time = LocalDateTime.now(ZoneId.of("America/New_York")).format(fmt)
+
+        val iduser: Int = 2
+        var createOrderFuture: Future[Unit] = orders.createOrder(0, iduser, Timestamp.valueOf(time))
+        Await.ready(createOrderFuture, Duration.Inf)
+        time = LocalDateTime.now(ZoneId.of("America/New_York")).format(fmt)
+        val order: Order = new Order(1, iduser, Timestamp.valueOf(time))
+        createOrderFuture = orders.createOrder(order.id, iduser, order.date)
+        Await.ready(createOrderFuture, Duration.Inf)
+
+        val getOrderFuture: Future[Option[Order]] = orders.getLastOrderFromUser(iduser)
+
+        val lastOrder: Option[Order] = Await.result(getOrderFuture, Duration.Inf);
+
+        lastOrder should be(Some(order))
+    }
         // -------------------------- ORDERLINE ---------------------------------
 
     test("OrderLines.createOrderLine should create a new orderLine") {
@@ -1500,9 +1548,11 @@ class DatabaseTest extends AnyFunSuite
         val orderLines: OrderLines = new OrderLines()
         val comments: Comments = new Comments(orders, orderLines)
         val wallets : Wallets = new Wallets()
+        val carts: Carts = new Carts()
+        val cartlines: CartLines = new CartLines()
         
 
-        val insertdata : InsertData = new InsertData(developers,genres,publishers,games, users, comments, orders, orderLines, null, null ,null)
+        val insertdata : InsertData = new InsertData(developers,genres,publishers,games, users, comments, orders, orderLines, carts, cartlines ,null)
         insertdata.ClearDB()
 
         val returnedPublisherSeqFuture: Future[Seq[Publisher]] = publishers.getAllPublishers()
@@ -1529,6 +1579,12 @@ class DatabaseTest extends AnyFunSuite
         val getOrderLinesFuture: Future[Seq[OrderLine]] = orderLines.getAllOrderLines()
         var allOrderLines: Seq[OrderLine] = Await.result(getOrderLinesFuture, Duration.Inf)
 
+        val getCartsFuture: Future[Seq[Cart]] = carts.getAllCarts()
+        var allcarts: Seq[Cart] = Await.result(getCartsFuture, Duration.Inf)
+
+        val getCartlinesFuture: Future[Seq[CartLine]] = cartlines.getAllCartLines()
+        var allcartlines: Seq[CartLine] = Await.result(getCartlinesFuture, Duration.Inf)
+
         val getWalletsFuture: Future[Seq[Wallet]] = wallets.getAllWallets()
         var allwallets: Seq[Wallet] = Await.result(getWalletsFuture, Duration.Inf)
 
@@ -1540,6 +1596,8 @@ class DatabaseTest extends AnyFunSuite
         allUsers.length should be(0)
         allOrders.length should be(0)
         allOrderLines.length should be(0)
+        allcarts.length should be(0)
+        allcartlines.length should be(0)
         allwallets.length should be(0)
 
 
@@ -1717,6 +1775,34 @@ class DatabaseTest extends AnyFunSuite
         var allOrderLines: Seq[OrderLine] = Await.result(getOrderLinesFuture, Duration.Inf)
 
         allOrderLines.length should be(4)
+    }
+
+    test("InsertData.FillCarts should add 1 cart")
+    {
+        val carts: Carts = new Carts()
+        
+        val insertdata : InsertData = new InsertData(null, null, null, null, null, null, null, null, carts, null, null)
+        insertdata.ClearDB()
+        insertdata.FillCart()
+
+        val getCartsFuture: Future[Seq[Cart]] = carts.getAllCarts()
+        var allcarts: Seq[Cart] = Await.result(getCartsFuture, Duration.Inf)
+
+        allcarts.length should be(1)
+    }
+
+    test("InsertData.FillCartLines should add 3 cartlines")
+    {
+        val cartlines: CartLines = new CartLines()
+        
+        val insertdata : InsertData = new InsertData(null, null, null, null, null, null, null, null, null, cartlines, null)
+        insertdata.ClearDB()
+        insertdata.FillCartLine()
+
+        val getCartlinesFuture: Future[Seq[CartLine]] = cartlines.getAllCartLines()
+        var allcartlines: Seq[CartLine] = Await.result(getCartlinesFuture, Duration.Inf)
+
+        allcartlines.length should be(3)
     }
 
     test("InsertData.FillWallets should add 5 wallets")

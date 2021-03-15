@@ -251,8 +251,8 @@ class InsertData ( developers: Developers , genres: Genres, publishers: Publishe
 
 	def FillCartLine() {
 		Await.result(cartlines.createCartLine(0, 136, 1, 59.99, 1), Duration.Inf)
-		//Await.result(cartlines.createCartLine(0, 313, 2, 45.0, 1), Duration.Inf)
-		//Await.result(cartlines.createCartLine(0, 71, 1, 59.99, 1), Duration.Inf)
+		Await.result(cartlines.createCartLine(0, 313, 2, 45.0, 1), Duration.Inf)
+		Await.result(cartlines.createCartLine(0, 71, 1, 59.99, 1), Duration.Inf)
 	}
 	def FillWallets() {
 		Await.result(wallets.createWallets(1 , 500 ), Duration.Inf)
