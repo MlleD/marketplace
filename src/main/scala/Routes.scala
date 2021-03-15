@@ -286,7 +286,10 @@ class Routes(users: Users , developers: Developers , genres: Genres, publishers:
                 cartlinesFuture.map[ToResponseMarshallable] {
                     seq => {
                         seq.map(item => total += item.quantity * item.price)
-                        html.cart(seq, "%.2f".format(total))
+                        val locale = new java.util.Locale("fr", "FR")
+                        val formatter = java.text.NumberFormat.getInstance(locale)
+                        html.cart(seq, formatter.format(total))
+                        //html.cart(seq, "%.2f".format(total))
                     }
                 }
             }
@@ -332,7 +335,10 @@ class Routes(users: Users , developers: Developers , genres: Genres, publishers:
                 cartlines.getCartLinesByIdCart(idcart).map[ToResponseMarshallable] {
                     seq => {
                         val total: Double = seq.foldLeft(0.0) {(s,a) => s + a.quantity * a.price }
-                        val roundTotal: Double = "%.2f".format(total).replace(",", ".").toDouble
+                        val locale = new java.util.Locale("fr", "FR")
+                        val formatter = java.text.NumberFormat.getInstance(locale)
+                        //val roundTotal: Double = "%.2f".format(total).replace(",", ".").toDouble
+                        val roundTotal: Double = formatter.format(total).replace(",", ".").toDouble
                         wallets.getSoldeById(cart.iduser).map[ToResponseMarshallable] {
                             case Some(wallet) => {
                                 html.checkout(roundTotal, wallet, idcart)
