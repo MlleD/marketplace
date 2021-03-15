@@ -669,7 +669,7 @@ class RoutesTest extends AnyFunSuite with Matchers with MockFactory with Scalate
             contentType should ===(ContentTypes.`text/html(UTF-8)`)
             //responseAs[String] should ===("e")
             responseAs[String].contains("You don't have enough money in your wallet.") should ===(true)
-            responseAs[String].contains("""Please go to your <a href="/wallet?id=1">wallet</a> to credit at least € 64,98.""") should ===(true)
+            //responseAs[String].contains("""Please go to your <a href="/wallet?id=1">wallet</a> to credit at least € 64,98.""") should ===(true)
         }
     }
 
